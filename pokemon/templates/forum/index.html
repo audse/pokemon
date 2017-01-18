@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Forum{% endblock %} 
+{% block content %}
+{% load humanize %}
+
+<br />
+
+<div class="col-md-1"></div>
+<div class="col-md-10">
+
+<ol class="breadcrumb">
+	<li class="breadcrumb-item active">
+		Forums
+	</li>
+</ol>
+
+<h1 class="gray oswald" style="margin-top:-10px;">Forums</h1>
+
+<table class="content-box-table">
+	<thead>
+		<tr>
+			<th>CORE</th>
+			<th>Name</th>
+			<th>Posts</th>
+			<th>Last Post</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for category in core_categories %}
+			<tr>
+				<td></td>
+				<td>
+					<a href="{% url 'category' category=category %}">{{ category.name }}</a><p>{{ category.description }}</p>
+				</td>
+				<td>{{ category.posts }}</td>
+				<td>
+					{% if category.last_post %}
+						<a href="{% url 'view_post' pk=category.last_post.pk %}">
+							{{ category.last_post.post_time|naturaltime }}
+						</a>
+					{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+	<thead>
+		<tr>
+			<th>GENERAL</th>
+			<th>Name</th>
+			<th>Posts</th>
+			<th>Last Post</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for category in general_categories %}
+			<tr>
+				<td></td>
+				<td>
+					<a href="{% url 'category' category=category %}">{{ category.name }}</a>
+					<p>{{ category.description }}</p>
+				</td>
+				<td>{{ category.posts }}</td>
+				<td>
+					{% if category.last_post %}
+						<a href="{% url 'view_post' pk=category.last_post.pk %}">
+							{{ category.last_post.post_time|naturaltime }}
+						</a>
+					{% endif %}
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<br />
+
+</div>
+<div class="col-md-1"></div>
+
+{% endblock %}

@@ -1,0 +1,141 @@
+{% load sass_tags %}
+{% load staticfiles %}
+{% load users_online %}
+{% load bookmark_notes %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+		<title>{% block title %}{% endblock %} - Pok&eacute;frame</title>
+
+		<!-- PLUGINS -->
+		<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Oswald&amp;subset=latin-ext"  />
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+
+
+		<!-- CUSTOM STYLES -->
+		<link rel="stylesheet" type="text/css" href="{% sass_src 'css/main.scss' %}" />
+
+	</head>
+	<body>
+
+	<div class="row">
+		<div class="col-md-7">
+			<div class="news" style="overflow: auto;">
+				
+				<div class="row-fluid">
+					<div class="news-item col-md-4">
+						<div class="wrap">
+							<span class="blue bold">Scroll to the right for more news and updates.</span>
+						</div>
+					</div>
+					<div class="news-item col-md-4">
+						<div class="wrap">
+							<span class="small"><a href="#">Alola is coming to  Pok&eacute;frame!</a> Read more about it right here...</span>
+						</div>
+					</div>
+					<div class="news-item col-md-4">
+						<div class="wrap">
+							<span class="small"><a href="#">Interaction Weekend #1</a> Are you ready to get clicky with it?</span>
+						</div>
+					</div>
+					<div class="news-item col-md-4">
+						<div class="wrap">
+							<span class="small"><a href="#">I can't think of another topic.</a> I hope this will do alright.</span>
+						</div>
+					</div>
+					<div class="news-item col-md-4">
+						<div class="wrap">
+							<span class="small"><a href="#">This website is completely new!</a> Thank you for being here now.</span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="col-md-5 info-box small">
+				<div style="float:left;">
+					{% now "H:i M d Y" %}<br />
+					<a href="{% url 'online_page' %}">{{ 1|users_online }} User{{ 1|users_online|pluralize }} Online</a><br />
+					<a href="{% url 'admin:index' %}">Admin</a>
+				</div>
+				<div style="float:right;text-align: right;">
+					{% if user.is_authenticated %}
+						<span class="big">
+							<a href="{% url 'profile_page' username=user.username %}">{{ user.username }}</a>
+							<a href="{% url 'view_bookmarks' %}">
+								<span class="badge badge-danger {% if user|bookmark_notes > 0%} badge-default {% endif %}">
+								<b>
+									{% if user|bookmark_notes > 0 %}
+									{{ user|bookmark_notes }} <i class="fa fa-bookmark"></i></span>
+									{% else %}
+									0 <i class="fa fa-bookmark"></i>
+									{% endif %}
+								</b>
+								</a>
+							</a>
+						</span><br />
+						<a href="{% url 'logout' %}">Log Out</a>
+					{% else %}
+					<a href="{% url 'login_page' %}">Log in</a><br />
+					<a href="{% url 'register_page' %}">Register</a><br />
+					<a href="#">Forgot Password</a>
+					{% endif %}
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+	</div>
+
+	<nav class="navbar navbar-toggleable-sm navbar-light">
+		<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation" style="margin:10px 20px;">
+			<i class="fa fa-bars" aria-hidden="true" style="color:white;"></i>
+		</button>
+		<a class="navbar-brand" href="{% url 'index' %}"><span class="green-text">Pok&eacute;frame</span></a>
+
+		<div class="collapse navbar-collapse" id="nav">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="{% url 'lab' %}">Lab <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'boxes' %}">Boxes</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Park</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'pokedex_index' %}">Dex</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#" style="padding-left:0px;">Daycare</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'forum_index' %}">Forum</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+	<div class="container-fluid" style="margin-top:15px;">
+		<div class="row">
+			{% block content %}{% endblock %}
+		</div>
+	</div>
+
+	<div class="footer small">
+		<a href="#">Copyright Information</a>
+		<a href="#">Privacy Policy</a>
+		<a href="#">Rules</a>
+		<a href="#">Support Center</a>
+	</div>
+
+	</body>
+</html>
+
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+

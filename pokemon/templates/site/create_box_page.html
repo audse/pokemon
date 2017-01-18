@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Create Box{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-2">
+
+</div>
+
+<div class="col-sm-8">
+	<h1 class="gray oswald">Create a Box</h1>
+	<form action="{% url 'create_box' %}" method="post">
+		{% csrf_token %}
+
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-pencil"></i></span>
+				<input type="text" class="form-control" name="name" placeholder="Box Name..." />
+			</div>
+			<label class="small gray">This can be changed later. Up to 140 characters.</label>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-4">
+				<label>
+					<input type="radio" name="wallpaper" value="1" />
+					<img src="{% static 'img/areas/1.png' %}" width="100%" >
+				</label>
+			</div>
+			<div class="col-sm-4">
+				<label>
+					<input type="radio" name="wallpaper" value="2" />
+					<img src="{% static 'img/areas/2.png' %}" width="100%">
+				</label>
+			</div>
+			<div class="col-sm-4">
+				<label>
+					<input type="radio" name="wallpaper" value="3" />
+					<img src="{% static 'img/areas/3.png' %}" width="100%">
+				</label>
+			</div>
+		</div>
+		<br />
+		<button class="btn btn-secondary" type="submit">Create</button> &nbsp; <span class="small gray">As this is your first box, it won't cost you anything.</span>
+		<br /><br /><br />
+
+	</form>
+</div>
+
+<div class="col-sm-2">
+	
+</div>
+
+{% endblock %}

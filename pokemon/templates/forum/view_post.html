@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load bbcode_tags %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+
+<br />
+<div class="col-md-1"></div>
+<div class="col-md-10">
+
+<ol class="breadcrumb">
+	<li class="breadcrumb-item">
+		<a href="{% url 'forum_index' %}">Forums</a>
+	</li>
+	<li class="breadcrumb-item">
+		<a href="{% url 'category' category=post.category %}">{{ post.category }}</a>
+	</li>
+	<li class="breadcrumb-item active">
+		View Post
+	</li>
+</ol>
+
+{% if not post.deleted %}
+<table class="content-box-table {% if post.stickied %}sticky{% endif %}" border=1 frame=void rules=rows>
+	<thead>
+		<tr>
+			<th>
+				<span class="open">
+					Posted by<br />
+					<a href="{% url 'profile_page' username=post.author.username %}" class="small">{{ post.author.username }}</a>
+				</span>
+			</th>
+			<th>
+				<span class="open">
+				{% if post.stickied %}
+					<span class="white">{{ post.title }}</span>
+				{% else %}
+					{{ post.title }}
+				{% endif %}
+				<br /><span class="small">Posted {{ post.post_time }} ({{ post.post_time|naturaltime }})</span>
+				</span>
+			</th>
+			<th style="text-align: right;">
+				{% if user.is_authenticated %}
+					<a href="{% url 'bookmark' pk=post.pk %}" class="space-icon">
+						&nbsp; <span class="fa fa-bookmark"></span>
+					</a>
+				{% endif %}
+
+				{% if user.username == post.author.username %}
+
+					<a href="{% url 'edit_post_page' pk=post.pk %}" class="space-icon">
+						&nbsp; <span class="fa fa-pencil"></span>
+					</a>
+				{% endif %}
+					
+				{% if user.is_staff %}
+
+					{% if post.locked %}
+						<a href="{% url 'unlock' pk=post.pk %}" class="space-icon">
+							&nbsp; <span class="fa fa-unlock"></span>
+						</a>
+					{% else %}
+						<a href="{% url 'lock' pk=post.pk %}" class="space-icon">
+							&nbsp; <span class="fa fa-lock"></span>
+						</a>
+					{% endif %}
+
+					{% if post.stickied %}
+					<a href="{% url 'unsticky' pk=post.pk %}" class="space-icon">
+						&nbsp; <span class="fa fa-circle-o"></span>
+					</a>
+					{% else %}
+					<a href="{% url 'sticky' pk=post.pk %}" class="space-icon">
+						&nbsp; <span class="fa fa-thumb-tack"></span>
+					</a>
+					{% endif %}
+
+				{% endif %}
+
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="3">
+				<br />
+				{% autoescape off %}
+				<p>{{ post.body_text|bbcode }}</p>
+				{% endautoescape %}
+			</td>
+		</tr>
+		{% for reply in replies %}
+			<tr>
+				<td colspan="3">
+					<blockquote class="reply" style="margin-top:10px;margin-bottom:10px;">
+					{% if not reply.deleted %}
+						{% autoescape off %}
+						<p>{{ reply.body_text|bbcode }}</p>
+						{% endautoescape %}
+
+						<span class="small">
+							{% if user.is_staff %}
+
+								<div class="row">
+									<div class="col-sm-8" style="padding-top:5px;">
+
+
+										{% if reply.author.username == user.username %}
+											<a href="" data-toggle="modal" data-target="#edit-reply-{{ reply.pk }}"><span class="fa fa-pencil"></span></a>
+										{% endif %}
+
+										Posted {{ reply.post_time }} ({{ reply.post_time|naturaltime }}) by
+										<a href="{% url 'profile_page' username=reply.author.username %}">
+											{{ reply.author.username }}
+										</a>
+									</div>
+									<div class="col-sm-4">
+										<form action="{% url 'delete_reply' pk=reply.pk %}" class="form-inline" method="POST">
+										{% csrf_token %}
+											<div class="input-group input-group-sm">
+												<input type="text" name="reason" class="form-control" placeholder="Reason..." />
+												<span class="input-group-btn input-group-btn-sm">
+													<button type="submit" style="margin-left:-5px;" class="btn btn-secondary">
+														Delete
+													</button>
+												</span>
+											</div>
+										</form><!-- END FORM -->
+									</div><!-- END COL 4-->
+								</div><!-- END ROW -->
+							{% else %}
+
+							{% if reply.author.username == user.username %}
+								<a href="" data-toggle="modal" data-target="#edit-reply-{{ reply.pk }}"><span class="fa fa-pencil"></span></a>
+							{% endif %}
+
+							Posted {{ reply.post_time }} ({{ reply.post_time|naturaltime }}) by
+							<a href="{% url 'profile_page' username=reply.author.username %}">
+								{{ reply.author.username }}
+							</a>
+							{% endif %}
+						</span>
+					{% else %}
+						<p style="margin-top:15px;">
+							{% if user.is_staff %}
+							<a href="{% url 'delete_reply_true' pk=reply.pk %}"><orange><span class="fa fa-times"></span></orange></a><!-- TRUE DELETE -->
+							{% endif %}
+							<b>Deleted!</b> ({{ reply.deleted_reason }})
+							{% if user.is_staff %}
+								<i class="small gray">It said: "{{ reply.body_text|bbcode|safe }}"</i>
+							{% endif %}
+						</p>
+					{% endif %}
+					</blockquote>
+				</td>
+			</tr>
+
+			<div class="modal fade" id="edit-reply-{{ reply.pk }}" tabindex="-1" role="dialog" aria-labelledby="EditReply" aria-hidden="true">
+			  <div class="modal-dialog" role="document">
+				<div class="modal-content">
+				  <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title">Edit Reply</h4>
+				  </div>
+				  <div class="modal-body">
+
+				  <form action="{% url 'edit_reply' pk=reply.pk %}" method="POST">
+						{% csrf_token %}
+						<div class="form-group">
+							<label>Reply Text</label>
+							<textarea class="form-control" name="body_text" rows="5">{{ reply.body_text }}</textarea>
+						</div>
+
+				  </div>
+				  <div class="modal-footer">
+					<button type="submit" class="btn btn-secondary">Submit Edit</button>
+					</form>
+				  </div>
+				</div>
+			  </div>
+			</div>
+
+		{% endfor %}
+		<tr />
+	</tbody>
+</table>
+<br />
+
+<!-- PAGINATION -->
+	<nav>
+	  	<ul class="pagination justify-content-center">
+	    	<li class="page-item {% if not replies.has_previous %}disabled{% endif %}">
+	      		<a class="page-link" href="?page=1" {% if not replies.has_previous %}tabindex="-1"{% endif %}>
+	      			First
+	      		</a>
+	    	</li>
+	    	<li class="page-item {% if not replies.has_previous %}disabled{% endif %}">
+	      		<a class="page-link" href="?page={% if replies.has_previous %}{{ replies.previous_page_number }}{% else %}1{% endif %}" {% if not replies.has_previous %}tabindex="-1"{% endif %}>
+	      			Prev
+	      		</a>
+	    	</li>
+	    	<li class="page-item disabled">
+	    		<a class="page-link" href="#" tabindex="-1">Page {{ replies.number }} of {{ replies.paginator.num_pages }}</a>
+	    	</a>
+	    	<li class="page-item {% if not replies.has_next %}disabled{% endif %}">
+	      		<a class="page-link" href="?page={% if replies.has_next %}{{ replies.next_page_number }}{% else %}{{ replies.paginator.num_pages }}{% endif %}" {% if not replies.has_next %}tabindex="-1"{% endif %}>
+	      			Next
+	      		</a>
+	    	</li>
+	    	<li class="page-item {% if not replies.has_next %}disabled{% endif %}">
+	      		<a class="page-link" href="?page={{ replies.paginator.num_pages }}" {% if not replies.has_next %}tabindex="-1"{% endif %}>
+	      			Last
+	      		</a>
+	    	</li>
+	  	</ul>
+	</nav>
+	<!-- END PAGINATION -->
+
+{% if user.is_authenticated %}
+	{% if post.locked = False %}
+		<form action="{% url 'reply' pk=post.pk %}" method="POST">
+			{% csrf_token %}
+			<div class="form-group">
+				<textarea class="form-control" name="reply_text" rows="5"></textarea>
+			</div>
+			<button type="submit" class="btn btn-secondary">Reply</button>
+		</form>
+	{% else %}
+		<div class="alert alert-danger">
+			This post is locked! You cannot reply.
+		</div>
+	{% endif %}
+{% else %}
+	<div class="alert alert-danger">
+		You must be logged in to reply!
+	</div>
+{% endif %}
+{% else %}
+	<div class="alert alert-danger">
+		This post has been deleted.
+	</div>
+{% endif %}
+
+<br />
+
+</div>
+<div class="col-md-1"></div>
+
+{% endblock %}
+
+
+
+

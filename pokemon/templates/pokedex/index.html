@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Pok&eacute;dex{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-12">
+	<h1 class="gray oswald">Pok&eacute;dex</h1>
+	{% for monster in pokemon %}
+		<div class="content-box" id="pokedex-{{ monster.number }}" style="margin-bottom: 15px;display:inline-block;min-width:30%">
+			<div class="content-box-head">
+				#{{ monster.number|stringformat:"03d" }} {{ monster.name }} 
+				<span class="oswald badge badge-{{ monster.primary_type }}" style="text-transform: uppercase;">{{ monster.primary_type }}</span>
+
+				<span class="oswald badge badge-{{ monster.secondary_type }}" style="text-transform: uppercase;">{{ monster.secondary_type }}</span><br />
+			</div>
+			<div class="content-box-body" style="padding-bottom:15px;">
+
+				<!-- SPRITES: REGULAR AND EGG -->
+				{% if monster.ehp %}
+				<img src="{% static 'img/eggs/' %}{{ monster.number }}.png" width="96" height="96" style="float: left" />
+				{% else %}
+				<img src="{% static 'img/eggs/0.png' %}" width="96" height="96" style="float: left" />
+				{% endif %}
+
+				<img src="{% static 'img/pokemon/' %}{{ monster.number }}.png" style="float: right" />
+				<!-- END SPRITES -->
+
+				<div style="clear:both;"></div>
+
+				<!-- MALE / FEMALE SPLIT -->
+				<div class="progress">
+				 	<div class="progress-bar small" role="progressbar" style="background: #705898;width:{{ monster.percent_male }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{ monster.percent_male }}% male</div>
+				 	<div class="progress-bar small" role="progressbar" style="width: {{ monster.percent_female }}%;background:#F8D030;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"> {{ monster.percent_female }}% female</div>
+				</div>
+				<!-- END GENDER -->
+				<br />
+				{% if monster.evo %}
+					{% if monster.evo_level %}
+						evolves at level {{ monster.evo_level }}
+					{% elif monster.evo_item %}
+						evolves with {{ monster.evo_item }}
+					{% elif monster.evo_on_trade %}
+						evolves on trade
+					{% endif %}
+				{% else %}
+					<br />
+				{% endif %}
+
+			</div>
+		</div>
+	{% endfor %}
+</div>
+
+{% endblock %}

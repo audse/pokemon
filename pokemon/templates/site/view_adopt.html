@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load partition %}
+
+{% block title %}
+	{{ adopt.owner.username }}'s 
+	{% if adopt.hatched %}
+		{% if adopt.nickname %}
+			{{ adopt.nickname }}
+		{% else %}
+			{{ adopt.pokemon.name }}
+		{% endif %}
+	{% else %}
+		Egg
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-10">
+	<h1 class="gray oswald">
+		<a href="{% url 'profile_page' username=adopt.owner.username %}">{{ adopt.owner.username }}</a>'s 
+		{% if adopt.hatched %}
+			{% if adopt.nickname %}
+				{{ adopt.nickname }}
+			{% else %}
+				{{ adopt.pokemon.name }}
+			{% endif %}
+		{% else %}
+			Egg
+		{% endif %}
+	</h1>
+	<div class="row">
+		<div class="col-sm-6">
+			{% if not adopt.hatched %}
+
+				<div class="content-box">
+						<div class="content-box-head">
+							Egg
+							
+						</div>
+						<div class="content-box-body">
+							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png"/>
+						</div>
+					</div>
+
+					{% if adopt.exp == adopt.pokemon.ehp %}
+						{% if adopt.owner == user %}
+							<div class="content-box" style="margin-top:15px;">
+								<a href="{% url 'hatch_egg' pk=adopt.pk %}"><button class="content-box-button">Hatch the Egg</button>
+							</div>
+						{% endif %}
+					{% endif %}
+
+				{% else %}	
+
+				<div class="content-box">
+					<div class="content-box-head">
+						#{{ adopt.pokemon.number|stringformat:"03d" }} {{ adopt.pokemon.name }} 
+						<span class="oswald badge badge-{{ adopt.pokemon.primary_type }}" style="text-transform: uppercase;">{{ adopt.pokemon.primary_type }}</span>
+
+						<span class="oswald badge badge-{{ adopt.pokemon.secondary_type }}" style="text-transform: uppercase;">{{ adopt.pokemon.secondary_type }}</span><br />
+					</div>
+					<div class="content-box-body" style="min-height: 96px;">
+						<img src="{% static 'img/pokemon/' %}{{ adopt.pokemon.number }}.png" style="float:left;"/>
+						{% if adopt.gender %}
+						Gender: male
+						{% else %}
+						Gender: female
+						{% endif %}<br />
+						Nature: {{ adopt.nature }}
+					</div>
+				</div>
+				<div class="content-box" style="margin-top:15px;">
+					<div class="content-box-body" style="padding-bottom:15px">
+						{% if adopt.pokemon.evo %}
+							{% if adopt.pokemon.evo_level %}
+								evolves at {{ adopt.total_exp }} EXP
+							{% elif adopt.pokemon.evo_item %}
+								evolves with {{ adopt.pokemon.evo_item }}
+							{% elif adopt.pokemon.evo_on_trade %}
+								evolves on trade
+							{% endif %}
+						{% else %}
+							<br />
+						{% endif %}
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		<div class="col-sm-6">
+			{% if adopt.party %}
+			<div class="content-box">
+				<button class="content-box-button" data-toggle="modal" data-target="#boxes-list">Move to Box</button>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+
+<div class="col-sm-1">
+</div>
+ 
+<!-- Modal -->
+<div class="modal fade" id="boxes-list" tabindex="-1" role="dialog" aria-labelledby="boxes-listLabel" aria-hidden="true">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="boxes-listLabel">Your Boxes</h4>
+      		</div>
+      		<div class="modal-body">
+      			<div class="row">
+      				<div class="col-sm-6">
+      					{% for box in boxes|partition:"2"|first %}
+      						<div class="content-box">
+      							<div class="content-box-head">{{ box.name }}</div>
+								<a href="">
+									<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%" />
+								</a>
+							</div>
+      					{% endfor %}
+      				</div>
+      			</div>
+      		</div>
+      		<div class="modal-footer">
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+{% endblock %}

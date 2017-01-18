@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}New Post in {{ category.name }}{% endblock %}
+{% block content %}
+
+<br />
+<div class="col-md-1"></div>
+<div class="col-md-10">
+
+<ol class="breadcrumb">
+	<li class="breadcrumb-item">
+		<a href="{% url 'forum_index' %}">Forums</a>
+	</li>
+	<li class="breadcrumb-item">
+		<a href="{% url 'category' category=category.name %}">{{ category.name }}</a>
+	</li>
+	<li class="breadcrumb-item active">
+		New Post
+	</li>
+</ol>
+
+<h1 class="gray oswald">New Post</h1>
+
+<form action="{% url 'new_post' %}" method="POST">
+	{% csrf_token %}
+	<input type="hidden" name="category" value="{{ category.name }}" />
+	<div class="form-group">
+		<div class="input-group">
+			<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-pencil"></i></span>
+			<input type="text" name="title" class="form-control" placeholder="Title..." value="{{ post.title }}"/>
+		</div>
+		<label class="small gray">This should be under 140 characters.</label>
+	</div>
+	<div class="form-group">
+		<textarea class="form-control" name="body_text" rows="10">{{ post.body_text }}</textarea>
+		<label class="small gray">BBCode is allowed. See <a href="#">this page</a> for details.</label><br />
+	</div>
+	<button type="submit" class="btn btn-secondary">Submit Post</button><br /><br />
+</form>
+
+<br />
+
+</div>
+<div class="col-md-1"></div>
+
+
+{% endblock %}

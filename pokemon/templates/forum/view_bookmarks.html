@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load humanize %}
+
+<br />
+<div class="col-md-2"></div>
+<div class="col-md-8">
+
+<h1 class="gray oswald">Bookmarks</h1>
+
+<table class="content-box-table" border=1 frame=void rules=rows>
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>New</th>
+			<th>Last Viewed</th>
+			<th><i class="fa fa-times"></i></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for bookmark in bookmarks %}
+			<tr>
+			<td><a href="{% url 'view_post' pk=bookmark.post.pk %}">{{ bookmark.post.title }}</a></td>
+			<td>{{ bookmark.new }}</td>
+			<td>{{ bookmark.last_viewed|naturaltime }}</td>
+			<td><a href="{% url 'delete_bookmark' pk=bookmark.pk %}"><i class="fa fa-times"></i>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<br />
+
+</div>
+<div class="col-md-2"></div>
+
+{% endblock %}

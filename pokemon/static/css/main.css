@@ -1,0 +1,304 @@
+html {
+  position: relative;
+  min-height: 100%;
+  overflow-x: hidden; }
+
+body {
+  /* Margin bottom by footer height */
+  padding-bottom: 10px;
+  margin-bottom: 60px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300; }
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  line-height: 60px;
+  /* Vertically center the text there */
+  background-color: #f5f5f5;
+  padding-left: 10px; }
+  .footer a {
+    margin: 5px; }
+
+/* ELEMENTS */
+a {
+  color: #2B6CA7; }
+  a:hover {
+    color: #1f4e7a;
+    text-decoration: none; }
+
+h1 {
+  padding: 20px 0; }
+
+/* GLOBAL */
+.green {
+  color: #5cb85c; }
+
+.gray {
+  color: #7B848A; }
+
+.red {
+  color: #D9534F; }
+
+.dark-red {
+  color: #a72925; }
+
+.light-blue {
+  color: #9ac1e5; }
+
+.blue {
+  color: #2B6CA7; }
+
+.bold {
+  font-weight: 700; }
+
+.small {
+  font-size: .8em; }
+
+.big {
+  font-size: 1.2em; }
+
+.oswald {
+  font-family: "Oswald", sans-serif;
+  letter-spacing: 2px; }
+
+.open {
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 0px;
+  font-weight: 300;
+  font-style: normal; }
+
+a.white {
+  color: rgba(255, 255, 255, 0.7); }
+  a.white:hover {
+    color: white; }
+
+/* NAVBAR */
+.navbar {
+  background-color: #2B6CA7;
+  padding: 0px;
+  font-family: "Oswald", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 500;
+  font-style: italic;
+  margin-right: -15px; }
+  .navbar .navbar-brand {
+    margin: 5px 30px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 4px; }
+    .navbar .navbar-brand:hover {
+      color: rgba(255, 255, 255, 0.7); }
+  .navbar li.nav-item {
+    padding: 5px;
+    border-right: 2px solid rgba(255, 255, 255, 0.3);
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
+    margin-left: -2px; }
+    .navbar li.nav-item:hover {
+      background: #1f4e7a; }
+  .navbar a.nav-link {
+    margin-left: 10px;
+    margin-right: 10px;
+    color: white !important;
+    width: 67px;
+    text-align: center; }
+  .navbar .navbar-text {
+    color: #7B848A;
+    margin-left: 10px;
+    margin-right: 10px; }
+
+/* NEWS */
+.news {
+  background: #f5f5f5;
+  position: relative;
+  font-size: 1em; }
+  .news .news-item {
+    padding: 10px 15px 20px 15px;
+    border-right: 2px solid white; }
+
+.row-fluid {
+  white-space: nowrap; }
+
+.row-fluid .col-md-4 {
+  display: inline-block; }
+  .row-fluid .col-md-4 .wrap {
+    white-space: normal; }
+
+/* CONTENT BOXES */
+.info-box {
+  margin: 20px; }
+  @media (min-width: 768px) {
+    .info-box {
+      margin: 5px 10px 10px -10px; } }
+
+.content-box {
+  border: 1px solid #2B6CA7; }
+  .content-box .content-box-head {
+    padding: 5px;
+    background: #2B6CA7;
+    color: white;
+    font-family: "Oswald", sans-serif;
+    letter-spacing: 2px;
+    text-align: center; }
+  .content-box .content-box-body {
+    padding: 15px 15px 0 15px; }
+  .content-box .content-box-button {
+    width: 100%;
+    border: none;
+    background: #2B6CA7;
+    color: white;
+    font-family: "Oswald", sans-serif;
+    letter-spacing: 2px; }
+
+table.content-box-table {
+  width: 100%;
+  border: 1px solid #2B6CA7; }
+  table.content-box-table th {
+    background: #2B6CA7;
+    font-family: "Oswald", sans-serif;
+    letter-spacing: 2px;
+    color: white;
+    padding: 5px 15px; }
+    table.content-box-table th a {
+      color: rgba(255, 255, 255, 0.7); }
+      table.content-box-table th a:hover {
+        color: white; }
+  table.content-box-table td {
+    padding: 5px 15px; }
+
+table.sticky {
+  border: 1px solid #449E44; }
+  table.sticky th {
+    background: #449E44; }
+
+.party-space {
+  background: rgba(0, 0, 0, 0.03);
+  margin-bottom: 20px;
+  padding: 0px; }
+  .party-space .party-space-content {
+    padding: 10px; }
+  .party-space .party-space-button {
+    background: #2B6CA7;
+    color: white;
+    border: 1px solid #2B6CA7;
+    font-family: "Oswald", sans-serif;
+    letter-spacing: 2px; }
+  .party-space .party-space-berries {
+    text-align: center;
+    margin-bottom: 5px; }
+    .party-space .party-space-berries .berry {
+      margin: 2px; }
+    .party-space .party-space-berries .berry-favorite {
+      background: green; }
+    .party-space .party-space-berries .berry-disliked {
+      background: red; }
+
+/* HACKS */
+@media (min-width: 768px) {
+  .margin-to-fit {
+    margin-bottom: 65px; } }
+
+@media (max-width: 768px) {
+  .margin-to-fit {
+    margin-top: -20px; } }
+
+/* STYLISTIC CHOICES */
+.admin {
+  color: #D9534F;
+  font-weight: 700; }
+  .admin:hover {
+    color: #a72925;
+    text-decoration: none; }
+
+.staff {
+  color: #2B6CA7;
+  font-weight: 700; }
+  .staff:hover {
+    color: #1f4e7a;
+    text-decoration: none; }
+
+.badge-normal {
+  background: #A8A878; }
+
+.badge-fire {
+  background: #F08030; }
+
+.badge-fighting {
+  background: #C03028; }
+
+.badge-water {
+  background: #6890F0; }
+
+.badge-flying {
+  background: #A890F0; }
+
+.badge-grass {
+  background: #78C850; }
+
+.badge-poison {
+  background: #A040A0; }
+
+.badge-electric {
+  background: #F8D030; }
+
+.badge-ground {
+  background: #E0C068; }
+
+.badge-psychic {
+  background: #F85888; }
+
+.badge-rock {
+  background: #B8A038; }
+
+.badge-ice {
+  background: #98D8D8; }
+
+.badge-bug {
+  background: #A7B720; }
+
+.badge-dragon {
+  background: #7038F8; }
+
+.badge-ghost {
+  background: #705898; }
+
+.badge-dark {
+  background: #705848; }
+
+.badge-steel {
+  background: #B8B8D0; }
+
+.badge-fairy {
+  background: #EE99AC; }
+
+.badge-question {
+  background: #68A090; }
+
+.lab-egg {
+  position: relative;
+  display: inline-block; }
+  .lab-egg span {
+    position: absolute;
+    bottom: 20px;
+    left: 48px; }
+
+label > input {
+  /* HIDE RADIO */
+  visibility: hidden;
+  /* Makes input not-clickable */
+  position: absolute;
+  /* Remove input from document flow */ }
+
+label > input + img {
+  /* IMAGE STYLES */
+  cursor: pointer;
+  border: 3px solid transparent; }
+
+label > input:checked + img {
+  /* (RADIO CHECKED) IMAGE STYLES */
+  border: 3px solid #9ac1e5; }
+
+/*# sourceMappingURL=../../../../../../../static/css/main.css.map */

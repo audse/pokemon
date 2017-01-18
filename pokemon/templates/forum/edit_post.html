@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Edit Post{% endblock %}
+{% block content %}
+
+<br />
+
+<div class="col-md-1"></div>
+<div class="col-md-10">
+
+<ol class="breadcrumb">
+	<li class="breadcrumb-item">
+		<a href="{% url 'forum_index' %}">Forums</a>
+	</li>
+	<li class="breadcrumb-item">
+		<a href="{% url 'category' category=post.category %}">{{ post.category }}</a>
+	</li>
+	<li class="breadcrumb-item">
+		<a href="{% url 'view_post' pk=post.pk %}">Your Post</a>
+	</li>
+	<li class="breadcrumb-item active">
+		Edit Post
+	</li>
+</ol>
+
+<h1 class="gray oswald">
+	<a href="{% url 'view_post' pk=post.pk %}">
+		<span class="fa fa-arrow-left"></span>
+	</a>
+	Edit Post
+</h1>
+
+<form action="{% url 'edit_post' pk=post.pk %}" method="POST">
+	{% csrf_token %}
+	<input type="hidden" name="category" value="{{ category.name }}" />
+	<div class="form-group">
+		<div class="input-group">
+			<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-pencil"></i></span>
+			<input type="text" name="title" class="form-control" placeholder="Title..." value="{{ post.title }}"/>
+		</div>
+		<label class="small gray">This should be under 140 characters.</label>
+	</div>
+	<div class="form-group">
+		<textarea class="form-control" name="body_text" rows="10">{{ post.body_text }}</textarea>
+		<label class="small gray">BBCode is allowed. See <a href="#">this page</a> for details.</label><br />
+
+	</div>
+	<button type="submit" class="btn btn-secondary">Submit Edit</button><br /><br />
+</form>
+
+<br />
+
+</div>
+<div class="col-md-1"></div>
+{% endblock %}

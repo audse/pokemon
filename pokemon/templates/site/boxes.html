@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Boxes{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-2">
+
+</div>
+
+<div class="col-sm-8">
+	<h1 class="gray oswald">Your Boxes</h1>
+
+	{% for box in boxes %}
+		<div class="content-box">
+			<div class="content-box-head">{{ box.name }}</div>
+			<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%" />
+		</div>
+	{% endfor %}
+
+	<br />
+	<p><code>-BZZ-</code></p>
+	<p>This is the PC. Similar to how Pok&eacute;mon may be stored in Pok&eacute;balls they may be stored digitally, connectified to each laboratory and Pok&eacute;mon center in the region unit. These storage files are known as <code>`BOXES`</code> in code-speak. Arrange hatchified Pok&eacute;mon you no longer want in your party as you see appropriate.</p>
+	<p><code>-BZZ-</code></p>
+
+	<br />
+</div>
+
+<div class="col-sm-2">
+	
+</div>
+
+{% endblock %}

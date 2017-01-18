@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load partition %}
+
+{% block title %}{{ current_user.username}}'s Profile{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1"></div>
+<div class="col-sm-7">
+	<h1 class="gray oswald">{{ current_user.username }}'s Profile</h1>
+	<div class="row">
+		<div class="col-sm-6">
+			{% for adopt in adopts|partition:"2"|first %}
+				<div class="party-space">
+					{% if adopt.hatched %}
+						<div class="party-space-content">
+							<img src="{% static 'img/pokemon/' %}{% if adopt.shiny %}shiny/{% endif %}{{ adopt.pokemon.number }}.png" style="float:left;" />
+							<h4 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">
+							{% if adopt.nickname %}
+								{{ adopt.nickname }}
+							{% else %}
+								{{ adopt.pokemon.name }}
+							{% endif %}
+							</a></h4>
+
+							{{ adopt.exp }} {% if adopt.total_exp != 0 %}/ {{ adopt.total_exp }}{% endif %}
+							<div class="progress">
+							 	<div class="progress-bar small" role="progressbar" style="{% if adopt.total_exp %}width:{{ adopt.percent }}%;{% else %}width:100%{% endif %}" aria-valuenow="{{ adopt.exp }}" aria-valuemin="0" aria-valuemax="{{ adopt.total_exp }}"></div>
+							</div>
+
+							<div style="clear:both"></div>
+						</div>
+						{% if adopt.can_interact %}
+						<div class="party-space-berries">
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sour' %}?berry=favorite{% elif adopt.disliked == 'sour' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'sour' %}berry-favorite{% endif %} {% if adopt.disliked == 'sour' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/sitrus-berry.png' %}" />
+							</a>
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'spicy' %}?berry=favorite{% elif adopt.disliked == 'spicy' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'spicy' %}berry-favorite{% endif %} {% if adopt.disliked == 'spicy' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/leppa-berry.png' %}" />
+							</a>
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'dry' %}?berry=favorite{% elif adopt.disliked == 'dry' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'dry' %}berry-favorite{% endif %} {% if adopt.disliked == 'dry' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/chesto-berry.png' %}" />
+							</a>
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sweet' %}?berry=favorite{% elif adopt.disliked == 'sweet' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'sweet' %}berry-favorite{% endif %} {% if adopt.disliked == 'sweet' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/kasib-berry.png' %}" />
+							</a>
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'bitter' %}?berry=favorite{% elif adopt.disliked == 'bitter' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'bitter' %}berry-favorite{% endif %} {% if adopt.disliked == 'bitter' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/nanab-berry.png' %}" />
+							</a>
+						</div>
+						{% else %}
+							<div style="padding-bottom: 10px; text-align: center">
+								{% if not user.is_authenticated %}
+								<i class="gray" style="padding: 10px;">Please log in to interact.</i><br />
+								{% else %}
+								<i class="gray" style="padding: 10px;">Thank you!</i><br />
+								{% endif %}
+							</div>
+						{% endif %}
+					{% else %}
+						<div class="party-space-content">
+							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png" style="float:left;" />
+
+							<h4 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">Egg</a></h4>
+
+							{{ adopt.exp }} / {{ adopt.pokemon.ehp }}
+							<div class="progress">
+							 	<div class="progress-bar small" role="progressbar" style="width:{{ adopt.percent }}%;" aria-valuenow="{{ adopt.exp }}" aria-valuemin="0" aria-valuemax="{{ adopt.pokemon.ehp }}"></div>
+							</div>
+
+							<div style="clear:both"></div>
+						</div>
+						{% if adopt.can_interact %}
+							<form action="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}" method="post">{% csrf_token %}
+								<button class="party-space-button" type="submit" style="width:100%">Hold the egg</button>
+							</form>
+						{% else %}
+							<div style="padding-bottom: 10px; text-align: center">
+								{% if not user.is_authenticated %}
+								<i class="gray" style="padding: 10px;">Please log in to interact.</i><br />
+								{% else %}
+								<i class="gray" style="padding: 10px;">Thank you!</i><br />
+								{% endif %}
+							</div>
+						{% endif %}
+				
+				{% endif %}
+				</div>
+			{% endfor %}
+		</div>
+		<div class="col-sm-6">
+			{% for adopt in adopts|partition:"2"|last %}
+				<div class="party-space">
+					{% if adopt.hatched %}
+						<div class="party-space-content">
+							<img src="{% static 'img/pokemon/' %}{% if adopt.shiny %}shiny/{% endif %}{{ adopt.pokemon.number }}.png" style="float:left;" />
+							<h4 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">
+							{% if adopt.nickname %}
+								{{ adopt.nickname }}
+							{% else %}
+								{{ adopt.pokemon.name }}
+							{% endif %}
+							</a></h4>
+
+							{{ adopt.exp }} {% if adopt.total_exp != 0 %}/ {{ adopt.total_exp }}{% endif %}
+							<div class="progress">
+							 	<div class="progress-bar small" role="progressbar" style="{% if adopt.total_exp %}width:{{ adopt.percent }}%;{% else %}width:100%{% endif %}" aria-valuenow="{{ adopt.exp }}" aria-valuemin="0" aria-valuemax="{{ adopt.total_exp }}"></div>
+							</div>
+
+							<div style="clear:both"></div>
+						</div>
+						{% if adopt.can_interact %}
+						<div class="party-space-berries">
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sour' %}?berry=favorite{% elif adopt.disliked == 'sour' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'sour' %}berry-favorite{% endif %} {% if adopt.disliked == 'sour' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/sitrus-berry.png' %}" />
+							</a>
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'spicy' %}?berry=favorite{% elif adopt.disliked == 'spicy' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'spicy' %}berry-favorite{% endif %} {% if adopt.disliked == 'spicy' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/leppa-berry.png' %}" />
+							</a>
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'dry' %}?berry=favorite{% elif adopt.disliked == 'dry' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'dry' %}berry-favorite{% endif %} {% if adopt.disliked == 'dry' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/chesto-berry.png' %}" />
+							</a>
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sweet' %}?berry=favorite{% elif adopt.disliked == 'sweet' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'sweet' %}berry-favorite{% endif %} {% if adopt.disliked == 'sweet' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/kasib-berry.png' %}" />
+							</a>
+							<a 
+								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'bitter' %}?berry=favorite{% elif adopt.disliked == 'bitter' %}?berry=disliked{% endif %}" 
+
+								class="berry {% if adopt.favorite == 'bitter' %}berry-favorite{% endif %} {% if adopt.disliked == 'bitter' %}berry-disliked{% endif %}">
+								<img src="{% static 'img/items/nanab-berry.png' %}" />
+							</a>
+						</div>
+						{% else %}
+							<div style="padding-bottom: 10px; text-align: center">
+								{% if not user.is_authenticated %}
+								<i class="gray" style="padding: 10px;">Please log in to interact.</i><br />
+								{% else %}
+								<i class="gray" style="padding: 10px;">Thank you!</i><br />
+								{% endif %}
+							</div>
+						{% endif %}
+					{% else %}
+						<div class="party-space-content">
+							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png" style="float:left;" />
+
+							<h4 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">Egg</a></h4>
+
+							{{ adopt.exp }} / {{ adopt.pokemon.ehp }}
+							<div class="progress">
+							 	<div class="progress-bar small" role="progressbar" style="width:{{ adopt.percent }}%;" aria-valuenow="{{ adopt.exp }}" aria-valuemin="0" aria-valuemax="{{ adopt.pokemon.ehp }}"></div>
+							</div>
+
+							<div style="clear:both"></div>
+						</div>
+						{% if adopt.can_interact %}
+							<form action="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}" method="post">{% csrf_token %}
+								<button class="party-space-button" type="submit" style="width:100%">Hold the egg</button>
+							</form>
+						{% else %}
+							<div style="padding-bottom: 10px; text-align: center">
+								{% if not user.is_authenticated %}
+								<i class="gray" style="padding: 10px;">Please log in to interact.</i><br />
+								{% else %}
+								<i class="gray" style="padding: 10px;">Thank you!</i><br />
+								{% endif %}
+							</div>
+						{% endif %}
+				
+				{% endif %}
+				</div>
+			{% endfor %}
+		</div>
+
+	</div>
+</div>
+<div class="col-sm-4"></div>
+<div class="col-sm-1"></div>
+
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}{{ category }}{% endblock %}
+{% block content %}
+
+<br />
+<div class="col-md-1"></div>
+<div class="col-md-10">
+
+<ol class="breadcrumb">
+	<li class="breadcrumb-item">
+		<a href="{% url 'forum_index' %}">Forums</a>
+	</li>
+	<li class="breadcrumb-item active">
+		{{ category }}
+	</li>
+</ol>
+
+<h1 class="gray oswald" style="margin-top:-10px;">
+	{{ category }}
+	{% if user.is_authenticated %}
+		{% if not display %}
+			{% if user.is_staff %}
+				<small><a href="{% url 'new_post_page' category=category %}"><span class="fa fa-plus-square"></span></a></small>
+			{% endif %}
+		{% else %}
+			<small><a href="{% url 'new_post_page' category=category %}"><span class="fa fa-plus-square"></span></a></small>
+		{% endif %}
+	{% endif %}
+</h1>
+
+<table class="content-box-table" border=1 frame=void rules=rows>
+	<thead>
+		<tr>
+			<th>User</th>
+			<th>Title</th>
+			<th>Time</th>
+			<th>Replies</th>
+			<th>Last Reply</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for post in stickied_posts %}
+			<tr class="table-success">
+				<td><a href="{% url 'profile_page' username=post.author.username %}" style="color:green">{{ post.author.username }}</a></td>
+				<td>
+					{% if post.locked %}
+						<span class="fa fa-lock"></span>
+					{% endif %}
+					<span class="fa fa-thumb-tack" style="color:green"></span>&nbsp;
+					<a href="{% url 'view_post' pk=post.pk %}" style="color:green">{{ post.title }}</a>
+				</td>
+				<td style="color:green">{{ post.post_time|naturaltime }}</td>
+				<td style="color:green">{{ post.replies }}</td>
+				<td style="color:green">{{ post.last_reply.post_time|naturaltime }}</td>
+			</tr>
+		{% endfor %}
+		{% for post in posts %}
+			<tr>
+				<td><a href="{% url 'profile_page' username=post.author.username %}">{{ post.author.username }}</a></td>
+				<td>
+					{% if post.locked %}
+						<span class="fa fa-lock"></span>
+					{% endif %}
+					<a href="{% url 'view_post' pk=post.pk %}">{{ post.title }}</a>
+				</td>
+				<td>{{ post.post_time|naturaltime }}</td>
+				<td>{{ post.replies }}</td>
+				<td style="color:green">{{ post.last_reply.post_time|naturaltime }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<br />
+
+<!-- PAGINATION -->
+<nav>
+  	<ul class="pagination justify-content-center">
+    	<li class="page-item {% if not posts.has_previous %}disabled{% endif %}">
+      		<a class="page-link" href="?page=1" {% if not posts.has_previous %}tabindex="-1"{% endif %}>
+      			First
+      		</a>
+    	</li>
+    	<li class="page-item {% if not posts.has_previous %}disabled{% endif %}">
+      		<a class="page-link" href="?page={% if posts.has_previous %}{{ posts.previous_page_number }}{% else %}1{% endif %}" {% if not posts.has_previous %}tabindex="-1"{% endif %}>
+      			Prev
+      		</a>
+    	</li>
+    	<li class="page-item disabled">
+    		<a class="page-link" href="#" tabindex="-1">Page {{ posts.number }} of {{ posts.paginator.num_pages }}</a>
+    	</a>
+    	<li class="page-item {% if not posts.has_next %}disabled{% endif %}">
+      		<a class="page-link" href="?page={% if posts.has_next %}{{ posts.next_page_number }}{% else %}{{ posts.paginator.num_pages }}{% endif %}" {% if not posts.has_next %}tabindex="-1"{% endif %}>
+      			Next
+      		</a>
+    	</li>
+    	<li class="page-item {% if not posts.has_next %}disabled{% endif %}">
+      		<a class="page-link" href="?page={{ posts.paginator.num_pages }}" {% if not posts.has_next %}tabindex="-1"{% endif %}>
+      			Last
+      		</a>
+    	</li>
+  	</ul>
+</nav>
+<!-- END PAGINATION -->
+
+<br />
+
+</div>
+<div class="col-md-1"></div>
+
+{% endblock %}
+
+
+
+

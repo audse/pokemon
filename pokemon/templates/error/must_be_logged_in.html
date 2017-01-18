@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-10">
+	<h1 class="gray oswald">Something went wrong!</h1>
+	<p>Sorry, you must be logged in to view this page.</p>
+	<p><a href="{% url 'login' %}">Login?</a></p>
+</div>
+
+<div class="col-sm-1">
+	
+</div>
+
+{% endblock %}

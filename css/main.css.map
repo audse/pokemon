@@ -1,0 +1,9 @@
+{
+	"version": 3,
+	"file": "../../Users/audrey/Projects/pokemon/pokemon/static/css/main.css",
+	"sources": [
+		"../../Users/audrey/Projects/pokemon/pokemon/static/css/main.scss"
+	],
+	"names": [],
+	"mappings": "AAAA,AAAA,IAAI,CAAC;EACJ,UAAU,EAAE,KAAK;EACjB,KAAK,EAAE,KAAK,GACZ"
+}
