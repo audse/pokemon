@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Edit Post{% endblock %}
 {% block content %}
-
 <br />
 
 <div class="col-md-1"></div>
@@ -41,7 +40,7 @@
 	</div>
 	<div class="form-group">
 		<textarea class="form-control" name="body_text" rows="10">{{ post.body_text }}</textarea>
-		<label class="small gray">BBCode is allowed. See <a href="#">this page</a> for details.</label><br />
+		<label class="small gray">BBCode is allowed. <a href="#" data-toggle="modal" data-target="#bbcode-help">Click here</a> for details. You will not lose your progress.</label><br />
 
 	</div>
 	<button type="submit" class="btn btn-secondary">Submit Edit</button><br /><br />
@@ -51,4 +50,5 @@
 
 </div>
 <div class="col-md-1"></div>
+{% include "includes/bbcode_help.html" %}
 {% endblock %}

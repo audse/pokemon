@@ -93,7 +93,7 @@
 			{% endif %}
 		</div>
 		<div class="col-sm-6">
-			{% if adopt.party %}
+			{% if adopt.party and adopt.hatched %}
 			<div class="content-box">
 				<button class="content-box-button" data-toggle="modal" data-target="#boxes-list">Move to Box</button>
 			</div>
@@ -119,7 +119,17 @@
       					{% for box in boxes|partition:"2"|first %}
       						<div class="content-box">
       							<div class="content-box-head">{{ box.name }}</div>
-								<a href="">
+								<a href="{% url 'move_to_box' box=box.pk adopt=adopt.pk %}">
+									<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%" />
+								</a>
+							</div>
+      					{% endfor %}
+      				</div>
+      				<div class="col-sm-6">
+      					{% for box in boxes|partition:"2"|last %}
+      						<div class="content-box">
+      							<div class="content-box-head">{{ box.name }}</div>
+								<a href="{% url 'move_to_box' box=box.pk adopt=adopt.pk %}">
 									<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%" />
 								</a>
 							</div>

@@ -2,6 +2,8 @@
 {% load staticfiles %}
 {% load users_online %}
 {% load bookmark_notes %}
+{% load get_posts %}
+{% load subtract %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -19,6 +21,11 @@
 		<!-- CUSTOM STYLES -->
 		<link rel="stylesheet" type="text/css" href="{% sass_src 'css/main.scss' %}" />
 
+		<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+
 	</head>
 	<body>
 
@@ -32,26 +39,17 @@
 							<span class="blue bold">Scroll to the right for more news and updates.</span>
 						</div>
 					</div>
-					<div class="news-item col-md-4">
-						<div class="wrap">
-							<span class="small"><a href="#">Alola is coming to  Pok&eacute;frame!</a> Read more about it right here...</span>
+					{% get_posts as posts_header %}
+					{% for post in posts_header %}
+						<div class="news-item col-md-4">
+							<div class="wrap">
+								<span class="small">
+									<a href="{% url 'view_post' pk=post.pk %}">{{ post.title }}</a>
+									{{ post.body_text|truncatechars:post.body_length }}
+								</span>
+							</div>
 						</div>
-					</div>
-					<div class="news-item col-md-4">
-						<div class="wrap">
-							<span class="small"><a href="#">Interaction Weekend #1</a> Are you ready to get clicky with it?</span>
-						</div>
-					</div>
-					<div class="news-item col-md-4">
-						<div class="wrap">
-							<span class="small"><a href="#">I can't think of another topic.</a> I hope this will do alright.</span>
-						</div>
-					</div>
-					<div class="news-item col-md-4">
-						<div class="wrap">
-							<span class="small"><a href="#">This website is completely new!</a> Thank you for being here now.</span>
-						</div>
-					</div>
+					{% endfor %}
 
 				</div>
 			</div>
@@ -65,20 +63,33 @@
 				<div style="float:right;text-align: right;">
 					{% if user.is_authenticated %}
 						<span class="big">
-							<a href="{% url 'profile_page' username=user.username %}">{{ user.username }}</a>
-							<a href="{% url 'view_bookmarks' %}">
-								<span class="badge badge-danger {% if user|bookmark_notes > 0%} badge-default {% endif %}">
-								<b>
+
+							<div id="notes">
+
+								<a href="{% url 'view_bookmarks' %}">
 									{% if user|bookmark_notes > 0 %}
-									{{ user|bookmark_notes }} <i class="fa fa-bookmark"></i></span>
+										<span class="badge badge-danger {% if user|bookmark_notes > 0%} badge-default {% endif %}">
+											<b>
+												{{ user|bookmark_notes }} <i class="fa fa-bookmark"></i>
+											</b>
+										</span>
 									{% else %}
-									0 <i class="fa fa-bookmark"></i>
+										<span class="badge badge-light {% if user|bookmark_notes > 0%} badge-default {% endif %}">
+											<b>
+												0 <i class="fa fa-bookmark"></i>
+											</b>
+										</span>
 									{% endif %}
-								</b>
 								</a>
+
+							</div>
+
+							<a href="{% url 'profile_page' username=user.username %}">{{ user.username }}</a>
+							
 							</a>
-						</span><br />
-						<a href="{% url 'logout' %}">Log Out</a>
+						</span>
+						<br />
+						<a href="{% url 'logout' %}">Log Out?</a>
 					{% else %}
 					<a href="{% url 'login_page' %}">Log in</a><br />
 					<a href="{% url 'register_page' %}">Register</a><br />
@@ -126,16 +137,38 @@
 		</div>
 	</div>
 
-	<div class="footer small">
-		<a href="#">Copyright Information</a>
-		<a href="#">Privacy Policy</a>
-		<a href="#">Rules</a>
-		<a href="#">Support Center</a>
+	<div class="footer small gray">
+		&copy; Pok&eacute;frame 2017&nbsp; | <a href="#">Support</a>
 	</div>
 
 	</body>
 </html>
 
-<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript">
+	function loadNotes(){
+		//$("#notes").load("#notes").fadeOut("fast").fadeIn("fast");
+		// var the_html = $("#notes").html();
+		// $("#notes").html(the_html);
+		// alert('yes');
+		$("#notes").load(document.URL + " #notes");
+	}
+
+	$(document).ready(function(){
+		setInterval(function(){
+			loadNotes()
+		}, 5000);
+	});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
 

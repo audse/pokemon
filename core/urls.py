@@ -8,7 +8,7 @@ urlpatterns = [
 	url(r'^$', views.index, name='index'),
 	url(r'^login/$', views.login_page, name='login_page'),
 	url(r'^register/$', views.register_page, name='register_page'),
-	url(r'^user/(?P<username>\w+)/$', views.profile_page, name='profile_page'),
+	url(r'^user/(?P<username>.*)/$', views.profile_page, name='profile_page'),
 	url(r'^users/online/$', views.online_page, name='online_page'),
 
 	# FUNCTION PAGES
@@ -23,15 +23,31 @@ urlpatterns = [
 	url(r'^login/failed/$', views.login_failed, name='login_failed'),
 	url(r'^error/interaction/$', views.cannot_interact, name='cannot_interact'),
 	url(r'^error/auth/$', views.cannot_access, name='cannot_access'),
+	url(r'^error/auth/staff$', views.staff_only, name='staff_only'),
 
-	# SITE FUNCTIONS PAGES
+	# LAB PAGES
 	url(r'^lab/$', views.lab, name='lab'),
 	url(r'^lab/reload/$', views.lab_reload, name='lab_reload'),
 	url(r'^lab/adopt/(?P<pk>[0-9]+)/$', views.lab_adopt, name='lab_adopt'),
-	url(r'^(?P<username>\w+)/interact/(?P<pk>[0-9]+)/$', views.interact, name='interact'),
+
+	# INTERACTING WITH ADOPTS PAGES
+	url(r'^(?P<username>.*)/interact/(?P<pk>[0-9]+)/$', views.interact, name='interact'),
 	url(r'^pokemon/view/(?P<pk>[0-9]+)/$', views.view_adopt, name='view_adopt'),
 	url(r'^egg/hatch/(?P<pk>[0-9]+)/$', views.hatch_egg, name='hatch_egg'),
+
+	# BOXES PAGES
 	url(r'^boxes/$', views.boxes, name='boxes'),
 	url(r'^boxes/create/$', views.create_box_page, name='create_box_page'),
 	url(r'^boxes/create/processsing/$', views.create_box, name='create_box'),
+	url(r'^boxes/(?P<box>[0-9]+)/move/(?P<adopt>[0-9]+)/$', views.move_to_box, name='move_to_box'),
+	url(r'^boxes/position/$', views.update_position, name='update_position'),
+	url(r'^update/action/$', views.manually_update_online, name='manually_update_online'),
+
+	# POKEDEX PAGES
+	url(r'^dex/$', views.pokedex_index, name='pokedex_index'),
+	url(r'^dex/recieve/$', views.recieve_pokedex, name='recieve_pokedex'),
 ]
+
+
+
+

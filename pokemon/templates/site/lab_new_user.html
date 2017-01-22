@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Lab{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-6">
+	<h1 class="gray oswald">Prof. Cedar's Laboratory</h1>
+	<p class="red bold">Redo this flavor text: needs to say welcome, give an overview, ask to start your journey and recieve dex</p>
+	<p>Hello, I'm Professor Cedar! You must be a new Pok&eacute;mon trainer- it seems you don't yet have a Pok&eacute;dex! Here, I can give you one, and you can start your Pok&eacute;mon journey!</p>
+	<a href="{% url 'recieve_pokedex' %}"><button class="btn btn-secondary">Recieve Your Pok&eacute;dex!</button></a>
+</div>
+
+<div class="col-sm-4">
+	<img src="{% static 'img/cedar.jpg' %}" width="100%" />
+</div>
+
+<div class="col-sm-1">
+	
+</div>
+
+{% endblock %}

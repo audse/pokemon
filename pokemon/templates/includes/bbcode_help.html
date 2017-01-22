@@ -1,0 +1,96 @@
+<div class="modal fade" id="bbcode-help" tabindex="-1" role="dialog" aria-labelledby="bbcode-helpLabel" aria-hidden="true">
+ 	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="bbcode-helpLabel">BBCode Help</h4>
+      		</div>
+      		<div class="modal-body">
+         		<table class="table">
+         			<tr>
+         				<th>Code</th>
+         				<th>Output</th>
+         			</tr>
+         			<tr>
+         				<td><pre>[b]text[/b]</pre></td>
+         				<td><b>text</b></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[i]text[/i]</pre></td>
+         				<td><i>text</i></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[u]text[/u]</pre></td>
+         				<td><u>text</u></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[s]text[/s]</pre></td>
+         				<td><s>text</s></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[pre][b]text[/b][/pre]</pre></td>
+         				<td><pre>[b]text[/b]</pre></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[quote]text[/quote]</pre></td>
+         				<td><blockquote>text</blockquote></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[center]text[/center]</pre></td>
+         				<td><center>text</center></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[color=red]text[/color]</pre><pre>[color=#0000ff]text[/color]</pre></td>
+         				<td><span style="color:red">text</span><br /><span style="color:#0000ff">text</span></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[url]http://ex.com[/url]</pre><pre>[url=http://ex.com]text[/url]</pre></td>
+         				<td><a href="#">http://ex.com</a><br /><a href="#">text</a></td>
+         			</tr>
+         			<tr>
+         				<td><pre>[img]http://ex.com[/img]</pre></td>
+         				<td><img src="" width="50" height="50" alt="Image"></td>
+         			</tr>
+         		</table>
+
+         		<b>Lists</b>
+         		<div class="spoiler-box">
+	         		<input class="spoilerbutton btn btn-secondary btn-sm" type="button" value="Show" onclick="this.value=this.value=='Show'?'Hide':'Show';">
+					<div class="spoiler"><div>
+	 				<table class="table">
+	 						<tr>
+	 							<th>Code</th>
+	 							<th>Output</th>
+	 						</tr>
+		         			<tr>
+		         				<td><pre>[list][*]text1[*]text2[/list]</pre></td>
+		         				<td><ul><li>text2</li><li>text2</li></ul></b></td>
+		         			</tr>
+		         			<tr>
+		         				<td><pre>[list=1][*]text1[*]text2[/list]</pre></td>
+		         				<td><ol><li>text2</li><li>text2</li></ol></b></td>
+		         			</tr>
+		         			<tr>
+		         				<td><pre>[list=a][*]text1[*]text2[/list]</pre></td>
+		         				<td><ol type="a"><li>text2</li><li>text2</li></ol></b></td>
+		         			</tr>
+		         			<tr>
+		         				<td><pre>[list=A][*]text1[*]text2[/list]</pre></td>
+		         				<td><ol type="A"><li>text2</li><li>text2</li></ol></b></td>
+		         			</tr>
+		         			<tr>
+		         				<td><pre>[list=i][*]text1[*]text2[/list]</pre></td>
+		         				<td><ol type="i"><li>text2</li><li>text2</li></ol></b></td>
+		         			</tr>
+		         			<tr>
+		         				<td><pre>[list=I][*]text1[*]text2[/list]</pre></td>
+		         				<td><ol type="I"><li>text2</li><li>text2</li></ol></b></td>
+		         			</tr>
+		         	</table></div></div>
+	         	</div>
+      		</div>
+      		<div class="modal-footer">
+      		</div>
+    	</div>
+  	</div>
+</div>

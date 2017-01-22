@@ -16,6 +16,13 @@
 			<th style="text-align:center;">Last Action</th>
 			<th style="text-align:right;">Time</th>
 		</tr>
+		<tr>
+			<td>
+				<a href="{% url 'profile_page' username='CEDAR' %}" class="admin">CEDAR</a>
+				<td style="text-align:center;">Performing System Tasks</td>
+				<td style="text-align:right;">now</td>
+			</td>
+		</tr>
 		{% for online in online_users %}
 			<tr>
 				<td>
@@ -47,7 +54,7 @@
 	      		</a>
 	    	</li>
 	    	<li class="page-item disabled">
-	    		<a class="page-link" href="#" tabindex="-1">Page {{ online_users.number }} of {{ online_users.paginator.num_pages }}</a>
+	    		<a class="page-link" href="#" tabindex="-1">{{ online_users.number }} of {{ online_users.paginator.num_pages }}</a>
 	    	</a>
 	    	<li class="page-item {% if not online_users.has_next %}disabled{% endif %}">
 	      		<a class="page-link" href="?page={% if online_users.has_next %}{{ online_users.next_page_number }}{% else %}{{ online_users.paginator.num_pages }}{% endif %}" {% if not online_users.has_next %}tabindex="-1"{% endif %}>

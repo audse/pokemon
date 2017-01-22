@@ -36,8 +36,7 @@ class Adopt(models.Model):
 
 	party = models.BooleanField(default=True)
 	boxes = models.BooleanField(default=False)
-	box_x_coord = models.IntegerField(blank=True, null=True)
-	box_y_coord = models.IntegerField(blank=True, null=True)
+	box_pos = models.IntegerField(blank=True, null=True)
 
 	gender = models.BooleanField()
 	nature = models.CharField(max_length=24, blank=True, null=True)
@@ -66,8 +65,20 @@ class Adopt(models.Model):
 		self.nature = nature
 		self.save()
 
+	def from_party_to_box(self, pos):
+		self.party = False
+		self.boxes = True
+		self.box_pos = pos
+		self.save()
+
+	def update_box_position(self, pos):
+		self.box_pos = pos
+		self.save()
+
 	def __str__(self):
 		name = self.owner.username + "'s " + self.pokemon.name
+		if not self.hatched:
+			name = name + " egg"
 		return name
 
 class Lab(models.Model):
@@ -99,17 +110,36 @@ class Interaction(models.Model):
 		return name
 
 class Box(models.Model):
-	user = models.ForeignKey('auth.user')
-	pokemon = models.ManyToManyField(Adopt)
+	user = models.ForeignKey('auth.User')
+	pokemon = models.ManyToManyField(Adopt, blank=True)
 
 	name = models.CharField(max_length=140)
 	wallpaper = models.IntegerField(default=1)
+
+	def add_pokemon(self, pokemon):
+		self.pokemon.add(pokemon)
+		self.save()
 
 	def __str__(self):
 		name = self.user.username + "'s box, '" + self.name + "'"
 		return name
 
+class Dex(models.Model):
+	user = models.ForeignKey('auth.User')
+	eggs = models.ManyToManyField(Pokemon, blank=True, related_name='eggs')
+	pokemon = models.ManyToManyField(Pokemon, blank=True, related_name='pokemon')
 
+	def add_egg_entry(self, egg):
+		self.eggs.add(egg)
+		self.save()
+
+	def add_pokemon_entry(self, pokemon):
+		self.pokemon.add(pokemon)
+		self.save()
+
+	def __str__(self):
+		name = self.user.username + "'s Dex"
+		return name
 
 
 

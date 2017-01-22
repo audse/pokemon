@@ -28,3 +28,40 @@ class Action(models.Model):
 
 	def __str__(self):
 		return self.user.username
+
+
+class Item(models.Model):
+	name = models.CharField(max_length=140)
+	category = models.CharField(max_length=140)
+	description = models.CharField(max_length=256, blank=True, null=True)
+	value = models.IntegerField(default=0)
+
+	def __str__(self):
+		return self.name
+
+class Inventory(models.Model):
+	owner = models.ForeignKey('auth.User')
+	item = models.ForeignKey(Item)
+
+	def __str__(self):
+		return item.name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -11,5 +11,5 @@ def users_online(value):
     online = value
     online -= 1
     time_threshold = datetime.now() - timedelta(minutes=10)
-    online = Action.objects.filter(time__gte=time_threshold).filter(online=True).count()
+    online = Action.objects.filter(time__gte=time_threshold).filter(online=True).count() + 1
     return online

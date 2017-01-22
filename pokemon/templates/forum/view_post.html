@@ -58,11 +58,11 @@
 
 					{% if post.locked %}
 						<a href="{% url 'unlock' pk=post.pk %}" class="space-icon">
-							&nbsp; <span class="fa fa-unlock"></span>
+							&nbsp; <span class="fa fa-lock"></span>
 						</a>
 					{% else %}
 						<a href="{% url 'lock' pk=post.pk %}" class="space-icon">
-							&nbsp; <span class="fa fa-lock"></span>
+							&nbsp; <span class="fa fa-unlock"></span>
 						</a>
 					{% endif %}
 
@@ -203,7 +203,7 @@
 	      		</a>
 	    	</li>
 	    	<li class="page-item disabled">
-	    		<a class="page-link" href="#" tabindex="-1">Page {{ replies.number }} of {{ replies.paginator.num_pages }}</a>
+	    		<a class="page-link" href="#" tabindex="-1">{{ replies.number }} of {{ replies.paginator.num_pages }}</a>
 	    	</a>
 	    	<li class="page-item {% if not replies.has_next %}disabled{% endif %}">
 	      		<a class="page-link" href="?page={% if replies.has_next %}{{ replies.next_page_number }}{% else %}{{ replies.paginator.num_pages }}{% endif %}" {% if not replies.has_next %}tabindex="-1"{% endif %}>

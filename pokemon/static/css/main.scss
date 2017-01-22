@@ -55,6 +55,17 @@ h1 {
 	padding: 20px 0;
 }
 
+b {
+	font-weight: 700;
+}
+
+blockquote {
+	color: $gray;
+	border-left: 2px solid #eee;
+	margin-left: 20px;
+	padding: 5px 10px;
+}
+
 /* GLOBAL */
 
 .green {
@@ -219,6 +230,19 @@ a.white {
 	}
 }
 
+.content-box-gray {
+	border:1px solid $gray;
+
+	.content-box-head {
+		background: $gray;
+	}
+	
+	.content-box-button {
+		background: $gray;
+	}
+
+}
+
 table.content-box-table {
 	width: 100%;
 	border: 1px solid $blue;
@@ -295,6 +319,17 @@ table.sticky {
 	}
 }
 
+.spoilerbutton {display:block;margin:5px 0;}
+.spoiler {overflow:hidden;background: #fff;}
+.spoiler > div {-webkit-transition: all 0.2s ease;-moz-transition: margin 0.2s ease;-o-transition: all 0.2s ease;transition: margin 0.2s ease;}
+.spoilerbutton[value="Show"] + .spoiler > div {margin-top:-150%;}
+.spoilerbutton[value="Hide"] + .spoiler {padding:5px;} 
+
+.spoiler-box {
+	border: 1px solid #eee;
+	padding: 10px;
+}
+
 
 /* STYLISTIC CHOICES */
 
@@ -316,6 +351,10 @@ table.sticky {
 		color: $dark-blue;
 		text-decoration: none;
 	}
+}
+
+.badge-light {
+	background: #ddd;
 }
 
 .badge-normal {

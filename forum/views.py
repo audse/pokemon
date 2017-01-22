@@ -62,7 +62,7 @@ def category(request, category):
 		post.replies = replies.count()
 
 		if replies.count() is not 0:
-			post.last_reply_time = replies.latest('post_time')
+			post.last_reply = replies.latest('post_time')
 
 	# pagination
 	paginator = Paginator(posts, 20)
@@ -280,6 +280,7 @@ def new_post(request):
 			return redirect(core_views.staff_only)
 		if title and body_text and category:
 			post = Post.objects.create(title=title, author=request.user, body_text=body_text, category=category)
+			bookmark =  Bookmark.objects.create(bookmarker=request.user, post=post)
 			return redirect(view_post, pk=post.pk)
 		else:
 			return redirect(new_post_page, category=category.name)

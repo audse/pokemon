@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load order_by %}
 
 {% block title %}Boxes{% endblock %}
 
@@ -13,12 +14,22 @@
 	<h1 class="gray oswald">Your Boxes</h1>
 
 	{% for box in boxes %}
-		<div class="content-box">
+		<div class="content-box" style="position:relative;">
 			<div class="content-box-head">{{ box.name }}</div>
-			<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%" />
+			<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%"/>
+			<div class="pokemon-float-box" style="position:absolute;left:0;top:30px;">
+				{% for adopt in box.pokemon.all|order_by:"box_pos" %}
+					<img src="{% static 'img/pokemon/' %}{{ adopt.pokemon.number }}.png" width="96" id="pokemon-{{ adopt.pk }}" />
+
+					<form id="update-form" style="display:none;">
+						{% csrf_token %}
+						<input type="hidden" id="pokemon-{{ adopt.pk }}-pk" name="pk" value="{{ adopt.pk }}" />
+						<input type="hidden" id="pokemon-{{ adopt.pk }}-pos" name="" value="0" />
+					</form>
+				{% endfor %}
+			</div>
 		</div>
 	{% endfor %}
-
 	<br />
 	<p><code>-BZZ-</code></p>
 	<p>This is the PC. Similar to how Pok&eacute;mon may be stored in Pok&eacute;balls they may be stored digitally, connectified to each laboratory and Pok&eacute;mon center in the region unit. These storage files are known as <code>`BOXES`</code> in code-speak. Arrange hatchified Pok&eacute;mon you no longer want in your party as you see appropriate.</p>
@@ -30,5 +41,25 @@
 <div class="col-sm-2">
 	
 </div>
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+    	$("#update-form").submit(function(){
+		    event.preventDefault();
+
+		    $.ajax({
+		        url: '{% url 'update_position' %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            // Whatever you want
+		            alert('it works');
+		        }
+		    });
+		});
+		$("#update-form").submit();
+	});
+</script>
 
 {% endblock %}

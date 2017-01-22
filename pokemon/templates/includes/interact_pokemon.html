@@ -1,0 +1,43 @@
+{% load staticfiles %}
+{% if adopt.can_interact %}
+<div class="party-space-berries">
+	<a 
+		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sour' %}?berry=favorite{% elif adopt.disliked == 'sour' %}?berry=disliked{% endif %}" 
+
+		class="berry {% if adopt.favorite == 'sour' %}berry-favorite{% endif %} {% if adopt.disliked == 'sour' %}berry-disliked{% endif %}">
+		<img src="{% static 'img/items/sitrus-berry.png' %}" />
+	</a>
+	<a 
+		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'spicy' %}?berry=favorite{% elif adopt.disliked == 'spicy' %}?berry=disliked{% endif %}" 
+
+		class="berry {% if adopt.favorite == 'spicy' %}berry-favorite{% endif %} {% if adopt.disliked == 'spicy' %}berry-disliked{% endif %}">
+		<img src="{% static 'img/items/leppa-berry.png' %}" />
+	</a>
+	<a 
+		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'dry' %}?berry=favorite{% elif adopt.disliked == 'dry' %}?berry=disliked{% endif %}" 
+
+		class="berry {% if adopt.favorite == 'dry' %}berry-favorite{% endif %} {% if adopt.disliked == 'dry' %}berry-disliked{% endif %}">
+		<img src="{% static 'img/items/chesto-berry.png' %}" />
+	</a>
+	<a 
+		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sweet' %}?berry=favorite{% elif adopt.disliked == 'sweet' %}?berry=disliked{% endif %}" 
+
+		class="berry {% if adopt.favorite == 'sweet' %}berry-favorite{% endif %} {% if adopt.disliked == 'sweet' %}berry-disliked{% endif %}">
+		<img src="{% static 'img/items/kasib-berry.png' %}" />
+	</a>
+	<a 
+		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'bitter' %}?berry=favorite{% elif adopt.disliked == 'bitter' %}?berry=disliked{% endif %}" 
+
+		class="berry {% if adopt.favorite == 'bitter' %}berry-favorite{% endif %} {% if adopt.disliked == 'bitter' %}berry-disliked{% endif %}">
+		<img src="{% static 'img/items/nanab-berry.png' %}" />
+	</a>
+</div>
+{% else %}
+	<div style="padding-bottom: 10px; text-align: center">
+		{% if not user.is_authenticated %}
+		<i class="gray" style="padding: 10px;">Please log in to interact.</i><br />
+		{% else %}
+		<i class="gray" style="padding: 10px;">Thank you!</i><br />
+		{% endif %}
+	</div>
+{% endif %}

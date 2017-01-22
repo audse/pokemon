@@ -1,0 +1,38 @@
+<div id="interaction-{{ adopt.pk }}">
+	{% if adopt.can_interact %}
+		<form id="interact-form-{{ adopt.pk }}">{% csrf_token %}
+			<button class="party-space-button" type="submit" style="width:100%">Hold the egg</button>
+		</form>
+	{% else %}
+		<div style="padding-bottom: 10px; text-align: center">
+			{% if not user.is_authenticated %}
+			<i class="gray" style="padding: 10px;">Please log in to interact.</i><br />
+			{% else %}
+			<i class="gray" style="padding: 10px;">Thank you!</i><br />
+			{% endif %}
+		</div>
+	{% endif %}
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+    	$("#interact-form-{{ adopt.pk }}").submit(function(){
+		    event.preventDefault();
+
+		    $.ajax({
+		        url: '{% url 'interact' username=current_user.username pk=adopt.pk %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            // Whatever you want
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            // $("#exp-{{ adopt.pk }}").fadeOut(800, function(){
+		            	// $("#exp-{{ adopt.pk }}").html("{{ adopt.exp }}").fadeIn().delay(2000);
+		            // });
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		            // $("#exp-{{ adopt.pk }}").html('{{ adopt.exp }}');
+		        }
+		    });
+		});
+	});
+</script>

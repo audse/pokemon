@@ -16,6 +16,7 @@
 	<p>Unfortunately, not all of these Pok&eacute;mon, still incubating in eggs, are identified by research, so you will have to sort through our collection to find the ones you want. I know I want them all!</p>
 	<p>You can look around all you want. Good luck, and godspeed!</p><Br />
 
+	{% if user.is_authenticated %}
 	<div class="content-box">
 		<div class="content-box-head">Professor's Eggs</div>
 		<div class="content-box-body" style="padding:0px;text-align: center;">
@@ -49,6 +50,8 @@
 			<button type="submit" class="content-box-button">Reload</button>
 		</form>
 	</div>
+	{% endif %}
+	
 	<br />
 </div>
 

@@ -33,6 +33,15 @@ a {
 h1 {
   padding: 20px 0; }
 
+b {
+  font-weight: 700; }
+
+blockquote {
+  color: #7B848A;
+  border-left: 2px solid #eee;
+  margin-left: 20px;
+  padding: 5px 10px; }
+
 /* GLOBAL */
 .green {
   color: #5cb85c; }
@@ -153,6 +162,13 @@ a.white {
     font-family: "Oswald", sans-serif;
     letter-spacing: 2px; }
 
+.content-box-gray {
+  border: 1px solid #7B848A; }
+  .content-box-gray .content-box-head {
+    background: #7B848A; }
+  .content-box-gray .content-box-button {
+    background: #7B848A; }
+
 table.content-box-table {
   width: 100%;
   border: 1px solid #2B6CA7; }
@@ -205,6 +221,30 @@ table.sticky {
   .margin-to-fit {
     margin-top: -20px; } }
 
+.spoilerbutton {
+  display: block;
+  margin: 5px 0; }
+
+.spoiler {
+  overflow: hidden;
+  background: #fff; }
+
+.spoiler > div {
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: margin 0.2s ease;
+  -o-transition: all 0.2s ease;
+  transition: margin 0.2s ease; }
+
+.spoilerbutton[value="Show"] + .spoiler > div {
+  margin-top: -150%; }
+
+.spoilerbutton[value="Hide"] + .spoiler {
+  padding: 5px; }
+
+.spoiler-box {
+  border: 1px solid #eee;
+  padding: 10px; }
+
 /* STYLISTIC CHOICES */
 .admin {
   color: #D9534F;
@@ -219,6 +259,9 @@ table.sticky {
   .staff:hover {
     color: #1f4e7a;
     text-decoration: none; }
+
+.badge-light {
+  background: #ddd; }
 
 .badge-normal {
   background: #A8A878; }

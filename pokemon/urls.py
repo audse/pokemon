@@ -23,5 +23,4 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('core.urls')),
     url(r'^forum/', include('forum.urls')),
-    url(r'^dex/', include('pokedex.urls')),
 ]

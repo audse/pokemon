@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth.models import User
 from .models import Action
-from pokedex.models import Pokemon, Adopt, Lab, Interaction, Box
+from pokedex.models import Pokemon, Adopt, Lab, Interaction, Box, Dex
 
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
@@ -17,7 +17,7 @@ import random
 
 # FUNCTIONS
 
-def update_online(request, action="Viewing Pok&eacute;frame"):
+def update_online(request, action="Viewing Pok&eacute;frame", override=False):
 	if request.user.is_authenticated():
 		action_account = Action.objects.filter(user=request.user)
 		if action_account.count() is not 0:
@@ -25,11 +25,222 @@ def update_online(request, action="Viewing Pok&eacute;frame"):
 				action_account = action_account.first()
 				action_account.update(action)
 			else:
-				action_account = action_account.first()
-				action_account.update_time()
+				if override:
+					action_account = action_account.first()
+					action_account.update(action)
+				else:
+					action_account = action_account.first()
+					action_account.update_time()
 		else:
 			action_account = Action.objects.create(user=request.user, action=action)
 			action_account.save()
+
+def get_likes(adopt):
+	adopt.favorite = "any"
+	adopt.disliked = "any"
+
+	# likes spicy
+	if adopt.nature == "adamant":
+		adopt.favorite = "spicy"
+		adopt.disliked = "dry"
+
+	elif adopt.nature == "brave":
+		adopt.favorite = "spicy"
+		adopt.disliked = "sweet"
+
+	elif adopt.nature == "naughty":
+		adopt.favorite = "spicy"
+		adopt.disliked = "bitter"
+
+	elif adopt.nature == "lonely":
+		adopt.favorite = "spicy"
+		adopt.disliked = "sour"
+
+	# likes dry
+	elif adopt.nature == "modest":
+		adopt.favorite = "dry"
+		adopt.disliked = "spicy"
+
+	elif adopt.nature == "quiet":
+		adopt.favorite = "dry"
+		adopt.disliked = "sweet"
+
+	elif adopt.nature == "rash":
+		adopt.favorite = "dry"
+		adopt.disliked = "bitter"
+
+	elif adopt.nature == "mild":
+		adopt.favorite = "dry"
+		adopt.disliked = "sour"
+
+	# likes sweet
+	elif adopt.nature == "timid":
+		adopt.favorite = "sweet"
+		adopt.disliked = "spicy"
+		
+	elif adopt.nature == "jolly":
+		adopt.favorite = "sweet"
+		adopt.disliked = "dry"
+
+	elif adopt.nature == "naive":
+		adopt.favorite = "sweet"
+		adopt.disliked = "bitter"
+		
+	elif adopt.nature == "hasty":
+		adopt.favorite = "sweet"
+		adopt.disliked = "sour"
+
+	# likes bitter
+	elif adopt.nature == "calm":
+		adopt.favorite = "bitter"
+		adopt.disliked = "spicy"
+		
+	elif adopt.nature == "careful":
+		adopt.favorite = "bitter"
+		adopt.disliked = "dry"
+
+	elif adopt.nature == "sassy":
+		adopt.favorite = "bitter"
+		adopt.disliked = "sweet"
+		
+	elif adopt.nature == "quirky":
+		adopt.favorite = "bitter"
+		adopt.disliked = "sour"
+
+	# likes sour
+	elif adopt.nature == "bold":
+		adopt.favorite = "sour"
+		adopt.disliked = "spicy"
+		
+	elif adopt.nature == "impish":
+		adopt.favorite = "sour"
+		adopt.disliked = "dry"
+
+	elif adopt.nature == "relaxed":
+		adopt.favorite = "sour"
+		adopt.disliked = "sweet"
+		
+	elif adopt.nature == "lax":
+		adopt.favorite = "sour"
+		adopt.disliked = "bitter"
+
+
+	# likes spicy
+	if adopt.nature == "adamant":
+		adopt.favorite = "spicy"
+		adopt.disliked = "dry"
+
+	elif adopt.nature == "brave":
+		adopt.favorite = "spicy"
+		adopt.disliked = "sweet"
+
+	elif adopt.nature == "naughty":
+		adopt.favorite = "spicy"
+		adopt.disliked = "bitter"
+
+	elif adopt.nature == "lonely":
+		adopt.favorite = "spicy"
+		adopt.disliked = "sour"
+
+	# likes dry
+	elif adopt.nature == "modest":
+		adopt.favorite = "dry"
+		adopt.disliked = "spicy"
+
+	elif adopt.nature == "quiet":
+		adopt.favorite = "dry"
+		adopt.disliked = "sweet"
+
+	elif adopt.nature == "rash":
+		adopt.favorite = "dry"
+		adopt.disliked = "bitter"
+
+	elif adopt.nature == "mild":
+		adopt.favorite = "dry"
+		adopt.disliked = "sour"
+
+	# likes sweet
+	elif adopt.nature == "timid":
+		adopt.favorite = "sweet"
+		adopt.disliked = "spicy"
+		
+	elif adopt.nature == "jolly":
+		adopt.favorite = "sweet"
+		adopt.disliked = "dry"
+
+	elif adopt.nature == "naive":
+		adopt.favorite = "sweet"
+		adopt.disliked = "bitter"
+		
+	elif adopt.nature == "hasty":
+		adopt.favorite = "sweet"
+		adopt.disliked = "sour"
+
+	# likes bitter
+	elif adopt.nature == "calm":
+		adopt.favorite = "bitter"
+		adopt.disliked = "spicy"
+		
+	elif adopt.nature == "careful":
+		adopt.favorite = "bitter"
+		adopt.disliked = "dry"
+
+	elif adopt.nature == "sassy":
+		adopt.favorite = "bitter"
+		adopt.disliked = "sweet"
+		
+	elif adopt.nature == "quirky":
+		adopt.favorite = "bitter"
+		adopt.disliked = "sour"
+
+	# likes sour
+	elif adopt.nature == "bold":
+		adopt.favorite = "sour"
+		adopt.disliked = "spicy"
+		
+	elif adopt.nature == "impish":
+		adopt.favorite = "sour"
+		adopt.disliked = "dry"
+
+	elif adopt.nature == "relaxed":
+		adopt.favorite = "sour"
+		adopt.disliked = "sweet"
+		
+	elif adopt.nature == "lax":
+		adopt.favorite = "sour"
+		adopt.disliked = "bitter"
+
+def check_interaction(request, adopt):
+	if not adopt.hatched:
+		adopt.percent = adopt.exp/adopt.pokemon.ehp*100
+	else:
+		get_likes(adopt)
+
+		if adopt.pokemon.evo_level:
+			adopt.percent = adopt.exp/adopt.total_exp*100
+		else:
+			adopt.percent = 100
+
+	# make sure they havent interacted in the past day
+	if request.user.is_authenticated():
+		time_threshold = datetime.datetime.now() - timedelta(days=1)
+		interactions_since_yesterday = Interaction.objects.filter(recieving_user=adopt.owner.username, sending_user=request.user, adopt=adopt, time__gte=time_threshold).count()
+		if interactions_since_yesterday is not 0:
+			adopt.can_interact = False
+		else:
+			adopt.can_interact = True
+
+def manually_update_online(request):
+	if request.user.is_authenticated():
+		if request.user.is_superuser:
+			action = str(request.POST.get("action"))
+			update_online(request, action, True)
+			return redirect(profile_page, username=request.user.username)
+		else:
+			return redirect(staff_only)
+	else:
+		return redirect(must_be_logged_in)
+
 
 
 # STATIC PAGES
@@ -64,107 +275,7 @@ def profile_page(request, username):
 
 		adopts = Adopt.objects.filter(owner=user, party=True)
 		for adopt in adopts:
-			if not adopt.hatched:
-				adopt.percent = adopt.exp/adopt.pokemon.ehp*100
-			else:
-				adopt.favorite = "any"
-				adopt.disliked = "any"
-
-				# likes spicy
-				if adopt.nature == "adamant":
-					adopt.favorite = "spicy"
-					adopt.disliked = "dry"
-
-				elif adopt.nature == "brave":
-					adopt.favorite = "spicy"
-					adopt.disliked = "sweet"
-
-				elif adopt.nature == "naughty":
-					adopt.favorite = "spicy"
-					adopt.disliked = "bitter"
-
-				elif adopt.nature == "lonely":
-					adopt.favorite = "spicy"
-					adopt.disliked = "sour"
-
-				# likes dry
-				elif adopt.nature == "modest":
-					adopt.favorite = "dry"
-					adopt.disliked = "spicy"
-
-				elif adopt.nature == "quiet":
-					adopt.favorite = "dry"
-					adopt.disliked = "sweet"
-
-				elif adopt.nature == "rash":
-					adopt.favorite = "dry"
-					adopt.disliked = "bitter"
-
-				elif adopt.nature == "mild":
-					adopt.favorite = "dry"
-					adopt.disliked = "sour"
-
-				# likes sweet
-				elif adopt.nature == "timid":
-					adopt.favorite = "sweet"
-					adopt.disliked = "spicy"
-					
-				elif adopt.nature == "jolly":
-					adopt.favorite = "sweet"
-					adopt.disliked = "dry"
-
-				elif adopt.nature == "naive":
-					adopt.favorite = "sweet"
-					adopt.disliked = "bitter"
-					
-				elif adopt.nature == "hasty":
-					adopt.favorite = "sweet"
-					adopt.disliked = "sour"
-
-				# likes bitter
-				elif adopt.nature == "calm":
-					adopt.favorite = "bitter"
-					adopt.disliked = "spicy"
-					
-				elif adopt.nature == "careful":
-					adopt.favorite = "bitter"
-					adopt.disliked = "dry"
-
-				elif adopt.nature == "sassy":
-					adopt.favorite = "bitter"
-					adopt.disliked = "sweet"
-					
-				elif adopt.nature == "quirky":
-					adopt.favorite = "bitter"
-					adopt.disliked = "sour"
-
-				# likes sour
-				elif adopt.nature == "bold":
-					adopt.favorite = "sour"
-					adopt.disliked = "spicy"
-					
-				elif adopt.nature == "impish":
-					adopt.favorite = "sour"
-					adopt.disliked = "dry"
-
-				elif adopt.nature == "relaxed":
-					adopt.favorite = "sour"
-					adopt.disliked = "sweet"
-					
-				elif adopt.nature == "lax":
-					adopt.favorite = "sour"
-					adopt.disliked = "bitter"
-
-				adopt.percent = adopt.exp/adopt.total_exp*100
-
-			# make sure they havent interacted in the past day
-			if request.user.is_authenticated():
-				time_threshold = datetime.datetime.now() - timedelta(days=1)
-				interactions_since_yesterday = Interaction.objects.filter(recieving_user=username, sending_user=request.user, adopt=adopt, time__gte=time_threshold).count()
-				if interactions_since_yesterday is not 0:
-					adopt.can_interact = False
-				else:
-					adopt.can_interact = True
+			check_interaction(request, adopt)
 
 		return render(request, 'core/profile.html', {'current_user':user, 'adopts':adopts})
 	else:
@@ -176,10 +287,9 @@ def online_page(request):
 	update_online(request, action)
 
 	# get list of currently online users
+	machine = User.objects.get(username="CEDAR")
 	time_threshold = datetime.datetime.now() - timedelta(minutes=10)
-	# CURRENTLY, USERS ARE ONLINE FOR 60 MINUTES
-	# CHANGE THIS LATER, THIS IS JUST FOR DEVELOPMENT. 10 MINUTES SOUNDS GOOD.
-	online_users = Action.objects.filter(time__gte=time_threshold).filter(online=True).order_by('-time')
+	online_users = Action.objects.filter(time__gte=time_threshold).filter(online=True).exclude(user=machine).order_by('-time')
 
 	# paginate to display X amount of users per page
 	paginator = Paginator(online_users, 20)
@@ -301,10 +411,12 @@ def pokemon_not_found(request):
 def cannot_access(request):
 	return render(request, 'error/cannot_access.html')
 
+def staff_only(request):
+	return render(request, 'error/staff_only.html')
 
 
-# SITE FUNCTIONS
-# LAB, PARTY, BOXES, PARK, ETC
+
+# LAB VIEWS
 
 def update_lab(request):
 	lab_set = Lab.objects.get(user=request.user)
@@ -317,28 +429,31 @@ def update_lab(request):
 
 def lab(request):
 	if request.user.is_authenticated():
-		lab_set = Lab.objects.filter(user=request.user).first()
-		if lab_set:
-			lab_set.egg_1_type = Pokemon.objects.get(number=lab_set.egg_1).primary_type
-			lab_set.egg_2_type = Pokemon.objects.get(number=lab_set.egg_2).primary_type
-			lab_set.egg_3_type = Pokemon.objects.get(number=lab_set.egg_3).primary_type
-			lab_set.egg_4_type = Pokemon.objects.get(number=lab_set.egg_4).primary_type
-			return render(request, 'site/lab_logged_in.html', {'lab_set':lab_set})
+		check_for_dex = Dex.objects.filter(user=request.user)
+		if check_for_dex.count() != 0:
+			lab_set = Lab.objects.filter(user=request.user).first()
+			if lab_set:
+				lab_set.egg_1_type = Pokemon.objects.get(number=lab_set.egg_1).primary_type
+				lab_set.egg_2_type = Pokemon.objects.get(number=lab_set.egg_2).primary_type
+				lab_set.egg_3_type = Pokemon.objects.get(number=lab_set.egg_3).primary_type
+				lab_set.egg_4_type = Pokemon.objects.get(number=lab_set.egg_4).primary_type
+				return render(request, 'site/lab.html', {'lab_set':lab_set})
+			else:
+				egg_1 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
+				egg_2 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
+				egg_3 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
+				egg_4 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
+				lab_set = Lab.objects.create(user=request.user, egg_1=egg_1, egg_2=egg_2, egg_3=egg_3, egg_4=egg_4)
+				lab_set.save()
+				lab_set.egg_1_type = Pokemon.objects.get(number=lab_set.egg_1).primary_type
+				lab_set.egg_2_type = Pokemon.objects.get(number=lab_set.egg_2).primary_type
+				lab_set.egg_3_type = Pokemon.objects.get(number=lab_set.egg_3).primary_type
+				lab_set.egg_4_type = Pokemon.objects.get(number=lab_set.egg_4).primary_type
+				return render(request, 'site/lab.html', {'lab_set':lab_set})
 		else:
-			egg_1 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-			egg_2 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-			egg_3 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-			egg_4 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-			lab_set = Lab.objects.create(user=request.user, egg_1=egg_1, egg_2=egg_2, egg_3=egg_3, egg_4=egg_4)
-			lab_set.save()
-			lab_set.egg_1_type = Pokemon.objects.get(number=lab_set.egg_1).primary_type
-			lab_set.egg_2_type = Pokemon.objects.get(number=lab_set.egg_2).primary_type
-			lab_set.egg_3_type = Pokemon.objects.get(number=lab_set.egg_3).primary_type
-			lab_set.egg_4_type = Pokemon.objects.get(number=lab_set.egg_4).primary_type
-			return render(request, 'site/lab_logged_in.html', {'lab_set':lab_set})
+			return render(request, 'site/lab_new_user.html')
 	else:
-		return render(request, 'site/lab_not_logged_in.html')
-
+		return render(request, 'site/lab.html')
 
 def lab_reload(request):
 	if request.user.is_authenticated():
@@ -391,6 +506,10 @@ def lab_adopt(request, pk):
 	else:
 		return redirect(must_be_logged_in)
 
+
+
+# INTERACTION WITH ADOPTS VIEWS
+
 def interact(request, username, pk):
 	if request.user.is_authenticated():
 		berry = request.GET.get('berry')
@@ -427,7 +546,13 @@ def view_adopt(request, pk):
 	if adopt.count() is not 0:
 		adopt = adopt.first()
 		if request.user.is_authenticated():
-			boxes = Box.objects.filter(user=request.user)
+			if request.user.username == adopt.owner.username:
+				boxes = Box.objects.filter(user=request.user)
+			else:
+				boxes = None
+
+			check_interaction(request, adopt)
+			
 		return render(request, 'site/view_adopt.html', {'adopt':adopt, 'boxes':boxes})
 	else:
 		return redirect(pokemon_not_found)
@@ -465,6 +590,10 @@ def hatch_egg(request, pk):
 	else:
 		return redirect(must_be_logged_in)
 
+
+
+# BOXES VIEWS
+
 def boxes(request):
 	if request.user.is_authenticated():
 		action = "Viewing boxes"
@@ -479,6 +608,9 @@ def boxes(request):
 		return redirect(must_be_logged_in)
 
 def create_box_page(request):
+	action = "Creating a box"
+	update_online(request, action)
+
 	return render(request, 'site/create_box_page.html')
 
 def create_box(request):
@@ -492,7 +624,74 @@ def create_box(request):
 	else:
 		return redirect(must_be_logged_in)
 
+def move_to_box(request, box, adopt):
+	if request.user.is_authenticated():
+		adopt = Adopt.objects.filter(pk=adopt)
+		if adopt.count() is 0:
+			return redirect(pokemon_not_found)
+		else:
+			adopt = adopt.first()
+			if adopt.owner.username == request.user.username:
+				box_list = Box.objects.filter(pk=box)
+				if box_list.count() is 0:
+					return redirect(boxes)
+				else:
+					box = box_list.first()
+					pokemon_in_box = box.pokemon.order_by('box_pos')
+					last_pokemon = pokemon_in_box.last()
+					if last_pokemon:
+						pos = last_pokemon.pokemon.box_pos + 1
+					else:
+						pos = 1
 
+					adopt.from_party_to_box(pos)
+					box.add_pokemon(adopt)
+					return redirect(boxes)
+			else: 
+				return redirect(cannot_access)
+	else:
+		return redirect(must_be_logged_in)
+
+def update_position(request):
+	pk = request.POST.get('pk')
+	adopt = Adopt.objects.filter(pk=pk).first()
+	pos = request.GET.get('pos')
+
+	adopt.update_box_position(pos=pos)
+
+
+# POKEDEX VIEWS 
+
+def pokedex_index(request):
+	if request.user.is_authenticated():
+		check_for_dex = Dex.objects.filter(user=request.user)
+		if check_for_dex.count() != 0:
+			action = "Viewing the Pok&eacute;dex"
+			update_online(request, action)
+
+			pokemon = Pokemon.objects.all()
+			dex = check_for_dex.first()
+
+			for monster in pokemon:
+				monster.percent_female = 100 - monster.percent_male
+				monster.dex_entered = dex.eggs.filter(name=monster.name).exists()
+
+			return render(request, 'pokedex/index.html', {'pokemon':pokemon})
+		else:
+			return render(request, 'pokedex/no_dex.html')
+	else:
+		return redirect(must_be_logged_in)
+
+def recieve_pokedex(request):
+	if request.user.is_authenticated():
+		check_for_dex = Dex.objects.filter(user=request.user)
+		if check_for_dex.count() == 0:
+			dex = Dex.objects.create(user=request.user)
+			return redirect(lab)
+		else:
+			return redirect(cannot_access)
+	else:
+		return redirect(must_be_logged_in)
 
 
 
