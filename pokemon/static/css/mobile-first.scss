@@ -529,6 +529,191 @@ table.sticky {
 	.desktop-table {
 		display: table-cell;
 	}
+
+	.navbar {
+		background-color: $blue;
+		padding: 0px;
+
+		font-family: $oswald;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		font-weight: 500;
+		font-style: italic;
+
+		margin-right: -15px;
+
+		.navbar-brand {
+			margin: 5px 30px;
+			color: rgba(255, 255, 255, .5);
+			letter-spacing: 4px;
+			&:hover {
+				color: rgba(255, 255, 255, .7);
+			}
+		}
+
+		li.nav-item {
+			padding: 5px;
+			border-right: 2px solid rgba(255, 255, 255, .3);
+			border-left: 2px solid rgba(255, 255, 255, .3);
+			margin-left:-2px;
+			&:hover {
+				background: $dark-blue;
+			}
+		}
+
+		li.no-blue {
+			padding: 5px;
+			border-right: 2px solid rgba(255, 255, 255, .3);
+			border-left: 2px solid rgba(255, 255, 255, .3);
+			margin-left:-2px;
+			&:hover {
+				background: $blue;
+			}
+		}
+
+		a.nav-link {
+			margin-left: 10px;
+			margin-right: 10px;
+			color: white !important;
+			width: 67px;
+			text-align: center;
+		}
+
+		.navbar-text {
+			color: $gray;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+	}
+
+	/* DROPDOWN */
+
+	ul {
+
+		li {
+			transition: padding .05s linear;
+			a {
+				transition: all .1s ease-out;
+			}
+		}
+
+		li.drop {
+			position: relative;
+		}
+
+		.dropOut .triangle {
+			width: 0;
+			height: 0;
+			position: absolute;
+			border-left: 8px solid transparent;
+			border-right: 8px solid transparent;
+			border-bottom: 8px solid $dark-blue;
+			top: -8px;
+			left: 50%;
+			margin-left: -8px;
+
+		}
+
+		.dropdownContain {
+			width: 160px;
+			position: absolute;
+			z-index: 2;
+			left: 50%;
+			margin-left: -80px;
+			top: -400px;
+		}
+
+		.dropOut {
+			width: 160px;
+			background: $dark-blue;
+			float: left;
+			position: relative;
+			margin-top: 0px;
+			opacity: 0;
+			border-radius: 4px;
+			transition: all .1s ease-out;
+
+			a {
+				color: rgba(255,255,255,.7);
+				font-family: $open-sans;
+				text-transform: none;
+				font-style:normal;
+				font-weight: 300;
+
+				&:hover {
+					color: white;
+				}
+			}
+		}
+
+		.dropOut ul {
+			float: left;
+			padding: 10px 0;
+		}
+
+		.dropOut ul li {
+			text-align: left;
+			flot: left;
+			width: 125px;
+			padding-left: 15px;
+			color: white;
+		}
+
+
+		li:hover .dropdownContain {
+			top: 65px;
+		}
+
+		li:hover .dropOut {
+			opacity: 1;
+			margin-top: -15px;
+		}
+	}
+
+
+	/* NEWS */
+
+	.news {
+		background: #f5f5f5;
+		position: relative;
+		font-size: 1em;
+
+		.news-item {
+			padding: 10px 15px 20px 15px;
+			border-right: 2px solid white;
+		}
+	}
+
+	.row-fluid{
+	    white-space: nowrap;
+	}
+	.row-fluid .col-md-4{
+	    display: inline-block;
+
+	    .wrap {
+	    	white-space: normal;
+	    }
+	}
+
+	.the-border-clause {
+		border: none;
+	}
+
+	.footer {
+	  	position: absolute;
+	  	bottom: -70;
+	  	width: 100%;
+	  	/* Set the fixed height of the footer here */
+	  	height: 60px;
+	  	line-height: 60px; /* Vertically center the text there */
+	  	background-color: #f5f5f5;
+	  	padding-left: 10px;
+
+	  	a {
+	  		margin: 5px;
+	  	}
+	}
+
 }
 
 
