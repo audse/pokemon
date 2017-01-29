@@ -1,0 +1,209 @@
+{% load sass_tags %}
+{% load staticfiles %}
+{% load users_online %}
+{% load bookmark_notes %}
+{% load get_posts %}
+{% load subtract %}
+{% load partition %}
+{% load next %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<title>{% block title %}{% endblock %} - PKMNPC</title>
+
+		<!-- PLUGINS CSS -->
+		<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Oswald&amp;subset=latin-ext"  />
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+
+		<!-- CUSTOM STYLES -->
+		<link rel="stylesheet" href="{% sass_src 'css/mobile-first.scss' %}" />
+
+
+		<!-- PLUGINS JS -->
+		<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+
+		<!-- CUSTOM JS -->
+		<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+
+
+		<script>
+
+			function loadNotes(){
+				$("#notes").load(document.URL + " #notes");
+			}
+
+			$(document).ready(function () {
+
+			    $("#you-menu-button").click(function () {
+			    	if (!$("#you-menu").is(":visible")) {
+			    		$("#you-menu").slideToggle('fast');
+			    	}
+			    });
+
+			    $(document).mouseup(function(event) {
+				    var target = $("#you-menu");
+				    if(!target.is(event.target) && !$("#you-menu-button").is(event.target) && target.is(":visible")) {
+				       $("#you-menu").slideToggle("fast");
+				    } else {
+				      return false;
+				    }
+				});
+
+				setInterval(function(){
+					loadNotes()
+				}, 5000);
+			});
+
+		</script>
+
+	</head>
+	<body>
+
+		<div class="mobile">
+			<div class="announcements-title" id="announcements-title">
+				<div class="left oswald white uppercase">
+					<a href="{% url 'category' category='Announcements' %}" style="color: white;">Recent Announcements...</a>
+				</div>
+				<div class="right white light small" style="margin-top: 3px;">
+					<a href="{% url 'online_page' %}">
+						{{ 1|users_online }} User{{ 1|users_online|pluralize }} Online
+					</a>
+				</div>
+				<div class="clear"></div>
+			</div>
+
+
+			<div class="announcements" style="overflow: auto;">
+				<div class="row-fluid">
+					{% get_posts as posts_header %}
+					{% for post in posts_header %}
+					<div id="announcement-{{ post.pk }}" class="item col-md-4">
+						<div class="wrap">
+							<span class="small">
+								<a href="{% url 'view_post' pk=post.pk %}"><span {% if post.important %}class="red bold"{% endif %}>{{ post.title }}</span></a>
+								{{ post.body_text|truncatechars:post.body_length }}
+							</span>
+						</div>
+
+						{% with posts_header|previous:forloop.counter0 as previous %}
+							{% if previous %}
+								<a href="#announcement-{{ previous.pk }}" class="previous-button" style="margin-top: 18px;color: white;">
+									<i class="fa fa-chevron-left very-big" aria-hidden="true"></i>
+								</a>
+						    {% endif %}
+						{% endwith %}
+
+						{% with posts_header|next:forloop.counter0 as next %}
+							{% if next %}
+								<a href="#announcement-{{ next.pk }}" class="next-button" style="margin-top: 18px;color: white;">
+									<i class="fa fa-chevron-right very-big" aria-hidden="true"></i>
+								</a>
+							{% else %}
+								<a href="{% url 'category' category='Announcements' %}" class="next-button" style="margin-top: 18px;color: white;">
+									<i class="fa fa-arrow-circle-right very-big" aria-hidden="true"></i>
+								</a>
+						    {% endif %}
+						{% endwith %}
+
+					</div>
+
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid" style="padding-top: 10px;min-height: 100%;overflow-y: scroll;">
+			<div class="row">
+				{% block content %}{% endblock %}
+			</div>
+		</div>
+
+		<nav class="navbar navbar-light mobile-nav fixed-bottom mobile">
+			<a class="navbar-brand" id="you-menu-button" href="#" style="text-align: center;position: relative;">
+				<img src="{% static 'img/icons/crown.png' %}" width="38" />
+				<div id="notes" style="position: absolute;top: 0;right:-10px;">
+					{% if user|bookmark_notes > 0 %}
+						<span class="notes-circle very-small">
+							<b>{{ user|bookmark_notes }}</b>
+						</span>
+					{% endif %}
+				</div>
+			</a>
+
+			<div class="menu-bubble" id="you-menu">
+				<div class="bubble">
+					{% if user.is_authenticated %}
+						<div class="bubble-header white big oswald" style="padding: 5px;">
+							<span class="left">{{ user.username }}</span>
+							<span class="right">
+								<a href="{% url 'logout' %}" class="light open small">
+									<span class="red">Logout?</span>
+									<img src="{% static 'img/icons/power-red.png' %}" width="16" /> &nbsp;
+								</a>
+							</span>
+							<div class="clear"></div>
+						</div>
+						<div class="bubble-content small">
+							Notifications: <br />
+							PD: <br />
+							Coins: <br />
+							{% if user.is_superuser %}
+							<a href="{% url 'admin:index' %}">Admin</a>
+							{% endif %}
+						</div>
+					{% else %}
+						<div class="bubble-header white big oswald" style="padding: 5px;">
+							<b>Welcome!</b> You're not logged in.
+						</div>
+						<div class="bubble-content small">
+							<a href="{% url 'login_page' %}"><span class="dark-blue">Login</span></a><br />
+							<a href="{% url 'register_page' %}"><span class="dark-blue">Register</span></a>
+						</div>
+					{% endif %}
+					<div style="display: block;padding-bottom: 5px;">
+					<a href="#" class="white small">&nbsp; Support</a>
+					</div>
+				</div>
+			</div>
+			<ul class="navbar-nav">
+				<li class="nav-item active">
+					<a class="nav-link" href="{% url 'lab' %}">
+						<img src="{% static 'img/icons/egg.png' %}" width="15" />
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'boxes' %}">
+						<img src="{% static 'img/icons/boxes.png' %}" width="17" />
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'park' %}">
+						<img src="{% static 'img/icons/grass.png' %}" width="20" />
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">
+						<img src="{% static 'img/icons/heart.png' %}" width="16" />
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#" style="color: white;font-size:.3em;letter-spacing: 3px;">
+						&#9679;&#9679;&#9679;
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+	</body>
+
+</html>
+
+
+
+

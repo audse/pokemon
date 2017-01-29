@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'mobile-first-base.html' %}
 {% load humanize %}
 {% block title %}{{ category }}{% endblock %}
 {% block content %}
 
-<br />
+<br class="desktop" />
 <div class="col-md-1"></div>
 <div class="col-md-10">
 
@@ -34,8 +34,8 @@
 		<tr>
 			<th>User</th>
 			<th>Title</th>
-			<th>Time</th>
-			<th>Replies</th>
+			<th class="desktop-table">Time</th>
+			<th class="desktop-table">Replies</th>
 			<th>Last Reply</th>
 		</tr>
 	</thead>
@@ -50,8 +50,8 @@
 					<span class="fa fa-thumb-tack" style="color:green"></span>&nbsp;
 					<a href="{% url 'view_post' pk=post.pk %}" style="color:green">{{ post.title }}</a>
 				</td>
-				<td style="color:green">{{ post.post_time|naturaltime }}</td>
-				<td style="color:green">{{ post.replies }}</td>
+				<td style="color:green" class="desktop-table">{{ post.post_time|naturaltime }}</td>
+				<td style="color:green" class="desktop-table">{{ post.replies }}</td>
 				<td style="color:green">{{ post.last_reply.post_time|naturaltime }}</td>
 			</tr>
 		{% endfor %}
@@ -64,8 +64,8 @@
 					{% endif %}
 					<a href="{% url 'view_post' pk=post.pk %}">{{ post.title }}</a>
 				</td>
-				<td>{{ post.post_time|naturaltime }}</td>
-				<td>{{ post.replies }}</td>
+				<td class="desktop-table">{{ post.post_time|naturaltime }}</td>
+				<td class="desktop-table">{{ post.replies }}</td>
 				<td style="color:green">{{ post.last_reply.post_time|naturaltime }}</td>
 			</tr>
 		{% endfor %}

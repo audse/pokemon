@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "mobile-first-base.html" %}
 {% load staticfiles %}
 {% load partition %}
 
@@ -8,9 +8,9 @@
 
 <div class="col-sm-12">
 	<h1 class="gray oswald">Pok&eacute;dex</h1>
-
+	
 	{% for monster in pokemon %}
-		<a href="#pokedex-{{ monster.number }}"><span class="badge badge-{% if monster.dex_entered %}{{ monster.primary_type }}{% else %}question{% endif %}" style="width:30px">{{ monster.number }}</span></a>
+		<a href="#pokedex-{{ monster.number }}"><span class="badge badge-{% if monster.pokedex_entered %}{{ monster.primary_type }}{% else %}question{% endif %}" style="width:30px">{{ monster.number }}</span></a>
 	{% endfor %}
 
 	<br />
@@ -18,11 +18,11 @@
 
 	<div class="row">
 	{% for monster in pokemon %}
-		{% if monster.dex_entered %}
+		{% if monster.pokedex_entered %}
 		<div class="col-sm-4">
 			<div class="content-box" id="pokedex-{{ monster.number }}" style="margin-bottom: 15px;">
 				<div class="content-box-head">
-					#{{ monster.number|stringformat:"03d" }}{{ monster.name }}
+					#{{ monster.number|stringformat:"03d" }} {{ monster.name }}
 					<span class="oswald badge badge-{{ monster.primary_type }}" style="text-transform: uppercase;">{{ monster.primary_type }}</span>
 
 					<span class="oswald badge badge-{{ monster.secondary_type }}" style="text-transform: uppercase;">{{ monster.secondary_type }}</span><br />
@@ -31,7 +31,11 @@
 
 					<!-- SPRITES: REGULAR AND EGG -->
 					{% if monster.ehp %}
-					<img src="{% static 'img/eggs/' %}{{ monster.number }}.png" width="96" height="96" style="float: left" />
+						{% if monster.egg_dex_entered %}
+							<img src="{% static 'img/eggs/' %}{{ monster.number }}.png" width="96" height="96" style="float: left" />
+						{% else %}
+							<img src="{% static 'img/eggs/00.png' %}" width="96" height="96" style="float: left" />
+						{% endif %}
 					{% else %}
 					<img src="{% static 'img/eggs/0.png' %}" width="96" height="96" style="float: left" />
 					{% endif %}

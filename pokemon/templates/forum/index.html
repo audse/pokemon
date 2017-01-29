@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'mobile-first-base.html' %}
 {% block title %}Forum{% endblock %} 
 {% block content %}
 {% load humanize %}
 
-<br />
+<br class="desktop" />
 
 <div class="col-md-1"></div>
 <div class="col-md-10">
@@ -22,7 +22,7 @@
 			<th>CORE</th>
 			<th>Name</th>
 			<th>Posts</th>
-			<th>Last Post</th>
+			<th class="desktop-table">Last Post</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -33,7 +33,7 @@
 					<a href="{% url 'category' category=category %}">{{ category.name }}</a><p>{{ category.description }}</p>
 				</td>
 				<td>{{ category.posts }}</td>
-				<td>
+				<td class="desktop-table">
 					{% if category.last_post %}
 						<a href="{% url 'view_post' pk=category.last_post.pk %}">
 							{{ category.last_post.post_time|naturaltime }}
@@ -48,7 +48,7 @@
 			<th>GENERAL</th>
 			<th>Name</th>
 			<th>Posts</th>
-			<th>Last Post</th>
+			<th class="desktop-table">Last Post</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -60,7 +60,7 @@
 					<p>{{ category.description }}</p>
 				</td>
 				<td>{{ category.posts }}</td>
-				<td>
+				<td class="desktop-table">
 					{% if category.last_post %}
 						<a href="{% url 'view_post' pk=category.last_post.pk %}">
 							{{ category.last_post.post_time|naturaltime }}
@@ -71,9 +71,12 @@
 		{% endfor %}
 	</tbody>
 </table>
-<br />
 
 </div>
 <div class="col-md-1"></div>
+
+<br class="mobile" />
+<br class="mobile" />
+<br class="mobile" />
 
 {% endblock %}

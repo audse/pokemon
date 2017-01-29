@@ -1,0 +1,91 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Park{% endblock %}
+
+{% block content %}
+
+
+<div class="col-sm-1"></div>
+<div class="col-sm-6">
+	<h1 class="gray oswald">The Park</h1>
+
+		<div id="park" class="content-box" style="position:relative;overflow: hidden;">
+			<img src="{% static 'img/park.png' %}" width="100%"/>
+			{% for pokemon in park_pokemon %}
+				{% if pokemon.hatched %}
+					<a href="" data-toggle="modal" data-target="#park-adopt-{{ pokemon.pk }}">
+						<img src="{% static 'img/pokemon/' %}{{ pokemon.pokemon.number }}.png" style="position: absolute;top:{{ pokemon.y_percent }}%;left:{{ pokemon.x_percent }}%;margin-top:-15px;margin-left:-15px;" />
+					</a>
+				{% else %}
+					<a href="" data-toggle="modal" data-target="#park-adopt-{{ pokemon.pk }}">
+						<img src="{% static 'img/eggs/crop/' %}{{ pokemon.pokemon.number }}.png" style="position: absolute;top:{{ pokemon.y_percent }}%;left:{{ pokemon.x_percent }}%;margin-top:-15px;margin-left:-15px;" />
+					</a>
+				{% endif %}
+			{% endfor %}
+		</div>
+
+		<div class="content-box">
+			<button id="reload" class="content-box-button">Reload</button>
+		</div>
+
+	<br />
+</div>
+
+<div class="col-sm-4">
+	<img src="{% static 'img/azza.jpg' %}" width="100%" />
+	<p class="red bold">Needs flavor text</p>
+</div>
+
+{% for pokemon in park_pokemon %}
+
+<div class="modal fade" id="park-adopt-{{ pokemon.pk }}" tabindex="-1" role="dialog" aria-labelledby="park-adoptLabel" aria-hidden="true">
+  	<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="park-adoptLabel">
+        			{% if pokemon.hatched %}
+        				Adopt this Pok&eacute;mon?
+      				{% else %}
+      					Adopt this egg?
+      				{% endif %}
+        		</h4>
+      		</div>
+      		<div class="modal-body" style="text-align:center;">
+      			{% if pokemon.hatched %}
+      				<img src="{% static 'img/pokemon/' %}{{ pokemon.pokemon.number }}.png" />
+      			{% else %}
+      				<img src="{% static 'img/eggs/' %}{{ pokemon.pokemon.number }}.png" />
+      			{% endif %}
+      		</div>
+      		<div class="modal-footer">
+        		<a href="{% url 'park_adopt' pk=pokemon.pk %}"><button type="button" class="btn btn-secondary" onclick=''>Adopt</button></a>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+{% endfor %}
+
+<script type="text/javascript">
+	function reloadPark(){
+		$("#park").load(document.URL + " #park");
+	}
+
+	$(document).ready(function(){
+		$("#reload").click(function(){
+			reloadPark()
+		    var btn = $(this);
+		    btn.prop('disabled', true);
+		    btn.addClass("content-box-button-disabled");
+		    $("#park").addClass("the-border-clause");
+		    setTimeout(function(){
+		        btn.prop('disabled', false);
+		        btn.removeClass("content-box-button-disabled");
+		    }, 500);
+		});
+	});
+</script>
+
+{% endblock %}

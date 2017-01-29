@@ -4,6 +4,7 @@
 {% load bookmark_notes %}
 {% load get_posts %}
 {% load subtract %}
+{% load partition %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -44,12 +45,17 @@
 						<div class="news-item col-md-4">
 							<div class="wrap">
 								<span class="small">
-									<a href="{% url 'view_post' pk=post.pk %}">{{ post.title }}</a>
+									<a href="{% url 'view_post' pk=post.pk %}"><span {% if post.important %}class="red bold"{% endif %}>{{ post.title }}</span></a>
 									{{ post.body_text|truncatechars:post.body_length }}
 								</span>
 							</div>
 						</div>
 					{% endfor %}
+					<div class="news-item col-md-4">
+						<div class="wrap">
+							<a href="{% url 'category' category='Announcements' %}" class="blue bold">To view more announcements, click here.</a>
+						</div>
+					</div>
 
 				</div>
 			</div>
@@ -116,17 +122,28 @@
 					<a class="nav-link" href="{% url 'boxes' %}">Boxes</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="#">Park</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{% url 'pokedex_index' %}">Dex</a>
+					<a class="nav-link" href="{% url 'park' %}">Park</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#" style="padding-left:0px;">Daycare</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{% url 'forum_index' %}">Forum</a>
+					<a class="nav-link" href="{% url 'pokedex_index' %}" style="padding-left:0px;">Pok&eacute;dex</a>
 				</li>
+				<li class="no-blue drop">
+					<a class="nav-link" href="#" >More...</a>
+					<div class="dropdownContain">
+						<div class="dropOut">
+							<div class="triangle"></div>
+							<ul>
+								<li><a href="#">Inventory</a></li>
+								<li><a href="#">Shop</a></li>
+								<li><a href="{% url 'forum_index' %}">Forum</a></li>
+							</ul>
+						</div>
+					</div>
+				</li>
+
 			</ul>
 		</div>
 	</nav>

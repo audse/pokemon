@@ -33,6 +33,8 @@ urlpatterns = [
 	# INTERACTING WITH ADOPTS PAGES
 	url(r'^(?P<username>.*)/interact/(?P<pk>[0-9]+)/$', views.interact, name='interact'),
 	url(r'^pokemon/view/(?P<pk>[0-9]+)/$', views.view_adopt, name='view_adopt'),
+	url(r'^pokemon/view/(?P<pk>[0-9]+)/nickname/$', views.change_nickname, name='change_nickname'),
+	url(r'^pokemon/evolve/exp/(?P<pk>[0-9]+)/$', views.evolve_by_level, name='evolve_by_level'),
 	url(r'^egg/hatch/(?P<pk>[0-9]+)/$', views.hatch_egg, name='hatch_egg'),
 
 	# BOXES PAGES
@@ -45,7 +47,12 @@ urlpatterns = [
 
 	# POKEDEX PAGES
 	url(r'^dex/$', views.pokedex_index, name='pokedex_index'),
-	url(r'^dex/recieve/$', views.recieve_pokedex, name='recieve_pokedex'),
+	url(r'^dex/receive/$', views.receive_pokedex, name='receive_pokedex'),
+
+	# PARK PAGES
+	url(r'^park/$', views.park, name='park'),
+	url(r'^park/adopt/(?P<pk>[0-9]+)/$', views.park_adopt, name='park_adopt'),
+	url(r'^pokemon/view/(?P<pk>[0-9]+)/release$', views.release_adopt, name='release_adopt'),
 ]
 
 

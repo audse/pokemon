@@ -1,36 +1,43 @@
 {% load staticfiles %}
 {% if adopt.can_interact %}
-<div class="party-space-berries">
-	<a 
-		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sour' %}?berry=favorite{% elif adopt.disliked == 'sour' %}?berry=disliked{% endif %}" 
+<div class="party-space-berries" id="interaction-{{ adopt.pk}}">
 
-		class="berry {% if adopt.favorite == 'sour' %}berry-favorite{% endif %} {% if adopt.disliked == 'sour' %}berry-disliked{% endif %}">
-		<img src="{% static 'img/items/sitrus-berry.png' %}" />
-	</a>
-	<a 
-		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'spicy' %}?berry=favorite{% elif adopt.disliked == 'spicy' %}?berry=disliked{% endif %}" 
+	<form id="interact-form-{{ adopt.pk }}-sour" style="display:inline-block;">{% csrf_token %}
+		<input type="hidden" name="berry" value="{% if adopt.favorite == 'sour' %}favorite{% elif adopt.disliked == 'sour' %}disliked{% endif %}" />
+		<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary {% if adopt.favorite == 'sour' %}btn-success{% elif adopt.disliked == 'sour' %}btn-danger{% endif %}">
+			<img src="{% static 'img/items/sitrus-berry.png' %}" />
+		</button>
+	</form>
 
-		class="berry {% if adopt.favorite == 'spicy' %}berry-favorite{% endif %} {% if adopt.disliked == 'spicy' %}berry-disliked{% endif %}">
-		<img src="{% static 'img/items/leppa-berry.png' %}" />
-	</a>
-	<a 
-		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'dry' %}?berry=favorite{% elif adopt.disliked == 'dry' %}?berry=disliked{% endif %}" 
+	<form id="interact-form-{{ adopt.pk }}-spicy" style="display:inline-block;">{% csrf_token %}
+		<input type="hidden" name="berry" value="{% if adopt.favorite == 'spicy' %}favorite{% elif adopt.disliked == 'spicy' %}disliked{% endif %}" />
+		<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary {% if adopt.favorite == 'spicy' %}btn-success{% elif adopt.disliked == 'spicy' %}btn-danger{% endif %}">
+			<img src="{% static 'img/items/leppa-berry.png' %}" />
+		</button>
+	</form>
 
-		class="berry {% if adopt.favorite == 'dry' %}berry-favorite{% endif %} {% if adopt.disliked == 'dry' %}berry-disliked{% endif %}">
-		<img src="{% static 'img/items/chesto-berry.png' %}" />
-	</a>
-	<a 
-		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sweet' %}?berry=favorite{% elif adopt.disliked == 'sweet' %}?berry=disliked{% endif %}" 
+	<form id="interact-form-{{ adopt.pk }}-dry" style="display:inline-block;" >{% csrf_token %}
+		<input type="hidden" name="berry" value="{% if adopt.favorite == 'dry' %}favorite{% elif adopt.disliked == 'dry' %}disliked{% endif %}" />
+		<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary {% if adopt.favorite == 'dry' %}btn-success{% elif adopt.disliked == 'dry' %}btn-danger{% endif %}">
+			<img src="{% static 'img/items/chesto-berry.png' %}" />
+		</button>
+	</form>
 
-		class="berry {% if adopt.favorite == 'sweet' %}berry-favorite{% endif %} {% if adopt.disliked == 'sweet' %}berry-disliked{% endif %}">
-		<img src="{% static 'img/items/kasib-berry.png' %}" />
-	</a>
-	<a 
-		href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'bitter' %}?berry=favorite{% elif adopt.disliked == 'bitter' %}?berry=disliked{% endif %}" 
+	<form id="interact-form-{{ adopt.pk }}-sweet" style="display:inline-block;">{% csrf_token %}
+		<input type="hidden" name="berry" value="{% if adopt.favorite == 'sweet' %}favorite{% elif adopt.disliked == 'sweet' %}disliked{% endif %}" />
+		<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary {% if adopt.favorite == 'sweet' %}btn-success{% elif adopt.disliked == 'sweet' %}btn-danger{% endif %}">
+			<img src="{% static 'img/items/kasib-berry.png' %}" />
+		</button>
+	</form>
 
-		class="berry {% if adopt.favorite == 'bitter' %}berry-favorite{% endif %} {% if adopt.disliked == 'bitter' %}berry-disliked{% endif %}">
-		<img src="{% static 'img/items/nanab-berry.png' %}" />
-	</a>
+	<form id="interact-form-{{ adopt.pk }}-bitter" style="display:inline-block;">{% csrf_token %}
+		<input type="hidden" name="berry" value="{% if adopt.favorite == 'bitter' %}favorite{% elif adopt.disliked == 'bitter' %}disliked{% endif %}" />
+		<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary {% if adopt.favorite == 'bitter' %}btn-success{% elif adopt.disliked == 'bitter' %}btn-danger{% endif %}">
+			<img src="{% static 'img/items/nanab-berry.png' %}" />
+		</button>
+	</form>
+
+
 </div>
 {% else %}
 	<div style="padding-bottom: 10px; text-align: center">
@@ -41,3 +48,74 @@
 		{% endif %}
 	</div>
 {% endif %}
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+    	$("#interact-form-{{ adopt.pk }}-sour").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' username=adopt.owner.username pk=adopt.pk %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+    	$("#interact-form-{{ adopt.pk }}-spicy").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' username=adopt.owner.username pk=adopt.pk %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+    	$("#interact-form-{{ adopt.pk }}-dry").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' username=adopt.owner.username pk=adopt.pk %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+    	$("#interact-form-{{ adopt.pk }}-sweet").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' username=adopt.owner.username pk=adopt.pk %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+    	$("#interact-form-{{ adopt.pk }}-bitter").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' username=adopt.owner.username pk=adopt.pk %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+	});
+</script>

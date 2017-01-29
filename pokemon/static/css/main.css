@@ -108,6 +108,13 @@ a.white {
     margin-left: -2px; }
     .navbar li.nav-item:hover {
       background: #1f4e7a; }
+  .navbar li.no-blue {
+    padding: 5px;
+    border-right: 2px solid rgba(255, 255, 255, 0.3);
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
+    margin-left: -2px; }
+    .navbar li.no-blue:hover {
+      background: #2B6CA7; }
   .navbar a.nav-link {
     margin-left: 10px;
     margin-right: 10px;
@@ -118,6 +125,70 @@ a.white {
     color: #7B848A;
     margin-left: 10px;
     margin-right: 10px; }
+
+/* DROPDOWN */
+ul li {
+  transition: padding .05s linear; }
+  ul li a {
+    transition: all .1s ease-out; }
+
+ul li.drop {
+  position: relative; }
+
+ul .dropOut .triangle {
+  width: 0;
+  height: 0;
+  position: absolute;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #1f4e7a;
+  top: -8px;
+  left: 50%;
+  margin-left: -8px; }
+
+ul .dropdownContain {
+  width: 160px;
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  margin-left: -80px;
+  top: -400px; }
+
+ul .dropOut {
+  width: 160px;
+  background: #1f4e7a;
+  float: left;
+  position: relative;
+  margin-top: 0px;
+  opacity: 0;
+  border-radius: 4px;
+  transition: all .1s ease-out; }
+  ul .dropOut a {
+    color: rgba(255, 255, 255, 0.7);
+    font-family: "Open Sans", sans-serif;
+    text-transform: none;
+    font-style: normal;
+    font-weight: 300; }
+    ul .dropOut a:hover {
+      color: white; }
+
+ul .dropOut ul {
+  float: left;
+  padding: 10px 0; }
+
+ul .dropOut ul li {
+  text-align: left;
+  flot: left;
+  width: 125px;
+  padding-left: 15px;
+  color: white; }
+
+ul li:hover .dropdownContain {
+  top: 65px; }
+
+ul li:hover .dropOut {
+  opacity: 1;
+  margin-top: -15px; }
 
 /* NEWS */
 .news {
@@ -161,6 +232,15 @@ a.white {
     color: white;
     font-family: "Oswald", sans-serif;
     letter-spacing: 2px; }
+    .content-box .content-box-button:focus {
+      outline: 0;
+      background: #1f4e7a;
+      border: none; }
+  .content-box .content-box-button-disabled {
+    background: #7B848A; }
+
+.the-border-clause {
+  border: none; }
 
 .content-box-gray {
   border: 1px solid #7B848A; }
@@ -245,6 +325,15 @@ table.sticky {
   border: 1px solid #eee;
   padding: 10px; }
 
+img {
+  image-rendering: pixelated; }
+
+.modal-open {
+  padding-right: 0 !important; }
+
+html {
+  overflow-y: scroll !important; }
+
 /* STYLISTIC CHOICES */
 .admin {
   color: #D9534F;
@@ -327,6 +416,9 @@ table.sticky {
     position: absolute;
     bottom: 20px;
     left: 48px; }
+
+.btn-smr {
+  padding: 3px; }
 
 label > input {
   /* HIDE RADIO */

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "mobile-first-base.html" %}
 {% load staticfiles %}
 
 {% block title %}Lab{% endblock %}
@@ -11,13 +11,19 @@
 
 <div class="col-sm-6">
 	<h1 class="gray oswald">Prof. Cedar's Laboratory</h1>
-	<p class="red bold">Redo this flavor text: needs to say welcome, give an overview, ask to start your journey and recieve dex</p>
-	<p>Hello, I'm Professor Cedar! You must be a new Pok&eacute;mon trainer- it seems you don't yet have a Pok&eacute;dex! Here, I can give you one, and you can start your Pok&eacute;mon journey!</p>
-	<a href="{% url 'recieve_pokedex' %}"><button class="btn btn-secondary">Recieve Your Pok&eacute;dex!</button></a>
+	<p>Hello! I'm Professor Cedar, but most people call me the Pok&eacute;mon Professor! This great Pok&eacute;mon Laboratory will be the starting point for your voyage into the world of Pok&eacute;mon!</p>
+	<p>Not all Pok&eacute;mon in this grand and diverse world have been identified by science. Here at the "lab" we rely on Pok&eacute;mon trainers and breeders like you to find new kinds of Pok&eacute;mon.</p>
+	<p>To keep track of your discoveries, we will give you a great invention- the Pok&eacute;mon Index, or Pok&eacute;dex for short! By the power of modern technology it will automatically record every Pok&eacute;mon you hatch.</p>
+	<br class="desktop" />
+	<a href="{% url 'receive_pokedex' %}"><button class="btn btn-secondary">Receive Your Pok&eacute;dex!</button></a>
+	<br class="mobile" />
+	<br class="mobile" />
 </div>
 
 <div class="col-sm-4">
 	<img src="{% static 'img/cedar.jpg' %}" width="100%" />
+	<br class="mobile" />
+	<br class="mobile" />
 </div>
 
 <div class="col-sm-1">

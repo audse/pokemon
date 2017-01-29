@@ -20,7 +20,7 @@
 		    event.preventDefault();
 
 		    $.ajax({
-		        url: '{% url 'interact' username=current_user.username pk=adopt.pk %}',
+		        url: '{% url 'interact' username=adopt.owner.username pk=adopt.pk %}',
 		        type: 'POST',
 		        data: $(this).serialize(),
 		        success: function(data) {

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "mobile-first-base.html" %}
 {% load staticfiles %}
 {% load partition %}
 
@@ -44,14 +44,14 @@
 							
 						</div>
 						<div class="content-box-body">
-							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png"/>
+							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png" width="96" height="96"/>
 						</div>
 					</div>
 
 					{% if adopt.exp == adopt.pokemon.ehp %}
 						{% if adopt.owner == user %}
 							<div class="content-box" style="margin-top:15px;">
-								<a href="{% url 'hatch_egg' pk=adopt.pk %}"><button class="content-box-button">Hatch the Egg</button>
+								<a href="{% url 'hatch_egg' pk=adopt.pk %}"><button class="content-box-button">Hatch the Egg</button></a>
 							</div>
 						{% endif %}
 					{% endif %}
@@ -86,17 +86,39 @@
 								evolves on trade
 							{% endif %}
 						{% else %}
-							<br />
+							<i class="gray">Does not evolve</i>
 						{% endif %}
 					</div>
 				</div>
+
+
+				{% if adopt.exp == adopt.total_exp %}
+					{% if adopt.owner == user %}
+						<div class="content-box" style="margin-top:15px;">
+							<a href="{% url 'evolve_by_level' pk=adopt.pk %}"><button class="content-box-button">Evolve Pokemon</button></a>
+						</div>
+					{% endif %}
+				{% endif %}
+
 			{% endif %}
 		</div>
 		<div class="col-sm-6">
-			{% if adopt.party and adopt.hatched %}
-			<div class="content-box">
-				<button class="content-box-button" data-toggle="modal" data-target="#boxes-list">Move to Box</button>
-			</div>
+			{% if adopt.owner.username == user.username %}
+				{% if adopt.party and adopt.hatched %}
+				<div class="content-box">
+					<button class="content-box-button" data-toggle="modal" data-target="#boxes-list">Move to Box</button>
+				</div>
+				{% endif %}
+
+				{% if adopt.hatched %}
+					<div class="content-box" {% if adopt.party and adopt.hatched %}style="margin-top:15px;"{% endif %}>
+						<button class="content-box-button" data-toggle="modal" data-target="#change-nickname">Change Nickname</button>
+					</div>
+				{% endif %}
+
+				<div class="content-box" {% if adopt.party and adopt.hatched %}style="margin-top:15px;"{% endif %}>
+					<button class="content-box-button" data-toggle="modal" data-target="#release">Release</button>
+				</div>
 			{% endif %}
 		</div>
 	</div>
@@ -105,7 +127,7 @@
 <div class="col-sm-1">
 </div>
  
-<!-- Modal -->
+<!-- BOXES MODAL -->
 <div class="modal fade" id="boxes-list" tabindex="-1" role="dialog" aria-labelledby="boxes-listLabel" aria-hidden="true">
 	<div class="modal-dialog">
     	<div class="modal-content">
@@ -138,6 +160,46 @@
       			</div>
       		</div>
       		<div class="modal-footer">
+      		</div>
+    	</div>
+  	</div>
+</div>
+ 
+<!-- RELEASE MODAL -->
+<div class="modal fade" id="release" tabindex="-1" role="dialog" aria-labelledby="releaseLabel" aria-hidden="true">
+  	<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Release</h4>
+      		</div>
+      		<div class="modal-body">
+        		Are you sure you want to release your {% if adopt.hatched %}{% if adopt.nickname %}{{ adopt.nickname }}{% else %}{{ adopt.pokemon.name }}{% endif %}{% else %}egg{% endif %}? Releasing cannot be undone.
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-secondary" onclick='' data-dismiss="modal">No</button>
+        		<a href="{% url 'release_adopt' pk=adopt.pk %}"><button type="button" class="btn btn-danger" onclick=''>Yes</button></a>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+<!-- CHANGE NICKNAME MODAL -->
+<div class="modal fade" id="change-nickname" tabindex="-1" role="dialog" aria-labelledby="changeNicknameLabel" aria-hidden="true">
+  	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Change Nickname</h4>
+      		</div>
+      		<div class="modal-body">
+      			<form method="post" action="{% url 'change_nickname' pk=adopt.pk %}">{% csrf_token %}
+      				<input class="form-control" name="nickname" placeholder="New Nickname..." />
+      		</div>
+      		<div class="modal-footer">
+        		<button type="submit" class="btn btn-success" onclick=''>Change</button></a>
+
+      			</form>
       		</div>
     	</div>
   	</div>

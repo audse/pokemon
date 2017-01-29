@@ -29,12 +29,24 @@ class Action(models.Model):
 	def __str__(self):
 		return self.user.username
 
+class Currency(models.Model):
+	user = models.ForeignKey('auth.User')
+	pd = models.IntegerField(default=500)
+	coins = models.IntegerField(default=0)
+
+	def get_pd(self, pd_amount):
+		self.pd = self.pd + pd_amount
+		self.save()
+
+	def __str__(self):
+		return self.user.username
 
 class Item(models.Model):
 	name = models.CharField(max_length=140)
 	category = models.CharField(max_length=140)
 	description = models.CharField(max_length=256, blank=True, null=True)
-	value = models.IntegerField(default=0)
+	purchase_value = models.IntegerField(default=0)
+	sell_value = models.IntegerField(default=0)
 
 	def __str__(self):
 		return self.name

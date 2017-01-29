@@ -12,6 +12,8 @@ class Pokemon(models.Model):
 	primary_type = models.CharField(max_length=24)
 	secondary_type = models.CharField(max_length=24, blank=True, null=True)
 
+	rarity = models.IntegerField()
+
 	evo_item = models.CharField(max_length=24, blank=True, null=True)
 	evo_level = models.IntegerField(blank=True, null=True)
 	evo_on_trade = models.BooleanField(default=False)
@@ -45,6 +47,8 @@ class Adopt(models.Model):
 	held_item = models.CharField(max_length=140, blank=True, null=True)
 	nickname = models.CharField(max_length=30, blank=True, null=True)
 
+	update_time = models.DateTimeField(default=timezone.now)
+
 	def interact(self, exp_amount):
 		if self.hatched is False:
 			if self.exp+exp_amount >= self.pokemon.ehp:
@@ -54,7 +58,11 @@ class Adopt(models.Model):
 				self.exp += exp_amount
 				self.save()
 		else:
-			self.exp += exp_amount
+			if self.total_exp:
+				if self.exp+exp_amount >= self.total_exp:
+					self.exp = self.total_exp
+				else:
+					self.exp += exp_amount
 			self.save()
 
 	def hatch(self, gender, shiny, nature):
@@ -65,6 +73,11 @@ class Adopt(models.Model):
 		self.nature = nature
 		self.save()
 
+	def evolve(self, evolution):
+		self.pokemon = evolution
+		self.exp = 0
+		self.save()
+
 	def from_party_to_box(self, pos):
 		self.party = False
 		self.boxes = True
@@ -73,6 +86,15 @@ class Adopt(models.Model):
 
 	def update_box_position(self, pos):
 		self.box_pos = pos
+		self.save()
+
+	def change_owner(self, new_owner):
+		self.owner = new_owner
+		self.update_time = timezone.now()
+		self.save()
+
+	def change_nickname(self, new_nickname):
+		self.nickname = new_nickname
 		self.save()
 
 	def __str__(self):
@@ -106,7 +128,7 @@ class Interaction(models.Model):
 	time = models.DateTimeField(default=timezone.now)
 
 	def __str__(self):
-		name = self.sending_user.username + " @ " + self.recieving_user
+		name = self.sending_user.username + " @ " + self.recieving_user + "'s " + self.adopt.pokemon.name
 		return name
 
 class Box(models.Model):

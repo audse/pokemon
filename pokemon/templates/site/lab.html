@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "mobile-first-base.html" %}
 {% load staticfiles %}
 
 {% block title %}Lab{% endblock %}
@@ -22,25 +22,25 @@
 		<div class="content-box-body" style="padding:0px;text-align: center;">
 			<a href="{% url 'lab_adopt' pk='1' %}">
 				<div class="lab-egg">
-					<img src="{% static 'img/eggs/' %}{{ lab_set.egg_1 }}.png" />
+					<img src="{% static 'img/eggs/00.png' %}" />
 					<span class="badge badge-{{ lab_set.egg_1_type }}">{{ lab_set.egg_1_type }}</span>
 				</div>
 			</a>
 			<a href="{% url 'lab_adopt' pk='2' %}">
 				<div class="lab-egg">
-					<img src="{% static 'img/eggs/' %}{{ lab_set.egg_2 }}.png" />
+					<img src="{% static 'img/eggs/00.png' %}" />
 					<span class="badge badge-{{ lab_set.egg_2_type }}">{{ lab_set.egg_2_type }}</span>
 				</div>
 			</a>
 			<a href="{% url 'lab_adopt' pk='3' %}">
 				<div class="lab-egg">
-					<img src="{% static 'img/eggs/' %}{{ lab_set.egg_3 }}.png" />
+					<img src="{% static 'img/eggs/00.png' %}" />
 					<span class="badge badge-{{ lab_set.egg_3_type }}">{{ lab_set.egg_3_type }}</span>
 				</div>
 			</a>
 			<a href="{% url 'lab_adopt' pk='4' %}">
 				<div class="lab-egg">
-					<img src="{% static 'img/eggs/' %}{{ lab_set.egg_4 }}.png" />
+					<img src="{% static 'img/eggs/00.png' %}" />
 					<span class="badge badge-{{ lab_set.egg_4_type }}">{{ lab_set.egg_4_type }}</span>
 				</div>
 			</a>

@@ -2,7 +2,7 @@ from __future__ import division
 from django.shortcuts import render, redirect
 
 from django.contrib.auth.models import User
-from .models import Action
+from .models import Action, Currency, Item, Inventory
 from pokedex.models import Pokemon, Adopt, Lab, Interaction, Box, Dex
 
 from django.contrib.auth import authenticate
@@ -13,6 +13,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import datetime
 from datetime import timedelta
+from django.utils import timezone
 import random
 
 # FUNCTIONS
@@ -273,9 +274,12 @@ def profile_page(request, username):
 	if user_exists.count() is not 0:
 		user = user_exists.first()
 
-		adopts = Adopt.objects.filter(owner=user, party=True)
-		for adopt in adopts:
-			check_interaction(request, adopt)
+		if user.username != "CEDAR":
+			adopts = Adopt.objects.filter(owner=user, party=True)
+			for adopt in adopts:
+				check_interaction(request, adopt)
+		else:
+			return redirect(lab)
 
 		return render(request, 'core/profile.html', {'current_user':user, 'adopts':adopts})
 	else:
@@ -381,7 +385,9 @@ def register(request):
 		# check that everything is correct
 		if all_fields_filled_out and username_not_in_use and email_not_in_use and passwords_are_same:
 			user = User.objects.create_user(username=username, email=email, password=password)
+			account_currency = Currency.objects.create(user=user)
 			user.save()
+			account_currency.save()
 			return redirect(index)
 		else:
 			return render(request, 'core/register.html', {'errors':errors})
@@ -421,10 +427,31 @@ def staff_only(request):
 def update_lab(request):
 	lab_set = Lab.objects.get(user=request.user)
 	if lab_set:
-		egg_1 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-		egg_2 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-		egg_3 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-		egg_4 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
+
+		rarity_level = []
+		rarities = []
+
+		for x in range(0, 4):
+			rarities.append(random.randint(1, 1000))
+
+		for rarity in rarities:
+			if rarity < 700:
+				rarity_level.append(1)
+			elif rarity < 910:
+				rarity_level.append(2)
+			elif rarity < 973:
+				rarity_level.append(3)
+			elif rarity < 992:
+				rarity_level.append(4)
+			elif rarity < 999:
+				rarity_level.append(5)
+			elif rarity <= 1000:
+				rarity_level.append(6)
+
+		egg_1 = Pokemon.objects.filter(ehp__isnull=False, rarity=rarity_level[0]).order_by('?').first().number
+		egg_2 = Pokemon.objects.filter(ehp__isnull=False, rarity=rarity_level[1]).order_by('?').first().number
+		egg_3 = Pokemon.objects.filter(ehp__isnull=False, rarity=rarity_level[2]).order_by('?').first().number
+		egg_4 = Pokemon.objects.filter(ehp__isnull=False, rarity=rarity_level[3]).order_by('?').first().number
 		lab_set.update(egg_1=egg_1, egg_2=egg_2, egg_3=egg_3, egg_4=egg_4)
 
 def lab(request):
@@ -439,10 +466,31 @@ def lab(request):
 				lab_set.egg_4_type = Pokemon.objects.get(number=lab_set.egg_4).primary_type
 				return render(request, 'site/lab.html', {'lab_set':lab_set})
 			else:
-				egg_1 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-				egg_2 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-				egg_3 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
-				egg_4 = Pokemon.objects.filter(ehp__isnull=False).order_by('?').first().number
+
+				rarity_level = []
+				rarities = []
+
+				for x in range(0, 4):
+					rarities.append(random.randint(1, 1000))
+
+				for rarity in rarities:
+					if rarity < 700:
+						rarity_level.append(1)
+					elif rarity < 910:
+						rarity_level.append(2)
+					elif rarity < 973:
+						rarity_level.append(3)
+					elif rarity < 992:
+						rarity_level.append(4)
+					elif rarity < 999:
+						rarity_level.append(5)
+					elif rarity <= 1000:
+						rarity_level.append(6)
+
+				egg_1 = Pokemon.objects.filter(ehp__isnull=False, rarity=rarity_level[0]).order_by('?').first().number
+				egg_2 = Pokemon.objects.filter(ehp__isnull=False, rarity=rarity_level[1]).order_by('?').first().number
+				egg_3 = Pokemon.objects.filter(ehp__isnull=False, rarity=rarity_level[2]).order_by('?').first().number
+				egg_4 = Pokemon.objects.filter(ehp__isnull=False, rarity=rarity_level[3]).order_by('?').first().number
 				lab_set = Lab.objects.create(user=request.user, egg_1=egg_1, egg_2=egg_2, egg_3=egg_3, egg_4=egg_4)
 				lab_set.save()
 				lab_set.egg_1_type = Pokemon.objects.get(number=lab_set.egg_1).primary_type
@@ -512,7 +560,7 @@ def lab_adopt(request, pk):
 
 def interact(request, username, pk):
 	if request.user.is_authenticated():
-		berry = request.GET.get('berry')
+		berry = request.POST.get('berry')
 		recieving_user = User.objects.get(username=username)
 		adopt = Adopt.objects.get(pk=pk)
 		if recieving_user:
@@ -532,6 +580,10 @@ def interact(request, username, pk):
 
 				adopt.interact(exp_amount)
 				interaction = Interaction.objects.create(sending_user = request.user, recieving_user=recieving_user, adopt=adopt)
+				users_currency = Currency.objects.filter(user=request.user).first()
+				pd_amount = random.randint(1, 5)
+				users_currency.get_pd(pd_amount)
+
 				return redirect(profile_page, username)
 		else:
 			return redirect(user_not_found)
@@ -552,7 +604,6 @@ def view_adopt(request, pk):
 				boxes = None
 
 			check_interaction(request, adopt)
-			
 		return render(request, 'site/view_adopt.html', {'adopt':adopt, 'boxes':boxes})
 	else:
 		return redirect(pokemon_not_found)
@@ -563,26 +614,38 @@ def hatch_egg(request, pk):
 		if adopt.count() is not 0:
 			adopt = adopt.first()
 			if adopt.owner == request.user:
+				dex = Dex.objects.filter(user=request.user)
+				if dex.count() is not 0:
+					dex = dex.first()
+					dex_egg_entry = dex.eggs.filter(name=adopt.pokemon.name).exists()
+					dex_pokemon_entry = dex.pokemon.filter(name=adopt.pokemon.name).exists()
 
-				# select random traits for pokemon
-				random_gender = random.randint(1,100)
-				if random_gender <= adopt.pokemon.percent_male:
-					gender = True
+					if not dex_egg_entry:
+						dex.add_egg_entry(adopt.pokemon)
+					if not dex_pokemon_entry:
+						dex.add_pokemon_entry(adopt.pokemon)
+
+					# select random traits for pokemon
+					random_gender = random.randint(1,100)
+					if random_gender <= adopt.pokemon.percent_male:
+						gender = True
+					else:
+						gender = False
+
+					random_shiny = random.randint(1, 1000)
+					if random_shiny == 500: # 1/1000 chance
+						shiny = True
+					else:
+						shiny = False
+
+					random_nature = random.randint(0, 15)
+					natures = ['hardy', 'lonely', 'brave', 'adamant', 'naughty', 'bold', 'docile', 'relaxed', 'impish', 'lax', 'timid', 'hasty', 'serious', 'jolly', 'naive', 'modest', 'mild', 'quiet', 'bashful', 'rash', 'calm', 'gentle', 'sassy', 'careful', 'quirky']
+					nature = natures[random_nature]
+
+					adopt.hatch(gender, shiny, nature)
+					return redirect(view_adopt, pk=adopt.pk)
 				else:
-					gender = False
-
-				random_shiny = random.randint(1, 1000)
-				if random_shiny == 500: # 1/1000 chance
-					shiny = True
-				else:
-					shiny = False
-
-				random_nature = random.randint(0, 15)
-				natures = ['hardy', 'lonely', 'brave', 'adamant', 'naughty', 'bold', 'docile', 'relaxed', 'impish', 'lax', 'timid', 'hasty', 'serious', 'jolly', 'naive', 'modest', 'mild', 'quiet', 'bashful', 'rash', 'calm', 'gentle', 'sassy', 'careful', 'quirky']
-				nature = natures[random_nature]
-
-				adopt.hatch(gender, shiny, nature)
-				return redirect(view_adopt, pk=adopt.pk)
+					return redirect(pokedex_index)
 			else:
 				return redirect(cannot_access)
 		else:
@@ -590,6 +653,52 @@ def hatch_egg(request, pk):
 	else:
 		return redirect(must_be_logged_in)
 
+def evolve_by_level(request, pk):
+	if request.user.is_authenticated():
+		adopt = Adopt.objects.filter(pk=pk)
+		if adopt.count() is not 0:
+			adopt = adopt.first()
+
+			if adopt.pokemon.evo:
+				if adopt.total_exp == adopt.exp:
+					evolution = Pokemon.objects.get(number=adopt.pokemon.evo)
+					adopt.evolve(evolution)
+
+					dex = Dex.objects.filter(user=request.user)
+					if dex.count() is not 0:
+						dex = dex.first()
+						dex_pokemon_entry = dex.pokemon.filter(name=evolution.pokemon.name).exists()
+						if not dex_pokemon_entry:
+							dex.add_pokemon_entry(evolution)
+
+						return redirect(view_adopt, pk=pk)
+
+					else:
+						return redirect(pokedex_index)
+				else:
+					return redirect(view_adopt, pk=pk)
+			else:
+				return redirect(pokemon_not_found)
+		else:
+			return redirect(pokemon_not_found)
+	else:
+		return redirect(must_be_logged_in)
+
+def change_nickname(request, pk):	
+	if request.user.is_authenticated():
+		adopt = Adopt.objects.filter(pk=pk)
+		if adopt.count() is not 0:
+			adopt = adopt.first()
+			if request.user.username == adopt.owner.username:
+				nickname = request.POST.get('nickname')
+				adopt.change_nickname(nickname)
+				return redirect(view_adopt, pk=pk)
+			else:
+				return redirect(cannot_access)
+		else:
+			return redirect(pokemon_not_found)
+	else:
+		return redirect(must_be_logged_in)
 
 
 # BOXES VIEWS
@@ -674,7 +783,8 @@ def pokedex_index(request):
 
 			for monster in pokemon:
 				monster.percent_female = 100 - monster.percent_male
-				monster.dex_entered = dex.eggs.filter(name=monster.name).exists()
+				monster.egg_dex_entered = dex.eggs.filter(name=monster.name).exists()
+				monster.pokedex_entered = dex.pokemon.filter(name=monster.name).exists()
 
 			return render(request, 'pokedex/index.html', {'pokemon':pokemon})
 		else:
@@ -682,7 +792,7 @@ def pokedex_index(request):
 	else:
 		return redirect(must_be_logged_in)
 
-def recieve_pokedex(request):
+def receive_pokedex(request):
 	if request.user.is_authenticated():
 		check_for_dex = Dex.objects.filter(user=request.user)
 		if check_for_dex.count() == 0:
@@ -693,6 +803,59 @@ def recieve_pokedex(request):
 	else:
 		return redirect(must_be_logged_in)
 
+
+# PARK VIEWS
+
+def park(request):
+	cedar = User.objects.filter(username="CEDAR")
+	park_pokemon = Adopt.objects.filter(owner=cedar).order_by('?')[:10]
+	for pokemon in park_pokemon:
+		pokemon.x_percent = random.randint(0, 100)
+		pokemon.y_percent = random.randint(0, 100)
+
+	return render(request, 'site/park.html', {'park_pokemon':park_pokemon})
+
+def park_adopt(request, pk):
+	if request.user.is_authenticated():
+		adopt = Adopt.objects.filter(pk=pk)
+		if adopt.count() is not 0:
+			adopt = adopt.first()
+
+			check_for_dex = Dex.objects.filter(user=request.user)
+			if check_for_dex.count() != 0:
+
+				amount_in_party = Adopt.objects.filter(owner=request.user, party=True).count()
+				if amount_in_party < 6:
+					adopt.change_owner(request.user)
+					return redirect(park)
+				else:
+					return redirect(party_is_full)
+			else:
+				return redirect(pokedex_index)
+		else:
+			return redirect(pokemon_not_found)
+	else:
+		return redirect(must_be_logged_in)
+
+def release_adopt(request, pk):
+	if request.user.is_authenticated():
+		adopt = Adopt.objects.filter(pk=pk)
+		if adopt.count() is not 0:
+			adopt = adopt.first()
+			if request.user.username == adopt.owner.username:
+				time_threshold = timezone.now() - timedelta(hours=2)	
+				if adopt.update_time <= time_threshold:
+					cedar = User.objects.get(username="CEDAR")
+					adopt.change_owner(cedar)
+					return redirect(profile_page, username=request.user.username)
+				else:
+					return redirect(view_adopt, pk=pk)
+			else:
+				return redirect(cannot_access)
+		else:
+			return redirect(pokemon_not_found)
+	else:
+		return redirect(must_be_logged_in)
 
 
 

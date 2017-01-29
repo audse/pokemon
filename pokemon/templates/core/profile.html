@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "mobile-first-base.html" %}
 {% load staticfiles %}
 {% load partition %}
 
@@ -17,13 +17,13 @@
 					{% if adopt.hatched %}
 						<div class="party-space-content">
 							<img src="{% static 'img/pokemon/' %}{% if adopt.shiny %}shiny/{% endif %}{{ adopt.pokemon.number }}.png" style="float:left;" />
-							<h4 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">
+							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">
 							{% if adopt.nickname %}
 								{{ adopt.nickname }}
 							{% else %}
 								{{ adopt.pokemon.name }}
 							{% endif %}
-							</a></h4>
+							</a></h5>
 							{% if adopt.percent != 100 %}
 							<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> {% if adopt.total_exp != 0 %}/ {{ adopt.total_exp }}{% endif %}
 							{% else %}
@@ -40,7 +40,7 @@
 						<div class="party-space-content">
 							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png" style="float:left;" />
 
-							<h4 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">Egg</a></h4>
+							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">Egg</a></h5>
 
 							<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> / {{ adopt.pokemon.ehp }}
 							<div class="progress">
@@ -61,13 +61,13 @@
 					{% if adopt.hatched %}
 						<div class="party-space-content">
 							<img src="{% static 'img/pokemon/' %}{% if adopt.shiny %}shiny/{% endif %}{{ adopt.pokemon.number }}.png" style="float:left;" />
-							<h4 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">
+							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">
 							{% if adopt.nickname %}
 								{{ adopt.nickname }}
 							{% else %}
 								{{ adopt.pokemon.name }}
 							{% endif %}
-							</a></h4>
+							</a></h5>
 							{% if adopt.percent != 100 %}
 							<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> {% if adopt.total_exp != 0 %}/ {{ adopt.total_exp }}{% endif %}
 							{% else %}
@@ -79,53 +79,12 @@
 
 							<div style="clear:both"></div>
 						</div>
-						{% if adopt.can_interact %}
-						<div class="party-space-berries">
-							<a 
-								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sour' %}?berry=favorite{% elif adopt.disliked == 'sour' %}?berry=disliked{% endif %}" 
-
-								class="berry {% if adopt.favorite == 'sour' %}berry-favorite{% endif %} {% if adopt.disliked == 'sour' %}berry-disliked{% endif %}">
-								<img src="{% static 'img/items/sitrus-berry.png' %}" />
-							</a>
-							<a 
-								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'spicy' %}?berry=favorite{% elif adopt.disliked == 'spicy' %}?berry=disliked{% endif %}" 
-
-								class="berry {% if adopt.favorite == 'spicy' %}berry-favorite{% endif %} {% if adopt.disliked == 'spicy' %}berry-disliked{% endif %}">
-								<img src="{% static 'img/items/leppa-berry.png' %}" />
-							</a>
-							<a 
-								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'dry' %}?berry=favorite{% elif adopt.disliked == 'dry' %}?berry=disliked{% endif %}" 
-
-								class="berry {% if adopt.favorite == 'dry' %}berry-favorite{% endif %} {% if adopt.disliked == 'dry' %}berry-disliked{% endif %}">
-								<img src="{% static 'img/items/chesto-berry.png' %}" />
-							</a>
-							<a 
-								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'sweet' %}?berry=favorite{% elif adopt.disliked == 'sweet' %}?berry=disliked{% endif %}" 
-
-								class="berry {% if adopt.favorite == 'sweet' %}berry-favorite{% endif %} {% if adopt.disliked == 'sweet' %}berry-disliked{% endif %}">
-								<img src="{% static 'img/items/kasib-berry.png' %}" />
-							</a>
-							<a 
-								href="{% url 'interact' username=adopt.owner.username pk=adopt.pk %}{% if adopt.favorite == 'bitter' %}?berry=favorite{% elif adopt.disliked == 'bitter' %}?berry=disliked{% endif %}" 
-
-								class="berry {% if adopt.favorite == 'bitter' %}berry-favorite{% endif %} {% if adopt.disliked == 'bitter' %}berry-disliked{% endif %}">
-								<img src="{% static 'img/items/nanab-berry.png' %}" />
-							</a>
-						</div>
-						{% else %}
-							<div style="padding-bottom: 10px; text-align: center">
-								{% if not user.is_authenticated %}
-								<i class="gray" style="padding: 10px;">Please log in to interact.</i><br />
-								{% else %}
-								<i class="gray" style="padding: 10px;">Thank you!</i><br />
-								{% endif %}
-							</div>
-						{% endif %}
+						{% include 'includes/interact_pokemon.html' %}
 					{% else %}
 						<div class="party-space-content">
 							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png" style="float:left;" />
 
-							<h4 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">Egg</a></h4>
+							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">Egg</a></h5>
 
 							<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> / {{ adopt.pokemon.ehp }}
 							<div class="progress">
@@ -134,48 +93,9 @@
 
 							<div style="clear:both"></div>
 						</div>
-						<div id="interaction-{{ adopt.pk }}">
-							{% if adopt.can_interact %}
-								<form id="interact-form-{{ adopt.pk }}">{% csrf_token %}
-									<button class="party-space-button" type="submit" style="width:100%">Hold the egg</button>
-								</form>
-							{% else %}
-								<div style="padding-bottom: 10px; text-align: center">
-									{% if not user.is_authenticated %}
-									<i class="gray" style="padding: 10px;">Please log in to interact.</i><br />
-									{% else %}
-									<i class="gray" style="padding: 10px;">Thank you!</i><br />
-									{% endif %}
-								</div>
-							{% endif %}
-						</div>
+						{% include 'includes/interact_egg.html' %}
 				{% endif %}
 				</div>
-
-
-				<script type="text/javascript">
-					$(document).ready(function(){
-				    	$("#interact-form-{{ adopt.pk }}").submit(function(){
-						    event.preventDefault();
-
-						    $.ajax({
-						        url: '{% url 'interact' username=current_user.username pk=adopt.pk %}',
-						        type: 'POST',
-						        data: $(this).serialize(),
-						        success: function(data) {
-						            // Whatever you want
-						            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
-						            // $("#exp-{{ adopt.pk }}").fadeOut(800, function(){
-						            	// $("#exp-{{ adopt.pk }}").html("{{ adopt.exp }}").fadeIn().delay(2000);
-						            // });
-						            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
-						            // $("#exp-{{ adopt.pk }}").html('{{ adopt.exp }}');
-						        }
-						    });
-						});
-					});
-				</script>
-
 			{% endfor %}
 		</div>
 
@@ -184,8 +104,8 @@
 <div class="col-sm-3">
 	{% if user.username == current_user.username %}
 	{% if user.is_superuser %}
-		<br /><br /><br /><br />
-		<h4 class="gray">What are you up to?</h4>
+		<br class="desktop" /><br class="desktop" /><br class="desktop" /><br class="desktop" />
+		<h5 class="gray">What are you up to?</h5>
 		<form action="{% url 'manually_update_online' %}" method="POST">
 			{% csrf_token %}
 			<div class="form-group">
@@ -196,6 +116,7 @@
 			</div>
 			<button class="btn btn-secondary" type="submit">Go</button>
 		</form>
+		<br class="mobile" />
 	{% endif %}
 	{% endif %}
 </div>
