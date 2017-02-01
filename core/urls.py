@@ -53,6 +53,9 @@ urlpatterns = [
 	url(r'^park/$', views.park, name='park'),
 	url(r'^park/adopt/(?P<pk>[0-9]+)/$', views.park_adopt, name='park_adopt'),
 	url(r'^pokemon/view/(?P<pk>[0-9]+)/release$', views.release_adopt, name='release_adopt'),
+
+	# WEB SCRAPE
+	url(r'^web/scrape/data/$', views.pokemon_web_scrape, name='pokemon_web_scrape'),
 ]
 
 

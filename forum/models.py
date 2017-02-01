@@ -43,7 +43,7 @@ class Reply(models.Model):
 		return self.body_text
 
 class Bookmark(models.Model):
-	bookmarker = models.ForeignKey('auth.user')
+	bookmarker = models.ForeignKey('auth.User')
 	post = models.ForeignKey(Post)
 	last_viewed = models.DateTimeField(default=timezone.now, null=True, blank=True)
 

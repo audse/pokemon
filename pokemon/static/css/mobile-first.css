@@ -374,6 +374,20 @@ table.sticky {
     .party-space .party-space-berries .berry-disliked {
       background: red; }
 
+.lab-egg {
+  position: relative;
+  display: inline-block; }
+  .lab-egg span {
+    position: absolute;
+    bottom: 20px;
+    left: 48px; }
+
+@media only screen and (max-device-width: 768px) {
+  .mobile-container {
+    padding-top: 10px;
+    min-height: 100%;
+    overflow-y: scroll; } }
+
 /* LAYOUT - DESKTOP SECOND */
 @media only screen and (min-device-width: 768px) {
   .mobile {
