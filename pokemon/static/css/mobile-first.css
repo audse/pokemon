@@ -1,11 +1,16 @@
 /* GLOBAL */
 html, body {
   font-family: "Open Sans", sans-serif;
-  height: 100%;
-  overflow-y: scroll; }
+  overflow-y: scroll;
+  overflow-x: hidden; }
+
+html {
+  height: 100%; }
 
 body {
-  margin-bottom: 60px; }
+  padding-bottom: 60px;
+  position: relative;
+  min-height: 100%; }
 
 h1 {
   line-height: 1.1;
@@ -396,6 +401,27 @@ table.sticky {
     display: inline; }
   .desktop-table {
     display: table-cell; }
+  .announcements-title-desktop {
+    background: #2B6CA7;
+    padding-left: 20px;
+    width: 100%;
+    margin: 0; }
+    .announcements-title-desktop a:hover {
+      text-decoration: none; }
+  .announcements-desktop {
+    background: #f5f5f5;
+    height: 100%; }
+  .announcement-desktop {
+    background: #f5f5f5;
+    padding: 5px 20px;
+    border-left: 1px solid white;
+    height: 100%; }
+  .next-button-desktop {
+    display: block;
+    top: 50%; }
+  .nopadding {
+    padding: 0 !important;
+    margin: 0 !important; }
   .navbar {
     background-color: #2B6CA7;
     padding: 0px;
@@ -490,27 +516,36 @@ table.sticky {
   ul li:hover .dropOut {
     opacity: 1;
     margin-top: -15px; }
-  /* NEWS */
-  .news {
-    background: #f5f5f5;
-    position: relative;
-    font-size: 1em; }
-    .news .news-item {
-      padding: 10px 15px 20px 15px;
-      border-right: 2px solid white; }
-  .row-fluid {
-    white-space: nowrap; }
-  .row-fluid .col-md-4 {
-    display: inline-block; }
-    .row-fluid .col-md-4 .wrap {
-      white-space: normal; }
+  /* NEWS 
+
+	.news {
+		background: #f5f5f5;
+		position: relative;
+		font-size: 1em;
+
+		.news-item {
+			padding: 10px 15px 20px 15px;
+			border-right: 2px solid white;
+		}
+	}
+
+	.row-fluid{
+	    white-space: nowrap;
+	}
+	.row-fluid .col-md-4{
+	    display: inline-block;
+
+	    .wrap {
+	    	white-space: normal;
+	    }
+	} */
   .the-border-clause {
     border: none; }
   .footer {
     position: absolute;
-    bottom: -70;
-    width: 100%;
-    /* Set the fixed height of the footer here */
+    left: 0;
+    right: 0;
+    bottom: 0;
     height: 60px;
     line-height: 60px;
     /* Vertically center the text there */

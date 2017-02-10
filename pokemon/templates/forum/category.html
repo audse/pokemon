@@ -66,7 +66,7 @@
 				</td>
 				<td class="desktop-table">{{ post.post_time|naturaltime }}</td>
 				<td class="desktop-table">{{ post.replies }}</td>
-				<td style="color:green">{{ post.last_reply.post_time|naturaltime }}</td>
+				<td>{{ post.last_reply.post_time|naturaltime }}</td>
 			</tr>
 		{% endfor %}
 	</tbody>
