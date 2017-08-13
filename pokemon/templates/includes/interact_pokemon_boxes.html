@@ -1,0 +1,22 @@
+{% load staticfiles %}
+{% load order_by %}
+{% load check_for_interaction_in_box %}
+
+<div id="boxes">
+{% for box in boxes|order_by:"create_time" %}<div id="load-box-{{ box.pk }}" class="load-box" style="background:#{{ box.wallpaper }}; display:inline-block;width:210px;height:160px;margin:5px 5px 0 0; padding: 3px;float:left;position:relative;"><button type="submit" class="btn btn-secondary" style="position:absolute;top:60px;left:50px;">Load Box</button></div><script type="text/javascript">
+	$(document).ready(function(){
+		$("#load-box-{{ box.pk }}").on("click", "button", function(event){
+			$(".load-box").each(function(){
+				$(this).html('<button type="submit" class="btn btn-secondary" style="position:absolute;top:60px;left:50px;">Load Box</button>');
+			});
+			$("#load-box-{{ box.pk }}").load("{% url 'load_box' pk=box.pk %}");
+		});
+	});
+</script>{% endfor %}
+</div>
+<div class="clear"></div><br />
+
+
+
+
+

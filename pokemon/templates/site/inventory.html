@@ -1,0 +1,231 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Inventory{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1"></div>
+
+<div class="col-sm-7">
+<h1 class="gray oswald">Inventory</h1>
+
+
+<table class="content-box-table">
+	<tr>
+		<th>SUMMONS</th>
+		<th style="text-align:center;">QTY</th>
+		<th style="text-align:center;">IMG</th>
+		<th style="text-align:right;">Price</th>
+	</tr>
+	{% for item in inventory %}
+		{% if item.item.category == "summon" %}
+			<tr>
+				<td>{{ item.item.name|title }}</td>
+				<td style="text-align:center;">{{ item.quantity }}</td>
+				<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.item.image }}.png" /></td>
+				<td style="text-align:right;"><a href="#" data-toggle="modal" data-target="#sell-{{ item.item.image }}">Sell for {{ item.item.sell_value }} PD each</a></td>
+			</tr>
+			<tr>
+				<td colspan="4" class="small">{{ item.item.description }}</td>
+			</tr>
+		{% endif %}
+	{% endfor %}
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>FOSSILS</th>
+		<th style="text-align:center;">QTY</th>
+		<th style="text-align:center;">IMG</th>
+		<th style="text-align:right;">Price</th>
+	</tr>
+	{% for item in inventory %}
+		{% if item.item.category == "fossil" %}
+			<tr>
+				<td>{{ item.item.name|title }}</td>
+				<td style="text-align:center;">{{ item.quantity }}</td>
+				<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.item.image }}.png" /></td>
+				<td style="text-align:right;"><a href="#" data-toggle="modal" data-target="#sell-{{ item.item.image }}">Sell for {{ item.item.sell_value }} PD each</a></td>
+			</tr>
+			<tr>
+				<td colspan="4" class="small">{{ item.item.description }}</td>
+			</tr>
+		{% endif %}
+	{% endfor %}
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>EVOLUTION STONE</th>
+		<th style="text-align:center;">QTY</th>
+		<th style="text-align:center;">IMG</th>
+		<th style="text-align:right;">Price</th>
+	</tr>
+	{% for item in inventory %}
+		{% if item.item.category == "evolution stone" %}
+			<tr>
+				<td>{{ item.item.name|title }}</td>
+				<td style="text-align:center;">{{ item.quantity }}</td>
+				<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.item.image }}.png" /></td>
+				<td style="text-align:right;"><a href="#" data-toggle="modal" data-target="#sell-{{ item.item.image }}">Sell for {{ item.item.sell_value }} PD each</a></td>
+			</tr>
+			<tr>
+				<td colspan="4" class="small">{{ item.item.description }}</td>
+			</tr>
+		{% endif %}
+	{% endfor %}
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>BERRY</th>
+		<th style="text-align:center;">QTY</th>
+		<th style="text-align:center;">IMG</th>
+		<th style="text-align:right;">Price</th>
+	</tr>
+	{% for item in inventory %}
+		{% if item.item.category == "berry" %}
+			<tr>
+				<td>{{ item.item.name|title }}</td>
+				<td style="text-align:center;">{{ item.quantity }}</td>
+				<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.item.image }}.png" /></td>
+				<td style="text-align:right;"><a href="#" data-toggle="modal" data-target="#sell-{{ item.item.image }}">Sell for {{ item.item.sell_value }} PD each</a></td>
+			</tr>
+			<tr>
+				<td colspan="4" class="small">{{ item.item.description }}</td>
+			</tr>
+		{% endif %}
+	{% endfor %}
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>KEY ITEM</th>
+		<th style="text-align:center;">QTY</th>
+		<th style="text-align:center;">IMG</th>
+		<th style="text-align:right;">Not Sellable</th>
+	</tr>
+	{% for item in inventory %}
+		{% if item.item.category == "key item" %}
+			<tr>
+				<td>
+					{% if item.item.name == "poke radar" %}
+						<a href="{% url 'pokeradar' %}">Pok&eacute; Radar</a>
+					{% elif item.item.name == "gts membership" %}
+						<a href="{% url 'gts' %}">Global Trade System Membership</a>
+					{% else %}
+						{{ item.item.name|title }}
+					{% endif %}
+				</td>
+				<td style="text-align:center;">{{ item.quantity }}</td>
+				<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.item.image }}.png" /></td>
+				<td style="text-align:right;">--</td>
+			</tr>
+			<tr>
+				<td colspan="4" class="small">{{ item.item.description }}</td>
+			</tr>
+		{% endif %}
+	{% endfor %}
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<th>PARCEL</th>
+		<th style="text-align:center;">QTY</th>
+		<th style="text-align:center;">IMG</th>
+		<th style="text-align:right;">Not Sellable</th>
+	</tr>
+	{% for item in inventory %}
+		{% if item.item.category == "parcel" %}
+			<tr>
+				<td><a href="{% url 'parcel_page' %}">{{ item.item.name|title }}</a></td>
+				<td style="text-align:center;">{{ item.quantity }}</td>
+				<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.item.image }}.png" /></td>
+				<td style="text-align:right;">--</td>
+			</tr>
+			<tr>
+				<td colspan="4" class="small">{{ item.item.description }}</td>
+			</tr>
+		{% endif %}
+	{% endfor %}
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>
+
+</div>
+
+<div class="col-sm-3">
+	<br class="desktop" />
+	<h3 class="gray oswald" style="margin-top:12px;">Gold Upgrades</h3>
+	<table class="content-box-table content-box-table-yellow">
+		<tr>
+			<th>NAME</th>
+			<th style="text-align: center">QTY</th>
+			<th style="text-align: right">IMG</th>
+		</tr>
+		{% for item in inventory %}
+			{% if item.item.purchase_value_coins != 0 %}
+				{% if tem.item.name != "parcel parcel" %}
+					<tr>
+						<td>{{ item.item.name|title }}</td>
+						<td style="text-align: center">{{ item.quantity }}</td>
+						<td style="text-align: right"><img src="{% static 'img/items/' %}{{ item.item.image }}.png" /></td>
+					</tr>
+					<tr class="small gray"><td colspan="3">{{ item.item.description }}</td></tr>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</table>
+</div>
+
+<div class="col-sm-1"></div>
+
+{% for item in inventory %}
+<div class="modal fade" id="sell-{{ item.item.image }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Sell {{ item.item.name|title }}s</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'sell_item' item_pk=item.item.pk %}" method="POST">
+			{% csrf_token %}
+			<div class="form-group">
+				<label>Sell</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Sell for {{ item.item.sell_value }} PD each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

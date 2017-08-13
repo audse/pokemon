@@ -1,0 +1,125 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+{% load humanize %}
+{% load order_by %}
+
+{% block title %}Pok&eacute;mart{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1"></div>
+
+<div class="col-sm-6">
+<h1 class="gray oswald">Elle's Pok&eacute;mart {% if sale %}25% off!{% endif %}</h1>
+
+
+<table class="content-box-table">
+	<thead>
+		<tr>
+			<th>EVOLUTION STONE</th>
+			<th style="text-align:center;">IMG</th>
+			<th style="text-align:right;">Price</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in items %}
+			{% if item.category == "evolution stone" %}
+				<tr>
+					<td>{{ item.name|title }}</td>
+					<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.image }}.png" /></td>
+					<td style="text-align:right;"><a href="#" data-toggle="modal" data-target="#buy-{{ item.pk }}">{{ item.purchase_value|intcomma }} PD</a></td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</tbody>
+	<thead>
+		<tr>
+			<th>BERRY</th>
+			<th style="text-align:center;">IMG</th>
+			<th style="text-align:right;">Price</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in items %}
+			{% if item.category == "berry" %}
+				<tr>
+					<td>{{ item.name|title }}</td>
+					<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.image }}.png" /></td>
+					<td style="text-align:right;"><a href="#" data-toggle="modal" data-target="#buy-{{ item.pk }}">{{ item.purchase_value }} PD</a></td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</tbody>
+	<thead>
+		<tr>
+			<th>KEY ITEM</th>
+			<th style="text-align:center;">IMG</th>
+			<th style="text-align:right;">Price</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in items|order_by:"purchase_value" %}
+			{% if item.category == "key item" and item.purchase_value > 0 %}
+				<tr>
+					<td>{{ item.name|title }}</td>
+					<td style="text-align:center;"><img src="{% static 'img/items/' %}{{ item.image }}.png" /></td>
+					<td style="text-align:right;"><a href="#" data-toggle="modal" data-target="#buy-{{ item.pk }}">{{ item.purchase_value|intcomma }} PD</a></td>
+				</tr>
+				<tr>
+					<td colspan="3" class="small">{{ item.description }}</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+	</tbody>
+</table>
+
+</div>
+
+<div class="col-sm-4">
+	<h1 class="white oswald">Info</h1>
+	<p>Oh... *huff* hey there... the store is all stocked and ready for you to look around. I'm *huff* Elle by the way! Talk to me if you need any help.</p>
+	<p>Oh? What do we have? Um... any items you might need to help your Pok&eacute;mon grow and thrive. Delicious berries in Aisle 3, powerful evolution stones in Aisle 5. Please explore. I'll be stacking these boxes.</p>
+	<img src="{% static 'img/' %}elle.png" class="render" width="100%" />
+</div>
+<div class="col-sm-1"></div>
+
+{% for item in items %}
+<div class="modal fade" id="buy-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}s</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'purchase_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value|intcomma }} PD each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

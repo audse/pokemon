@@ -1,0 +1,29 @@
+{% load order_by %}
+{% load check_for_interaction_in_box %}
+{% load staticfiles %}
+
+{% for adopt in box.pokemon.all %}{% if not adopt.gts and not adopt.daycare %}{% check_for_interaction_in_box user adopt.pk as check_interaction_result %}{% if check_interaction_result %}<form class="interact-form" style="display:inline-block;{% if adopt.happiness == 100 %}background-image:url('{% static 'img/glow-small.png/' %}'){% endif %};height:30px;width:40px;float:left;">
+				{% csrf_token %}
+				<input type="hidden" name="owner_username" value="{{ adopt.owner.username }}" />
+				<input type="hidden" name="pk" value="{{ adopt.pk }}" />
+				{% if adopt.shiny %}<input type="image" src="{% static 'img/pokemon/icons/shiny/' %}{{ adopt.pokemon.number }}.gif" id="opacity-{{ adopt.pk }}" alt="Submit Form" style="float:left;" style="width:40px;height:30px;image-rendering: pixelated;border:none;" />{% else %}<input type="image" src="{% static 'img/pokemon/icons/' %}{{ adopt.pokemon.number }}.png" id="opacity-{{ adopt.pk }}" alt="Submit Form" style="width:40px;height:30px;image-rendering: pixelated;border:none;" />{% endif %}</form>{% else %}{% if adopt.shiny %}<img src="{% static 'img/pokemon/icons/shiny/' %}{{ adopt.pokemon.number }}.gif" style="opacity: 0.3;cursor:not-allowed" />{% else %}<img src="{% static 'img/pokemon/icons/' %}{{ adopt.pokemon.number }}.png" style="opacity: 0.3;cursor:not-allowed;float:left;" />{% endif %}{% endif %}{% endif %}{% endfor %}
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+    	$(".interact-form").submit(function(){
+		    event.preventDefault();
+
+		    $.ajax({
+		        url: '{% url 'interact' %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        context: this,
+		        success: function(data) {
+		            $(this).css("opacity", "0.3");
+		            $(this).css("cursor", "not-allowed");
+		        }
+		    });
+		});
+	});
+</script>

@@ -1,0 +1,22 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Inventory{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1"></div>
+
+<div class="col-sm-8">
+	<h1 class="gray oswald">Inventory</h1>
+	<div class="row">
+		<div class="col-sm-12">
+			<p><span class="red bold">Flavor text is needed here! Something about not having a bag, and needing one, where to get it, what it means. Art (of a backpack) is needed here too!</span></p>
+			<p>It seems you don't have a Bag- Head over to <a href="{% url 'pokemart' %}">the Pok&eacute;mart</a> to get one!</p>
+		</div>
+	</div>
+</div>
+
+<div class="col-sm-1"></div>
+
+{% endblock %}

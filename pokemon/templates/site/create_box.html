@@ -1,0 +1,134 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Create Box{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-2">
+
+</div>
+
+<div class="col-sm-8">
+	<h1 class="gray oswald">Create a Box</h1>
+	<form action="{% url 'create_box' %}" method="post">
+		{% csrf_token %}
+
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-pencil"></i></span>
+				<input type="text" class="form-control" name="name" placeholder="Box Name..." />
+			</div>
+			<label class="small gray">This can be changed later. Up to 140 characters.</label>
+		</div>
+
+		<label>Background Color</label>
+		<div class="row">
+			<div class="col-sm-4">
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="A8A878" />
+					<div style="display:block;width:100%;height:40px;background:#A8A878;"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="6890F0" />
+					<div style="display:block;width:100%;height:40px;background:#6890F0"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="A040A0" />
+					<div style="display:block;width:100%;height:40px;background:#A040A0"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="F85888" />
+					<div style="display:block;width:100%;height:40px;background:#F85888"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="A7B720" />
+					<div style="display:block;width:100%;height:40px;background:#A7B720"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="705848" />
+					<div style="display:block;width:100%;height:40px;background:#705848"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="68A090" />
+					<div style="display:block;width:100%;height:40px;background:#68A090"></div>
+				</label>
+			</div>
+			<div class="col-sm-4">
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="F08030" />
+					<div style="display:block;width:100%;height:40px;background:#F08030"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="A890F0" />
+					<div style="display:block;width:100%;height:40px;background:#A890F0"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="F8D030" />
+					<div style="display:block;width:100%;height:40px;background:#F8D030"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="B8A038" />
+					<div style="display:block;width:100%;height:40px;background:#B8A038"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="7038F8" />
+					<div style="display:block;width:100%;height:40px;background:#7038F8"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="B8B8D0" />
+					<div style="display:block;width:100%;height:40px;background:#B8B8D0"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="EEEEEE" />
+					<div style="display:block;width:100%;height:40px;background:#EEEEEE"></div>
+				</label>
+			</div>
+			<div class="col-sm-4">
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="C03028" />
+					<div style="display:block;width:100%;height:40px;background:#C03028"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="78C850" />
+					<div style="display:block;width:100%;height:40px;background:#78C850"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="E0C068" />
+					<div style="display:block;width:100%;height:40px;background:#E0C068"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="98D8D8" />
+					<div style="display:block;width:100%;height:40px;background:#98D8D8"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="705898" />
+					<div style="display:block;width:100%;height:40px;background:#705898"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="EE99AC" />
+					<div style="display:block;width:100%;height:40px;background:#EE99AC"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="333333" />
+					<div style="display:block;width:100%;height:40px;background:#333333"></div>
+				</label>
+			</div>
+		</div>
+		<br />
+		<button class="btn btn-secondary" type="submit">Create</button>
+		{% if voucher %}
+			&nbsp; <span class="small gray">This will use up one Box Voucher.</span>
+		{% elif first %}
+			&nbsp; <span class="small gray">As this is your first box, it won't cost you anything.</span>
+		{% endif %}
+		<br /><br /><br />
+
+	</form>
+</div>
+
+<div class="col-sm-2">
+	
+</div>
+
+{% endblock %}

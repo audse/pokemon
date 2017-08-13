@@ -1,0 +1,105 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}GTS{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-10">
+	<h1 class="gray oswald">Global Trade Station</h1>
+	<a href="{% url 'start_trade_page' username='' %}"><button class="btn btn-secondary">Set up trade</button></a>
+	<br /><br />
+</div>
+<div class="col-sm-1"></div>
+<div class="col-sm-1"></div>
+
+<div class="col-sm-5">
+	<h5>Sent Trades</h5>
+	{% for trade in sent_trades %}
+			<div class="content-box">
+				<div class="content-box-head">
+					Trade with {{ trade.recieving_user.username }}
+					{% if not trade.recieving_adopt %}
+						<a href="{% url 'cancel_trade' pk=trade.pk %}"><span style="float:right;color:white;">&times;</span></a>
+					{% endif %}
+				</div>
+				<div class="content-box-body">
+					{% if trade.recieving_adopt %}
+						<span class="small gray">
+							{{ trade.recieving_user.username }}'s Message: 
+							{% if trade.recieving_message %}
+								{{ trade.recieving_message }}
+							{% else %}
+								None supplied!
+							{% endif %}
+						</span><br />
+					{% else %}
+						<span class="small gray">
+							Your Message: 
+							{% if trade.sending_message %}
+								{{ trade.sending_message }}
+							{% else %}
+								None supplied!
+							{% endif %}
+						</span><br />
+					{% endif %}<br />
+					<a href="{% url 'view_adopt' pk=trade.sending_adopt.pk status='pokemon' %}"><img src="{% static 'img/pokemon/' %}{% if trade.sending_adopt.shiny %}shiny/{% endif %}{{ trade.sending_adopt.pokemon.number }}.png"/></a>
+					{% if trade.recieving_adopt %}
+						<p>{{ trade.recieving_user }} offered...</p>
+						<a href="{% url 'view_adopt' pk=trade.recieving_adopt.pk status='pokemon' %}"><img src="{% static 'img/pokemon/' %}{% if trade.recieving_adopt.shiny %}shiny/{% endif %}{{ trade.recieving_adopt.pokemon.number }}.png"/></a>
+						Holding {{ trade.recieving_adopt.held_item.name }}<br />
+
+						<a href="{% url 'reject_trade_offer' pk=trade.pk %}"><button class="btn btn-danger">Reject</button></a>
+						<a href="{% url 'accept_trade_offer' pk=trade.pk %}"><button class="btn btn-success">Accept</button></a>
+						<br /><br />
+						<p class="small gray">Note: You must have an open party space to accept or reject trade offers.</p>
+					{% else %}
+						Waiting for offer...
+					{% endif %}
+				</div>
+			</div>
+	{% empty %}
+		<i class="gray small">None to show!</i>
+	{% endfor %}
+</div>
+<div class="col-sm-5">
+	<h5>Received Trades</h5>
+	{% for trade in recieved_trades %}
+			<div class="content-box">
+				<div class="content-box-head">
+					Trade with {{ trade.sending_user.username }}
+				</div>
+				<div class="content-box-body">
+					{% if trade.recieving_adopt %}
+						{% if trade.seen_offer %}
+							{% if trade.accepted %}
+								<a href="{% url 'view_adopt' pk=trade.sending_adopt.pk status='pokemon' %}"><img src="{% static 'img/pokemon/' %}{% if trade.sending_adopt.shiny %}shiny/{% endif %}{{ trade.sending_adopt.pokemon.number }}.png" /></a>
+								<a href="{% url 'collect_trade_offer' pk=trade.pk %}"><button class="btn btn-success">Collect Pok&eacute;mon</button></a>
+							{% else %}
+								<a href="{% url 'view_adopt' pk=trade.recieving_adopt.pk status='pokemon' %}"><img src="{% static 'img/pokemon/' %}{% if recieving_adopt.sending_adopt.shiny %}shiny/{% endif %}{{ trade.recieving_adopt.pokemon.number }}.png" /></a>
+								Trade rejected. <a href="{% url 'collect_rejected_trade_offer' pk=trade.pk %}"><button class="btn btn-secondary">Collect Pok&eacute;mon</button></a>
+							{% endif %}
+						{% else %}
+							<a href="{% url 'view_adopt' pk=trade.sending_adopt.pk status='pokemon' %}"><img src="{% static 'img/pokemon/' %}{% if trade.sending_adopt.shiny %}shiny/{% endif %}{{ trade.sending_adopt.pokemon.number }}.png" /></a>
+							Waiting for acceptance...
+							<p>You offered...</p>
+							<a href="{% url 'view_adopt' pk=trade.recieving_adopt.pk status='pokemon' %}"><img src="{% static 'img/pokemon/' %}{% if trade.recieving_adopt.shiny %}shiny/{% endif %}{{ trade.recieving_adopt.pokemon.number }}.png"/></a>
+							Holding {{ trade.recieving_adopt.held_item.name }}
+						{% endif %}
+					{% else %}
+						<a href="{% url 'view_adopt' pk=trade.sending_adopt.pk status='pokemon' %}"><img src="{% static 'img/pokemon/' %}{% if trade.sending_adopt.shiny %}shiny/{% endif %}{{ trade.sending_adopt.pokemon.number }}.png" /></a>
+						Holding {{ trade.sending_adopt.held_item.name }}
+						<a href="{% url 'offer_trade_page' pk=trade.pk %}"><button class="btn btn-secondary">Offer</button></a>
+					{% endif %}
+				</div>
+			</div>
+	{% empty %}
+		<i class="gray small">None to show!</i>
+	{% endfor %}
+</div>
+
+{% endblock %}

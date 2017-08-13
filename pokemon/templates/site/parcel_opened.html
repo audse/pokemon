@@ -1,0 +1,83 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Parcels{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1"></div>
+<div class="col-sm-10">
+	<br />
+	<div class="alert alert-info">
+		<b>You opened the parcel and found...</b> {{ message }}
+	</div>
+</div>
+<div class="col-sm-1"></div>
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-6">
+	<h1 class="gray oswald">Parcels <small style="font-size:.6em;">Click to open</small></h1>
+	<div class="content-box">
+		<div class="content-box-body" style="padding-bottom:15px;">
+			{% if parcel %}
+				{% for i in parcel_quantity %}
+					<a href="{% url 'open_parcel' %}"><img src="{% static 'img/items/parcel.png' %}" /></a>
+				{% endfor %}
+			{% else %}
+				<i class="gray">You do not have any parcels.</i>
+			{% endif %}
+		</div>
+	</div>
+	<br /><h3 class="gray oswald">Gold</h3>
+	<div class="content-box">
+		<div class="content-box-body" style="padding-bottom:15px;">
+			{% if gold_parcel %}
+				{% for i in gold_parcel_quantity %}
+					<img src="{% static 'img/items/gold-parcel.png' %}" />
+				{% endfor %}
+			{% else %}
+				<i class="gray">You do not have any gold parcels.</i>
+			{% endif %}
+		</div>
+	</div>
+</div>
+<div class="col-sm-4">
+	<br /><h3 class="gray oswald">Purchase</h3>
+	<p><i class="gray">These may or may not belong to a certain mailing facility, but we're not asking questions.</i></p>
+	<br /><h5 class="gray oswald">Parcel Store <span class="badge badge-electric">GOLD</span></h5>
+	<table class="content-box-table">
+		<tr>
+			<th>PARCEL</th>
+			<th>IMG</th>
+			<th>Price</th>
+		</tr>
+		<tr>
+			<td>Gold Parcel</td>
+			<td><img src="{% static 'img/items/gold-parcel.png' %}" /></td>
+			<td>50 Coins</td>
+		</tr>
+		<tr>
+			<td class="small gray" colspan="3">
+				A mysterious package...It looks kind of valuable! I wonder what's inside?
+			</td>
+		</tr>
+		<tr>
+			<td>Parcel Parcel</td>
+			<td><img src="{% static 'img/items/parcel-parcel.png' %}" /></td>
+			<td>50 Coins</td>
+		</tr>
+		<tr>
+			<td class="small gray" colspan="3">
+				A mysterious package of mysterious packages... I wonder what's inside what's inside?
+			</td>
+		</tr>
+	</table>
+</div>
+
+<div class="col-sm-1">
+	
+</div>
+
+{% endblock %}

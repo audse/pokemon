@@ -1,0 +1,27 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Pok&eacute;mart{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-6">
+	<h1 class="gray oswald">Elle's Pok&eacute;mart</h1>
+	<p>Oh... *huff* hey there... the store is all stocked and ready for you to look around. I'm *huff* Elle by the way! Talk to me if you need any help.</p>
+	<p>Oh? What do we have? Um... any items you might need to help your Pok&eacute;mon grow and thrive. Delicious berries in Aisle 3, powerful evolution stones in Aisle 5. Please explore. I'll be stacking these boxes.</p>
+	
+</div>
+
+<div class="col-sm-4">
+	<img src="{% static 'img/elle.png' %}" class="render" width="100%" />
+</div>
+
+<div class="col-sm-1">
+	
+</div>
+
+{% endblock %}

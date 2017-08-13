@@ -1,0 +1,61 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Private Messages{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-10">
+	<h1 class="gray oswald">Private Messages <small><a href="{% url 'send_pm_page' username='send' %}"><i class="fa fa-plus"></i></a></small></h1>
+</div>
+<div class="col-sm-1"></div>
+<div class="col-sm-1"></div>
+<div class="col-sm-5">
+	<br />
+	<h3 class="gray oswald">Received PMs</h3>
+	{% for pm in received_pms %}
+		<div class="content-box {% if not pm.seen %}content-box-red{% else %}content-box-gray{% endif %}">
+			<div class="content-box-head">
+				Message from <a href="{% url 'profile_page' username=pm.sending_user.username %}"><span style="color:rgba(255,255,255,0.6);">{{ pm.sending_user.username }}</span></a></div>
+			<div class="content-box-body">
+				<h5 class="gray" style="margin:10px 0 10px 0">{% if pm.parent_pm != None %}RE: {% endif %}{{ pm.subject }}</h5>
+				{% if pm.parent_pm != None %}
+					<div class="content-box small {% if not pm.seen %}content-box-red{% else %}content-box-gray{% endif %}">
+						<div class="content-box-body"><p>You said: {{ pm.parent_pm.message }}</p></div>
+					</div>
+				{% endif %}
+				<p>{{ pm.message }}</p>
+				<p class="small gray">Sent {{ pm.send_time }} server time.</p>
+			{% if not pm.replied %}
+			</div>
+			<a href="{% url 'reply_page' pk=pm.pk %}"><button class="content-box-button">Reply</button></a>
+			<div class="content-box-body">
+			{% endif %}
+				<p>{% if not pm.seen %}<a href="{% url 'mark_as_read' pk=pm.pk %}"><button style="width: 100%;margin-bottom:10px;" class="btn btn-sm btn-secondary">Mark as Read</button></a>{% endif %}
+				<a href="{% url 'remove_from_received' pk=pm.pk %}"><button style="width: 100%;color:" class="btn btn-sm btn-secondary red">Remove from Inbox</button></a></p>
+			</div>
+		</div>
+	{% endfor %}
+</div>
+<div class="col-sm-5">
+	<br />
+	<h3 class="gray oswald">Sent PMs</h3>
+	{% for pm in sent_pms %}
+		<div class="content-box">
+			<div class="content-box-head">
+				Message to <a href="{% url 'profile_page' username=pm.receiving_user.username %}"><span style="color:rgba(255,255,255,0.6);">{{ pm.receiving_user.username }}</span></a></div>
+			<div class="content-box-body">
+				<h5 class="gray" style="margin:10px 0 10px 0">{{ pm.subject }}</h5>
+				<p>{{ pm.message }}</p>
+				<p class="small gray">Sent {{ pm.send_time }} server time.</p>
+				<p><a href="{% url 'remove_from_sent' pk=pm.pk %}"><button style="width: 100%;color:" class="btn btn-sm btn-secondary red">Remove from Inbox</button></a></p>
+			</div>
+		</div>
+	{% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Pok&eacute;mart{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1"></div>
+
+<div class="col-sm-8">
+
+<h1 class="gray oswald">Pok&eacute;mart</h1>
+<p>Looks like you don't have a bag! You can't start collecting items in your inventory without one. The first one's on me! (Insert more flavor text, maybe art of a random shopkeeper)</p>
+<a href="{% url 'receive_bag' %}"><button class="btn btn-secondary">Receive Your Bag!</button></a>
+
+</div>
+
+
+{% endblock %}

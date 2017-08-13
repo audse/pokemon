@@ -1,0 +1,38 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Send Private Message{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-10">
+	<h1 class="gray oswald">Send Private Message</h1>
+
+	<form action="{% url 'send_pm' %}" method="POST">
+		{% csrf_token %}
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-user"></i></span>
+				<input type="text" name="username" class="form-control" placeholder="Username..." value="{% if username != 'send' %}{{ username }}{% endif %}"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-pencil"></i></span>
+				<input type="text" name="subject" class="form-control" placeholder="Subject..." value=""/>
+			</div>
+			<label class="small gray">This should be under 140 characters.</label>
+		</div>
+		<div class="form-group">
+			<textarea class="form-control" name="message" rows="10"></textarea>
+		</div>
+		<button type="submit" class="btn btn-secondary">Send PM</button><br /><br />
+	</form>
+
+</div>
+
+{% endblock %}

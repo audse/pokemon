@@ -1,0 +1,368 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+{% load order_by %}
+
+{% block title %}Daycare{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-6">
+	<h1 class="gray oswald">Your Daycare</h1>
+
+	<div class="row">
+	{% for adopt in adopts_in_daycare %}
+		<div class="col-sm-6" style="text-align: center;">
+			<div class="content-box">
+				<div class="content-box-head">
+					{% if adopt.nickname %}
+						{{ adopt.nickname }}
+					{% else %}
+						{{ adopt.pokemon.name }}
+					{% endif %}
+					{% if adopt.gender %}&male;{% else %}&female;{% endif %}
+				</div>
+				<div class="content-box-body">
+					<a href="{% url 'view_adopt' pk=adopt.pk status='pokemon' %}"><img src="{% static 'img/pokemon/' %}{% if adopt.shiny %}shiny/{% endif %}{{ adopt.pokemon.number }}.png" /></a>
+				</div>
+				<a href="" data-toggle="modal" data-target="#feed-{{ adopt.pk }}" ><button class="content-box-button">Feed Pok&eacute; Puff</button></a>
+				<div class="content-box-body">
+					Happiness<br />
+					<div class="progress" style="position:relative;margin: 10px 0 20px 0;">
+						<div class="progress-bar" role="progressbar" style="width:{{ adopt.happiness }}%;position: absolute;left:0;z-index:6">
+							{{ adopt.happiness }}%
+						</div>
+						<div class="progress-bar" role="progressbar" style="width:0%;"></div>
+					 	<div class="progress-bar" role="progressbar" style="width:20%;background:#e74c3c;position: absolute;left:0;z-index:5;text-align:right;">>:(&nbsp;</div>
+					 	<div class="progress-bar" role="progressbar" style="width:40%;background:#e67e22;position: absolute;left:0;z-index:4;text-align:right;">:(&nbsp;</div>
+					 	<div class="progress-bar" role="progressbar" style="width:60%;background:#f1c40f;position: absolute;left:0;z-index:3;text-align:right;">:|&nbsp;</div>
+					 	<div class="progress-bar" role="progressbar" style="width:80%;background:#87D37C;position: absolute;left:0;z-index: 2;text-align:right;">:)&nbsp;</div>
+					 	<div class="progress-bar" role="progressbar" style="width:100%;background:#2ecc71;position: absolute;left:0;z-index:1;text-align:right;">:D&nbsp;</div>
+					</div>
+				</div>
+				<a href="{% url 'pick_up_adopt' pk=adopt.pk %}"><button class="content-box-button">Pick Up Pok&eacute;mon</button></a>
+			</div>
+		</div>
+		{% if forloop.counter == 1 and forloop.last %}
+			<a href="{% url 'drop_off_adopt_page' %}"><button class="btn btn-secondary">Drop Off 2nd Pok&eacute;mon</button></a>
+		{% elif forloop.counter == 2 %}
+			<div class="col-sm-12" style="text-align:center;">
+				<br />
+				{% if same_pokemon and opposite_genders %}
+					The two seem to <b style="color:#F85888">get along</b>.
+				{% else %}
+					The two prefer to play with other Pokémon more than with each other.
+				{% endif %}
+
+				<br /><br />
+
+				{% if same_pokemon and opposite_genders %}
+				<div class="content-box">
+					<div class="content-box-body">
+						{% if daycare_eggs.count != 0 %}
+
+							{% if daycare_adopts == 1 and has_egg_permit %}
+								<p><i class="gray">You may only adopt {% if has_egg_permit %}two eggs{% else %}one egg{% endif %} per day.</i></p>
+
+								<p style="text-align: center;">
+									{% for egg in daycare_eggs %}
+										<a href="#" data-toggle="modal" data-target="#egg-{{ egg.pk }}"><img src="{% static 'img/eggs/crop/' %}{{ egg.pokemon.number }}.png" style="margin: 10px;" /></a>
+									{% endfor %}
+								</p>
+								<p><i class="gray small">Note that you must have an open party space to adopt an egg.</i></p>
+							{% elif daycare_adopts == 0 %}
+								<p><i class="gray">You may only adopt {% if has_egg_permit %}two eggs{% else %}one egg{% endif %} per day.</i></p>
+
+								<p style="text-align: center;">
+									{% for egg in daycare_eggs %}
+										<a href="#" data-toggle="modal" data-target="#egg-{{ egg.pk }}">
+											<img src="{% static 'img/eggs/crop/' %}{{ egg.pokemon.number }}.png" style="margin: 10px;" />
+										</a>
+									{% endfor %}
+								</p>
+								<p><i class="gray small">Note that you must have an open party space to adopt an egg.</i></p>
+							{% else %}
+								<p><i class="gray">You have already adopted the maximum eggs.</i></p>
+							{% endif %}
+						{% else %}
+							<p><i class="gray">These Pok&eacute;mon have not yet produced any eggs.</i></p>
+						{% endif %}
+					</div>
+				</div>
+				{% endif %}
+
+			</div>
+		{% endif %}
+	{% empty %}
+		<div class="col-sm-12">
+			<br />
+			<p><i class="gray">No Pok&eacute;mon in daycare.</i></p>
+		
+			<a href="{% url 'drop_off_adopt_page' %}"><button class="btn btn-secondary">Drop Off Pok&eacute;mon</button></a><br />
+		</div>
+	{% endfor %}
+	</div>
+
+	<br /><br />
+	<h4 class="gray oswald">Pok&eacute; Puff Store</h4>
+	<table class="content-box-table">
+		<tr>
+			<th>BASIC</th>
+			<th style="text-align:center;">IMG</th>
+			<th style="text-align:right;">Price</th>
+		</tr>
+
+		{% for poke_puff in poke_puffs %}
+		<tr>
+			<td>{{ poke_puff.name|title }}</td>
+			<td style="text-align:center;"><img src="{% static 'img/items/poke-puffs/' %}{{ poke_puff.image }}.png" /></td>
+			<td style="text-align:right;"><a href="#" data-toggle="modal" data-target="#buy-{{ poke_puff.pk }}">{{ poke_puff.purchase_value }} PD</a></td>
+		</tr>
+		<tr>
+			<td colspan="3" class="small">{{ poke_puff.description }}</td>
+		</tr>
+		{% endfor %}
+
+	</table>
+	<br />
+</div>
+
+<div class="col-sm-4">
+	<!-- 
+	<p>Needs assistant image</p> -->
+
+	<br class="desktop" />
+	<h3 class="gray oswald" style="margin:10px 0 10px 0;">Contracts</h3>
+	<div class="content-box">
+		{% if has_contract_license %}
+			{% if contract %}
+				<div class="content-box-head">
+					{% if contract.difficulty == 5 %}
+						<span class="badge badge-danger">VERY HARD</span>
+					{% elif contract.difficulty == 4 %}
+						<span class="badge badge-fire">HARD</span>
+					{% elif contract.difficulty == 3 %}
+						<span class="badge badge-electric">MEDIUM</span>
+					{% elif contract.difficulty == 2 %}
+						<span class="badge badge-grass">EASY</span>
+					{% elif contract.difficulty == 1 %}
+						<span class="badge badge-success">VERY EASY</span>
+					{% endif %}
+					&nbsp;A TRAINER HAS REQUESTED...
+				</div>
+				<div class="content-box-body">
+					<img src="{% static 'img/pokemon/' %}{{ contract.requested_pokemon.number }}.png" style="float:left;">
+					<p>
+						<span class="badge badge-{{ contract.requested_pokemon.primary_type }}" style="font-size:1em;">#{{ contract.requested_pokemon }}</span><br />
+						{% if contract.requested_happiness %}
+							Happiness: {{ contract.requested_happiness }}% or more
+						{% endif %}<br />
+						{% if contract.requested_stat %}
+							Stat: {{ contract.requested_stat }}, {{ contract.requested_stat_value }}% or more
+						{% endif %}
+					</p>
+					<div class="clear"></div>
+					<p><i class="small gray">Note that all Pok&eacute;mon used for this contract must be hatched after {{ contract.date_accepted }} server time.</i></p>
+
+					<p>You will be paid {{ contract.payment_amount }} {{ contract.payment_method }} for completion of this contract.</p>
+					{% if contract.difficulty == 3 %}
+					<p class="small gray"><i>You will also receive 1 parcel.</i></p>
+					{% elif contract.difficulty == 4 %}
+					<p class="small gray"><i>You will also receive 3 parcels.</i></p>
+					{% elif contract.difficulty == 5 %}
+					<p class="small gray"><i>You will also receive 5 parcels.</i></p>
+					{% endif %}
+				</div>
+				<a href="{% url 'complete_contract_page' %}"><button class="content-box-button">Complete Contract</button></a>
+				<div class="content-box-body">
+					<a href="#" data-toggle="modal" data-target="#cancel-contract"><button class="btn btn-sm btn-secondary" style="width:100%;margin-bottom: 15px;">Cancel Contract</button></a>
+				</div>
+			{% else %}
+				{% if potential_contract %}
+					<div class="content-box-body">
+						<p>A trainer has a 
+							{% if potential_contract.difficulty == 5 %}
+								<span class="badge badge-danger">very hard</span>
+							{% elif potential_contract.difficulty == 4 %}
+								<span class="badge badge-fire">hard</span>
+							{% elif potential_contract.difficulty == 3 %}
+								<span class="badge badge-electric">medium</span>
+							{% elif potential_contract.difficulty == 2 %}
+								<span class="badge badge-grass">easy</span>
+							{% elif potential_contract.difficulty == 1 %}
+								<span class="badge badge-success">very easy</span>
+							{% endif %}
+						 contract for you:</p>
+						 <a href="{% url 'accept_potential_contract' %}"><button class="btn btn-success" style="width:100%;margin-bottom: 15px;">Accept</button></a>
+						 <a href="{% url 'reject_potential_contract' %}"><button class="btn btn-sm btn-danger" style="width:100%;margin-bottom: 15px;">Reject</button></a>
+						 <p><i class="small gray">Note that there will be a 1000 PD cancellation fee for uncompleted contracts.</i></p>
+					</div>
+				{% else %}
+					<div class="content-box-body">
+						<p><i class="gray">You have no contracts.</i></p>
+						<p><a href="{% url 'create_potential_contract' %}"><button class="btn btn-secondary" style="width:100%;">Check Available Contracts</button></a></p>
+					</div>
+				{% endif %}
+			{% endif %}
+		{% else %}
+			<div class="content-box-body">
+				<p><i class="gray">You do not have a license to contract. If you want to begin, purchase a license from the <a href="{% url 'pokemart' %}">Pok&eacute;mart</a>.</i></p>
+			</div>
+		{% endif %}
+		</div>
+		<br /><br />
+		<h4 class="gray oswald">Daycare Store <span class="small badge badge-electric">GOLD</span></h4>
+		<table class="content-box-table">
+			<tr>
+				<th>NAME</th>
+				<th style="text-align: center;">IMG</th>
+				<th style="text-align: right">Price</th>
+			</tr>
+			{% for item in daycare_items|order_by:"purchase_value_coins" %}
+				<tr>
+					<td>{{ item.name|title }}</td>
+					<td style="text-align: center;"><img src="{% static 'img/items/' %}{{ item.image }}.png" /></td>
+					<td style="text-align: right;"><a href="#" data-toggle="modal" data-target="#buy-gold-{{ item.pk }}">{{ item.purchase_value_coins }} Coins</a></td>
+				</tr>
+				<tr>
+					<td colspan="3" class="small gray">{{ item.description }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+</div>
+
+<div class="col-sm-1">
+	
+</div>
+
+{% for item in poke_puffs %}
+<div class="modal fade" id="buy-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}s</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'purchase_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value }} PD each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
+{% for adopt in adopts_in_daycare %}
+<div class="modal fade" id="feed-{{ adopt.pk }}" tabindex="-1" role="dialog" >
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Feed Pok&eacute; Puffs</h4>
+	  </div>
+	  <div class="modal-body">
+			{% for item in poke_puffs_in_inventory %}
+				<form action="{% url 'feed_poke_puff' adopt_pk=adopt.pk %}" method="POST" style="display:inline-block;text-align:center;padding:5px;" class="small">
+					{% csrf_token %}
+					<input type="hidden" name="poke_puff_pk" value="{{ item.pk }}" />
+					<input type="image" src="{% static 'img/items/poke-puffs/' %}{{ item.item.image }}.png" />
+					<br />x{{ item.quantity }}
+				</form>
+			{% endfor %}
+		</form>
+	  </div>
+	  <div class="modal-footer">
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
+{% if contract %}
+<div class="modal fade" id="cancel-contract" tabindex="-1" role="dialog">
+  	<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Cancel Contract</h4>
+      		</div>
+      		<div class="modal-body">
+        		Are you sure you want to cancel this contract? This cannot be undone, and will cost 1000 PD.
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-secondary" onclick='' data-dismiss="modal">No</button>
+        		<a href="{% url 'cancel_contract' %}"><button type="button" class="btn btn-danger" onclick=''>Yes</button></a>
+      		</div>
+    	</div>
+  	</div>
+</div>
+{% endif %}
+
+{% for item in daycare_items %}
+<div class="modal fade" id="buy-gold-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}s</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'purchase_gold_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value_coins }} Coins each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
+{% for egg in daycare_eggs %}
+	<div class="modal fade" id="egg-{{ egg.pk }}" tabindex="-1" role="dialog">
+	  	<div class="modal-dialog modal-sm">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        		<h4 class="modal-title"">
+	      					Adopt this egg?
+	        		</h4>
+	      		</div>
+	      		<div class="modal-body" style="text-align:center;">
+	      				<img src="{% static 'img/eggs/' %}{{ egg.pokemon.number }}.png" />
+	      		</div>
+	      		<div class="modal-footer">
+	        		<a href="{% url 'adopt_daycare_egg' pk=egg.pk %}"><button type="button" class="btn btn-secondary" onclick=''>Adopt</button></a>
+	      		</div>
+	    	</div>
+	  	</div>
+	</div>
+{% endfor %}
+
+{% endblock %}

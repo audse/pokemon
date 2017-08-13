@@ -1,0 +1,36 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Reply to Private Message{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-10">
+	<h1 class="gray oswald">Reply to Private Message</h1>
+
+	<div class="content-box">
+		<div class="content-box-head">
+			Replying to message from <a href="{% url 'profile_page' username=pm.sending_user.username %}"><span style="color:rgba(255,255,255,0.6);">{{ pm.sending_user.username }}</span></a></div>
+		<div class="content-box-body">
+			<h5 class="gray" style="margin:10px 0 10px 0">{{ pm.subject }}</h5>
+			<p>{{ pm.message }}</p>
+			<p class="small gray">Sent {{ pm.send_time }} server time.</p>
+		</div>
+	</div>
+
+	<form action="{% url 'reply' %}" method="POST">
+		{% csrf_token %}
+		<input type="hidden" name="parent" value="{{ pm.pk }}" />
+		<div class="form-group">
+			<textarea class="form-control" name="message" rows="10"></textarea>
+		</div>
+		<button type="submit" class="btn btn-secondary">Send PM</button><br /><br />
+	</form>
+
+</div>
+
+{% endblock %}

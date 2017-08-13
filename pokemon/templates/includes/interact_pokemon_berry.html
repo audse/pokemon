@@ -1,0 +1,138 @@
+{% load staticfiles %}
+{% if adopt.can_interact %}
+
+<button class="party-space-button"  data-toggle="modal" data-target="#feed" style="width:100%;margin-top:5px;background-color: #5cb85c; border: 1px solid #449E44">Feed a berry</button>
+
+<div class="modal fade" data-backdrop="" id="feed" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title">Feed Berry</h4>
+      		</div>
+      		<div class="modal-body">
+      			<div  id="interaction-{{ adopt.pk}}">
+
+					<form id="interact-form-{{ adopt.pk }}-smart" style="display:inline-block;">{% csrf_token %}
+						<input type="hidden" name="berry" value="smart" /><input type="hidden" name="owner_username" value="{{ adopt.owner.username }}" /><input type="hidden" name="pk" value="{{ adopt.pk }}" />
+						<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary" {% if has_aguav_berry %} style="background:#78C850;" {% else %} style="background:gray" disabled {% endif %}>
+							<img src="{% static 'img/items/aguav-berry.png' %}" />
+						</button>
+						</span>
+					</form>
+
+					<form id="interact-form-{{ adopt.pk }}-cool" style="display:inline-block;">{% csrf_token %}
+						<input type="hidden" name="berry" value="cool" /><input type="hidden" name="owner_username" value="{{ adopt.owner.username }}" /><input type="hidden" name="pk" value="{{ adopt.pk }}" />
+						<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary" {% if has_leppa_berry %} style="background:#F08030" {% else %} style="background:gray" disabled {% endif %}>
+							<img src="{% static 'img/items/leppa-berry.png' %}" />
+						</button>
+					</form>
+
+					<form id="interact-form-{{ adopt.pk }}-cute" style="display:inline-block;">{% csrf_token %}
+						<input type="hidden" name="berry" value="cute" /><input type="hidden" name="owner_username" value="{{ adopt.owner.username }}" /><input type="hidden" name="pk" value="{{ adopt.pk }}" />
+						<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary" {% if has_kasib_berry %} style="background:#EE99AC" {% else %} style="background:gray" disabled {% endif %}>
+							<img src="{% static 'img/items/kasib-berry.png' %}" />
+						</button>
+					</form>
+
+					<form id="interact-form-{{ adopt.pk }}-beauty" style="display:inline-block;" >{% csrf_token %}
+						<input type="hidden" name="berry" value="beauty" /><input type="hidden" name="owner_username" value="{{ adopt.owner.username }}" /><input type="hidden" name="pk" value="{{ adopt.pk }}" />
+						<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary" {% if has_chesto_berry %} style="background:#6890F0" {% else %} style="background:gray" disabled {% endif %}>
+							<img src="{% static 'img/items/chesto-berry.png' %}" />
+						</button>
+					</form>
+
+					<form id="interact-form-{{ adopt.pk }}-tough" style="display:inline-block;">{% csrf_token %}
+						<input type="hidden" name="berry" value="tough" /><input type="hidden" name="owner_username" value="{{ adopt.owner.username }}" /><input type="hidden" name="pk" value="{{ adopt.pk }}" />
+						<button type="submit" formmethod="post" class="btn btn-sm btn-smr btn-secondary" {% if has_sitrus_berry %} style="background:#F8D030" {% else %} style="background:gray" disabled {% endif %}>
+							<img src="{% static 'img/items/sitrus-berry.png' %}" />
+						</button>
+					</form>
+
+				</div>
+				<span class="small">Make sure you have the berry you've chosen in your inventory before feeding it to a Pok&eacute;mon.</span>
+      		</div>
+      		<div class="modal-footer">
+      		</div>
+    	</div>
+  	</div>
+</div>
+{% else %}
+
+{% endif %}
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+    	$("#interact-form-{{ adopt.pk }}-tough").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+
+		   //          $('#feed').modal('hide');
+					// $('body').removeClass('modal-open');
+					// $('.modal-backdrop').remove();
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+    	$("#interact-form-{{ adopt.pk }}-cool").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+    	$("#interact-form-{{ adopt.pk }}-beauty").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+    	$("#interact-form-{{ adopt.pk }}-cute").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+    	$("#interact-form-{{ adopt.pk }}-smart").submit(function(){
+		    event.preventDefault();
+		    $.ajax({
+		        url: '{% url 'interact' %}',
+		        type: 'POST',
+		        data: $(this).serialize(),
+		        success: function(data) {
+		            $("#interaction-{{ adopt.pk }}").html('<div style="padding-bottom: 10px; text-align: center"><i class="gray" style="padding: 10px;">Thank you!</i><br /></div>');
+		            
+		            $("#exp-{{ adopt.pk }}").load(document.URL + ' #exp-{{ adopt.pk }}');
+		        }
+		    });
+		});
+	});
+</script>

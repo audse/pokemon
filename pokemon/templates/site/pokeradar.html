@@ -1,0 +1,322 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+{% load order_by %}
+{% load humanize %}
+
+{% block title %}Pok&eacute; Radar{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1"></div>
+
+<div class="col-sm-9">
+	<h1 class="gray oswald">Pok&eacute; Radar</h1>
+
+	<p>RADAR ACTIVATED. <code>*BOOP*</code> <code>*BOOP*</code> User detected, Guide startup! Greetings consumer, you have legally purchased this <code>POKE RADAR</code>. A Pok&eacute; Radar is a device that allowa you to more efficiently search for shiny Pok&eacute;mon.</p>
+
+	<p>To use the Pok&eacute; Radar, charge me up by interacting with Pok&eacute;mon. If I have enough power I will automatically use it to scan one of your eggs as it hatches. Remember &ndash; keep me charged to scan EVERY egg you hatch! That way you won't miss a shiny!</p>
+
+	<p><code>*BEEP*</code> Dictionary result: Shiny: A Pok&eacute;mon of rare or unusual color for its species.</p>
+
+	<p>Returning to radar mode <code>*BOOP*</code> <code>*BOOP*</code></p>
+
+	{% if hunt %}
+		<table class="content-box-table" border=1 frame=void rules=rows style="position: relative;">
+			<tr>
+				<th>Shiny #{{ hunt.pokemon.number|stringformat:"03d" }} {{ hunt.pokemon.name }} Hunt
+				<a href="#" data-toggle="modal" data-target="#cancel-hunt"><span style="color: white;position:absolute;right:10px;font-size: 2em;top:-8px">&times;</span></a></th>
+			</tr>
+			<tr>
+				<td style="text-align: center;">
+					<img src="{% static 'img/pokemon/' %}{{ hunt.pokemon.number }}.png" style="float:left;" />
+					<img src="{% static 'img/pokemon/' %}0.png" />
+					<img src="{% static 'img/pokemon/shiny/' %}{{ hunt.pokemon.number }}.png" style="float:right;" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<br />
+					<p>{{ hunt.hatched }} Hatched (Maximum bonus at 50)</p>
+					{% if shiny_day %}
+						<p>Your current shiny chance is doubled {% if shiny_charm != None %}and boosted{% endif %} to be <code>{{ shiny_chance }}%</code>!</p>
+					{% else %}
+						<p>Your current shiny chance is {% if shiny_charm != None %}a boosted{% endif %} <code>{{ shiny_chance }}%</code>.</p>
+					{% endif %}
+				</td>
+			</tr>
+
+			{% if has_radar_drive %}
+				{% if hunt.second_pokemon == None %}
+				<tr>
+					<td style="text-align: center;">
+						<br />
+						<p>It appears you have a radar drive! Would you like to hunt another Pok&eacute;mon as well?</p>
+						<a href="#" data-toggle="modal" data-target="#start-second-hunt"><button class="btn btn-secondary" style="width:100%">Start Another Hunt</button></a>
+						<br /><br />
+					</td>
+				</tr>
+				{% else %}
+
+					<tr style="position: relative;">
+						<th style="position: relative;">Shiny #{{ hunt.second_pokemon.number|stringformat:"03d" }} {{ hunt.second_pokemon.name }} Hunt
+						<a href="#" data-toggle="modal" data-target="#cancel-second-hunt"><span style="color: white;position:absolute;top:-7px;right:10px;font-size: 2em;">&times;</span></a></th>
+					</tr>
+					<tr>
+						<td style="text-align: center;">
+							<img src="{% static 'img/pokemon/' %}{{ hunt.second_pokemon.number }}.png" style="float:left;" />
+							<img src="{% static 'img/pokemon/' %}0.png" />
+							<img src="{% static 'img/pokemon/shiny/' %}{{ hunt.second_pokemon.number }}.png" style="float:right;" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<br />
+							<p>{{ hunt.second_hatched }} Hatched (Maximum bonus at 50)</p>
+							{% if shiny_day %}
+								<p>Your current shiny chance is doubled {% if shiny_charm != None %}and boosted{% endif %} to be <code>{{ second_shiny_chance }}%</code>!</p>
+							{% else %}
+								<p>Your current shiny chance is {% if shiny_charm != None %}a boosted{% endif %} <code>{{ second_shiny_chance }}%</code>.</p>
+							{% endif %}
+						</td>
+					</tr>
+				{% endif %}
+			{% endif %}
+
+			<tr>
+				<th>Pok&eacute; Radar Charge</th>
+			</tr>
+			<tr>
+				<td>
+					<br />
+					<div class="progress" style="position:relative;">
+						<div class="progress-bar" role="progressbar" style="width:0%;height:30px;"></div>
+						<div class="progress-bar" role="progressbar" style="width:{{ charge_percent }}%;height:30px;position:absolute;z-index:7;left:0"></div>
+					 	<div class="progress-bar" role="progressbar" style="width:16.67%;height:30px;background:#e74c3c;position: absolute;z-index:6;left:0;text-align:right"><img src="{% static 'img/icons/egg.png' %}" height="30" style="opacity:0.5;" /></div>
+					 	<div class="progress-bar" role="progressbar" style="width:33.33%;height:30px;background:#e67e22;position: absolute;z-index:5;left:0;text-align:right"><img src="{% static 'img/icons/egg.png' %}" height="30" style="opacity:0.5;" /></div>
+					 	<div class="progress-bar" role="progressbar" style="width:50%;height:30px;background:#f1c40f;position: absolute;z-index:4;left:0;text-align:right"><img src="{% static 'img/icons/egg.png' %}" height="30" style="opacity:0.5;" /></div>
+					 	<div class="progress-bar" role="progressbar" style="width:66.67%;height:30px;background:#bbdd21;position: absolute;z-index:3;left:0;text-align:right"><img src="{% static 'img/icons/egg.png' %}" height="30" style="opacity:0.5;" /></div>
+					 	<div class="progress-bar" role="progressbar" style="width:83.33%;height:30px;background:#87D37C;position: absolute;z-index:2;left:0;text-align:right"><img src="{% static 'img/icons/egg.png' %}" height="30" style="opacity:0.5;" /></div>
+					 	<div class="progress-bar" role="progressbar" style="width:100%;height:30px;background:#2ecc71;position: absolute;z-index:1;left:0;text-align:right"><img src="{% static 'img/icons/egg.png' %}" height="30" style="opacity:0.5;" />&nbsp;</div>
+					</div>
+					<p>{{ hunt.charge }} / 300</p>
+					<p class="small">Each egg you hatch requires 50 charge to scan.</p>
+					{% if has_gold_batteries %}
+						<p class="small gray"><img src="{% static 'img/items/' %}gold-batteries.png" />Equipped: The Pok&eacute; Radar will not reset when you hatch a shiny.</p>
+					{% endif %}
+					{% if hunt.reset %}
+						<p class="red">Your Pok&eacute; Radar has been reset from breaking the chain. This happens when you hatch an egg without at least 3 charge, or hatch a shiny.</p>
+						<p class="small red">To remove this message, hatch an egg for your hunt while the Radar is charged.</p>
+					{% endif %}
+				</td>
+			</tr>
+		</table>
+	{% else %}
+		<p>Now that you know what to do, you can start a hunt below! Don't worry, it can always be cancelled.</p>
+
+		<a href="#" data-toggle="modal" data-target="#start-hunt"><button class="btn btn-secondary">Start a Hunt!</button></a>
+		<br /><br />
+	{% endif %}
+	<br />
+	<h3 class="oswald gray">Pok&eacute; Radar Store <span class="small badge badge-electric">GOLD</span></h3>
+	<p>These items should help your Pok&eacute; Radar function better, but they are not necessary to use the Radar.</p>
+</div>
+<div class="col-sm-2"></div>
+<div class="col-sm-1"></div>
+<div class="col-sm-6">
+	<table class="content-box-table">
+		<tr>
+			<th>NAME</th>
+			<th style="text-align: center;">IMG</th>
+			<th style="text-align: right">Price</th>
+		</tr>
+		{% for item in poke_radar_items|order_by:"purchase_value_coins" %}
+			<tr>
+				<td>{{ item.name|title }}</td>
+				<td style="text-align: center;"><img src="{% static 'img/items/' %}{{ item.image }}.png" /></td>
+				<td style="text-align: right;"><a href="#" data-toggle="modal" data-target="#buy-gold-{{ item.pk }}">{{ item.purchase_value_coins }} Coins</a></td>
+			</tr>
+			<tr>
+				<td colspan="3" class="small gray">{{ item.description }}</td>
+			</tr>
+		{% endfor %}
+	</table>
+
+	<br class="desktop" /><br class="desktop" />
+</div>
+<div class="col-sm-3">
+	<h4 class="gray oswald">Shiny Charms</h4>
+	{% if shiny_charm == None %}
+		<p><i class="gray small">You have no shiny charms active.</i></p>
+	{% else %}
+		<p style="text-align: center;"><i class="gray small"><img src="{% static 'img/items/shiny-charm.png' %}" /><br />You have a shiny charm active! It was activated {{ shiny_charm.start_time|naturaltime }} and will last for 24 hours.</i></p>
+	{% endif %}
+	<div class="content-box" style="text-align: center;">
+		<div class="content-box-body">
+			{% if has_shiny_charm != None %}
+			<p><img src="{% static 'img/items/shiny-charm.png' %}" /> x{{ has_shiny_charm.quantity }}</p>
+			{% else %}
+			<p><i class="gray">No shiny charms.</i></p>
+			{% endif %}
+		</div>
+		{% if has_shiny_charm != None %}
+			{% if shiny_charm != None %}
+				<button class="content-box-button content-box-button-disabled">Activate Shiny Charm</button>
+			{% else %}
+				<a href="{% url 'activate_shiny_charm' %}"><button class="content-box-button">Activate Shiny Charm</button></a>
+			{% endif %}
+		{% else %}
+			<button class="content-box-button content-box-button-disabled">Activate Shiny Charm</button>
+		{% endif %}
+	</div>
+	<p><i class="gray small">Note that shiny charms cannot stack, and using multiple in a day will have no added effect.</i></p>
+</div>
+
+
+{% for item in poke_radar_items %}
+<div class="modal fade" id="buy-gold-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}s</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'purchase_gold_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value_coins }} Coins each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
+<div class="modal fade" id="start-hunt" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Start a Hunt</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'start_hunt' %}" method="POST">
+			{% csrf_token %}
+			<div class="form-group">
+				<label>Pokemon</label>
+
+				<select name="pokemon">
+					<option>Select a Pok&eacute;mon</option>
+					{% for pokemon in basic_pokemon_in_dex %}
+						<option value="{{ pokemon.number }}">
+							{{ pokemon.name }}
+						</option>
+					{% endfor %}
+				</select>
+				<br />
+
+				<small>Note that the Pok&eacute;mon you wish to hunt must be basic and already registered in your Pok&eacute;dex.</small>
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Start</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+
+<div class="modal fade" id="start-second-hunt" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Start a Second Hunt</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'add_second_pokemon_to_hunt' %}" method="POST">
+			{% csrf_token %}
+			<div class="form-group">
+				<label>Pokemon</label>
+
+				<select name="pokemon">
+					<option>Select a Pok&eacute;mon</option>
+					{% for pokemon in basic_pokemon_in_dex %}
+						<option value="{{ pokemon.number }}">
+							{{ pokemon.name }}
+						</option>
+					{% endfor %}
+				</select>
+				<br />
+
+				<small>Note that the Pok&eacute;mon you wish to hunt must be basic and already registered in your Pok&eacute;dex.</small>
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Start</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+
+<div class="modal fade" id="cancel-hunt" tabindex="-1" role="dialog">
+  	<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Cancel Hunt</h4>
+      		</div>
+      		<div class="modal-body">
+        		Are you sure you want to cancel your {{ hunt.pokemon.name }} hunt? This cannot be undone.
+
+        		<br /><br />
+        		<span class="small">Note that by ending your hunt you are resetting your Pok&eacute; Radar and it will lose all its charge. Canceling your first hunt will also cancel any secondondary hunts.</span>
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-secondary" onclick='' data-dismiss="modal">No</button>
+        		<a href="{% url 'cancel_hunt' %}"><button type="button" class="btn btn-danger" onclick=''>Yes</button></a>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+<div class="modal fade" id="cancel-second-hunt" tabindex="-1" role="dialog">
+  	<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Cancel Second Hunt</h4>
+      		</div>
+      		<div class="modal-body">
+        		Are you sure you want to cancel your {{ hunt.second_pokemon.name }} hunt? This cannot be undone.
+
+        		<br /><br />
+        		<span class="small">Note that by ending your secondary hunt you will not lose your charge.</span>
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-secondary" onclick='' data-dismiss="modal">No</button>
+        		<a href="{% url 'cancel_second_hunt' %}"><button type="button" class="btn btn-danger" onclick=''>Yes</button></a>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+<div class="col-sm-1"></div>
+
+{% endblock %}

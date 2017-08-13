@@ -1,0 +1,46 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+{% load order_by %}
+
+{% block title %}Complete Contract{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1">
+
+</div>
+
+<div class="col-sm-10">
+
+	<h1 class="gray oswald">
+		<a href="{% url 'daycare' %}">
+			<span class="fa fa-arrow-left"></span>
+		</a>
+		Complete Contract
+	</h1>
+
+	<form action="{% url 'complete_contract' %}" method="POST">
+		{% csrf_token %}
+		<label>Select Pok&eacute;mon</label><br />
+
+		<div>
+		{% for adopt in adopts_in_party %}
+			<label class="label-pokemon" style="position:relative;" title="{% if adopt.nickname %}{{ adopt.nickname }}{% else %}{{ adopt.pokemon.name }}{% endif %} {% if adopt.gender %}&male;{% else %}&female;{% endif %}"><input type="radio" name="adopt_pk" value="{{ adopt.pk }}" />{% if adopt.shiny %}<img src="{% static 'img/pokemon/icons/shiny/' %}{{ adopt.pokemon.number }}.gif" />{% else %}<img src="{% static 'img/pokemon/icons/' %}{{ adopt.pokemon.number }}.png" />{% endif %}</a></label>
+		{% endfor %}
+		</div>
+
+		{% for box in boxes %}
+			<div style="width:230px;height:220px;display:inline-block;margin:5px;background: #{{ box.wallpaper }}; position:relative;float:left;">{% for adopt in box.pokemon.all|order_by:"box_time" %}{% if not adopt.gts and not adopt.daycare %}<label class="label-pokemon" style="position:relative;" title="{% if adopt.nickname %}{{ adopt.nickname }}{% else %}{{ adopt.pokemon.name }}{% endif %} {% if adopt.gender %}&male;{% else %}&female;{% endif %}"><input type="radio" name="adopt_pk" value="{{ adopt.pk }}" />{% if adopt.shiny %}<img src="{% static 'img/pokemon/icons/shiny/' %}{{ adopt.pokemon.number }}.gif" />{% else %}<img src="{% static 'img/pokemon/icons/' %}{{ adopt.pokemon.number }}.png" />{% endif %}</a></label>{% endif %}{% endfor %}</div>
+		{% endfor %}
+
+		<div class="clear"></div>
+		<br />
+		<button class="btn btn-lg btn-secondary" type="submit">Complete Contract</button>
+		<br />
+		<br />
+
+	</form>
+	
+</div>
+
+{% endblock %}

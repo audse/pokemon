@@ -1,0 +1,95 @@
+{% extends "mobile-first-base.html" %}
+{% load staticfiles %}
+
+{% block title %}Today's Interactions{% endblock %}
+
+{% block content %}
+
+<div class="col-sm-1"></div>
+<div class="col-sm-10">
+
+<h1 class="gray oswald">Today's Interactions</h1>
+
+<p>Today, the users of Pok&eacute;mon PC have collectively made <span class="badge badge-success">{{ interactions }}</span> interactions. <span class="badge badge-success">{{ berry_interactions }}</span> berries were fed. <span class="badge badge-success">{{ hatched }}</span> eggs were hatched too!</p>
+
+<!-- <div class="progress">
+	<div class="progress-bar" role="progressbar" style="width:{{ interaction_progress }}%;"></div>
+</div> -->
+
+<div class="progress" style="position:relative;height:50px;border-radius: 15px;">
+	{% if not yesterday_interactions_met %}
+		<div class="progress-bar" role="progressbar" style="width:{{ interaction_progress }}%;height: 50px;position: absolute;left:0;z-index:6;padding-top:17px;">
+			{{ interaction_progress }}%
+		</div>
+	{% else %}
+		<div class="progress-bar" role="progressbar" style="width:100%;height: 50px;position: absolute;left:0;z-index:6;padding-top:17px;">
+			<b>2X EXP</b> Today Only!
+		</div>
+	{% endif %}
+	<div class="progress-bar" role="progressbar" style="width:0%;"></div>
+	<div class="progress-bar" role="progressbar" style="width:20%;height:50px;background:#e74c3c;position: absolute;left:0;z-index:5;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:40%;height:50px;background:#e67e22;position: absolute;left:0;z-index:4;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:60%;height:50px;background:#f1c40f;position: absolute;left:0;z-index:3;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:80%;height:50px;background:#87D37C;position: absolute;left:0;z-index: 2;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:100%;height:50px;background:#2ecc71;position: absolute;left:0;z-index:1;text-align:right;padding-top:17px;">2X EXP &nbsp;</div>
+</div>
+<br />
+<div class="progress" style="position:relative;height:50px;border-radius: 15px;">
+	{% if not yesterday_berry_interactions_met %}
+		<div class="progress-bar" role="progressbar" style="width:{{ berry_progress }}%;height: 50px;position: absolute;left:0;z-index:6;padding-top:17px;">
+			{{ berry_progress }}%
+		</div>
+	{% else %}
+		<div class="progress-bar" role="progressbar" style="width:100%;height: 50px;position: absolute;left:0;z-index:6;padding-top:17px;">
+			<b>25% Off</b> Today Only!
+		</div>
+	{% endif %}
+	<div class="progress-bar" role="progressbar" style="width:0%;"></div>
+	<div class="progress-bar" role="progressbar" style="width:20%;height:50px;background:#e74c3c;position: absolute;left:0;z-index:5;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:40%;height:50px;background:#e67e22;position: absolute;left:0;z-index:4;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:60%;height:50px;background:#f1c40f;position: absolute;left:0;z-index:3;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:80%;height:50px;background:#87D37C;position: absolute;left:0;z-index: 2;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:100%;height:50px;background:#2ecc71;position: absolute;left:0;z-index:1;text-align:right;padding-top:17px;">25% OFF &nbsp;</div>
+</div>
+<br />
+<div class="progress" style="position:relative;height:50px;border-radius: 15px;">
+	{% if not yesterday_hatched_met %}
+		<div class="progress-bar" role="progressbar" style="width:{{ hatch_progress }}%;height: 50px;position: absolute;left:0;z-index:6;padding-top:17px;">
+			{{ hatch_progress }}%
+		</div>
+	{% else %}
+		<div class="progress-bar" role="progressbar" style="width:100%;height: 50px;position: absolute;left:0;z-index:6;padding-top:17px;">
+			<b>2X Shiny Chances</b> Today Only!
+		</div>
+	{% endif %}
+	<div class="progress-bar" role="progressbar" style="width:0%;"></div>
+	<div class="progress-bar" role="progressbar" style="width:20%;height:50px;background:#e74c3c;position: absolute;left:0;z-index:5;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:40%;height:50px;background:#e67e22;position: absolute;left:0;z-index:4;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:60%;height:50px;background:#f1c40f;position: absolute;left:0;z-index:3;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:80%;height:50px;background:#87D37C;position: absolute;left:0;z-index: 2;text-align:right;"></div>
+	<div class="progress-bar" role="progressbar" style="width:100%;height:50px;background:#2ecc71;position: absolute;left:0;z-index:1;text-align:right;padding-top:17px;">X2 SHINY &nbsp;</div>
+</div>
+
+<br />
+
+<p>Just you have made <span class="badge badge-success">{{ your_interactions }}</span> interactions and fed <span class="badge badge-success">{{ your_berry_interactions }}</span> Pok&eacute;mon. That's <span class="badge badge-success">{{ your_interactions_contribution }}%</span> of the interactions made today! Wow!</p>
+
+<p>In your whole Pok&eacute;mon PC career, you have made <span class="badge badge-success">{{ your_overall_interactions }}</span> interactions!</p>
+
+<p>If the site reaches these goals today, tomorrow will be special! Enough interactions will get you X2 Exp from interactions tomorrow! If you generously feed berries, all purchases in the Pok&eacute;mart will be 25% off! And if enough eggs are hatched, there will be a sitewide increase in shiny chances!</p>
+
+<br />
+<p>These users have clicked you, and you have not yet clicked back.</p>
+{% if users_to_click %}
+	{% for user_to_click in users_to_click %}
+		<a href="{% url 'profile_page' username=user_to_click.username %}">{{ user_to_click.username }}</a>{% if not forloop.last %}, {% endif %}
+	{% endfor %}
+{% else %}
+	<i class="small gray">None to show!</i>
+{% endif %}
+<br />
+<br />
+
+</div>
+
+{% endblock %}
