@@ -1,6 +1,8 @@
 <div id="interaction-{{ adopt.pk }}">
 	{% if adopt.can_interact %}
 		<form id="interact-form-{{ adopt.pk }}">{% csrf_token %}
+			<input type="hidden" name="owner_username" value="{{ adopt.owner.username }}" />
+			<input type="hidden" name="pk" value="{{ adopt.pk }}" />
 			<button class="party-space-button" type="submit" style="width:100%">Hold the egg</button>
 		</form>
 	{% else %}
@@ -20,7 +22,7 @@
 		    event.preventDefault();
 
 		    $.ajax({
-		        url: '{% url 'interact' username=adopt.owner.username pk=adopt.pk %}',
+		        url: '{% url 'interact' %}',
 		        type: 'POST',
 		        data: $(this).serialize(),
 		        success: function(data) {

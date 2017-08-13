@@ -10,25 +10,29 @@
 
 </div>
 
-<div class="col-sm-8">
+<div class="col-sm-9">
 	<h1 class="gray oswald">Your Boxes</h1>
 
-	{% for box in boxes %}
-		<div class="content-box" style="position:relative;">
-			<div class="content-box-head">{{ box.name }}</div>
-			<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%"/>
-			<div class="pokemon-float-box" style="position:absolute;left:0;top:30px;">
-				{% for adopt in box.pokemon.all|order_by:"box_pos" %}
-					<img src="{% static 'img/pokemon/' %}{{ adopt.pokemon.number }}.png" width="96" id="pokemon-{{ adopt.pk }}" />
+	{% if voucher %}
+		<p class="small"><img src="{% static 'img/items/coupon-3.png' %}" />You appear to have a box voucher. Would you like to <a href="{% url 'create_box_page' %}">create a box</a>?</p>
+	{% else %}
+		<p class="small">Buy a box voucher from the <a href="{% url 'pokemart' %}">Pok&eacute;mart</a> to create a box.</p>
+	{% endif %}
 
-					<form id="update-form" style="display:none;">
-						{% csrf_token %}
-						<input type="hidden" id="pokemon-{{ adopt.pk }}-pk" name="pk" value="{{ adopt.pk }}" />
-						<input type="hidden" id="pokemon-{{ adopt.pk }}-pos" name="" value="0" />
-					</form>
-				{% endfor %}
+	{% for box in boxes|order_by:"create_time" %}
+		<div class="content-box" style="position:relative;width: 240px;display:inline-block;">
+			<div class="content-box-head">
+				{{ box.name }} ({{ box.pokemon.count }}/25 Slots)
+			</div>
+			<div class="content-box-body" style="background: #{{ box.wallpaper }};height:175px;padding-bottom:15px;">
+				{% for adopt in box.pokemon.all|order_by:"box_time" %}{% if not adopt.gts and not adopt.daycare %}<a href="{% url 'view_adopt' pk=adopt.pk  status='pokemon' %}">{% if adopt.shiny %}<img src="{% static 'img/pokemon/icons/shiny/' %}{{ adopt.pokemon.number }}.gif" id="pokemon-{{ adopt.pk }}" />{% else %}<img src="{% static 'img/pokemon/icons/' %}{{ adopt.pokemon.number }}.png" id="pokemon-{{ adopt.pk }}" />{% endif %}</a>{% endif %}{% endfor %}
+			</div>
+			<div class="content-box-head">
+				<a href="#" data-toggle="modal" data-target="#box-edit-{{ box.pk }}"><span style="color:white;"><span class="fa fa-pencil"></span></span></a>
+				<a href="#" data-toggle="modal" data-target="#box-delete-{{ box.pk }}"><span style="color:white;position:absolute;bottom:-5px;right: 10px;font-size: 2em;">&times;</span></a>
 			</div>
 		</div>
+
 	{% endfor %}
 	<br />
 	<p><code>-BZZ-</code></p>
@@ -42,24 +46,149 @@
 	
 </div>
 
+{% for box in boxes %}
+<div class="modal fade" id="box-delete-{{ box.pk }}" tabindex="-1" role="dialog">
+  	<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Delete Box</h4>
+      		</div>
+      		<div class="modal-body">
+        		Are you sure you want to delete your box <code>{{ box.name }}</code>? Deleting cannot be undone.
 
-<script type="text/javascript">
-	$(document).ready(function(){
-    	$("#update-form").submit(function(){
-		    event.preventDefault();
+        		<br /><br />
+        		<span class="small">Note that you cannot delete any box which contains Pok&eacute;mon. Please move them before deleting.</span>
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-secondary" onclick='' data-dismiss="modal">No</button>
+        		<a href="{% url 'delete_box' pk=box.pk %}"><button type="button" class="btn btn-danger" onclick=''>Yes</button></a>
+      		</div>
+    	</div>
+  	</div>
+</div>
 
-		    $.ajax({
-		        url: '{% url 'update_position' %}',
-		        type: 'POST',
-		        data: $(this).serialize(),
-		        success: function(data) {
-		            // Whatever you want
-		            alert('it works');
-		        }
-		    });
-		});
-		$("#update-form").submit();
-	});
-</script>
+<div class="modal fade" id="box-edit-{{ box.pk }}" tabindex="-1" role="dialog" aria-labelledby="boxes-listLabel" aria-hidden="true">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="boxes-listLabel">Edit Box</h4>
+      		</div>
+      		<div class="modal-body">
+      				<form action="{% url 'edit_box' pk=box.pk %}" method="post">
+		{% csrf_token %}
+
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-pencil"></i></span>
+				<input type="text" class="form-control" name="name" value="{{ box.name }}" />
+			</div>
+			<label class="small gray">This can be changed later. Up to 140 characters.</label>
+		</div>
+
+		<label>Background Color</label>
+		<div class="row">
+			<div class="col-sm-4">
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="A8A878" />
+					<div style="display:block;width:100%;height:40px;background:#A8A878;"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="6890F0" />
+					<div style="display:block;width:100%;height:40px;background:#6890F0"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="A040A0" />
+					<div style="display:block;width:100%;height:40px;background:#A040A0"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="F85888" />
+					<div style="display:block;width:100%;height:40px;background:#F85888"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="A7B720" />
+					<div style="display:block;width:100%;height:40px;background:#A7B720"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="705848" />
+					<div style="display:block;width:100%;height:40px;background:#705848"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="68A090" />
+					<div style="display:block;width:100%;height:40px;background:#68A090"></div>
+				</label>
+			</div>
+			<div class="col-sm-4">
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="F08030" />
+					<div style="display:block;width:100%;height:40px;background:#F08030"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="A890F0" />
+					<div style="display:block;width:100%;height:40px;background:#A890F0"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="F8D030" />
+					<div style="display:block;width:100%;height:40px;background:#F8D030"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="B8A038" />
+					<div style="display:block;width:100%;height:40px;background:#B8A038"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="7038F8" />
+					<div style="display:block;width:100%;height:40px;background:#7038F8"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="B8B8D0" />
+					<div style="display:block;width:100%;height:40px;background:#B8B8D0"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="EEEEEE" />
+					<div style="display:block;width:100%;height:40px;background:#EEEEEE"></div>
+				</label>
+			</div>
+			<div class="col-sm-4">
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="C03028" />
+					<div style="display:block;width:100%;height:40px;background:#C03028"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="78C850" />
+					<div style="display:block;width:100%;height:40px;background:#78C850"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="E0C068" />
+					<div style="display:block;width:100%;height:40px;background:#E0C068"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="98D8D8" />
+					<div style="display:block;width:100%;height:40px;background:#98D8D8"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="705898" />
+					<div style="display:block;width:100%;height:40px;background:#705898"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="EE99AC" />
+					<div style="display:block;width:100%;height:40px;background:#EE99AC"></div>
+				</label>
+				<label class="label" style="width:100%;">
+					<input type="radio" name="wallpaper" value="333333" />
+					<div style="display:block;width:100%;height:40px;background:#333333"></div>
+				</label>
+			</div>
+		</div>
+		<button class="btn btn-secondary" type="submit">Submit Edit</button>
+
+	</form>
+      			</div>
+      		<div class="modal-footer">
+      		</div>
+    	</div>
+  	</div>
+</div>
+{% endfor %}
 
 {% endblock %}

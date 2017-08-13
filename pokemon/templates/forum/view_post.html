@@ -1,6 +1,7 @@
 {% extends 'mobile-first-base.html' %}
 {% load humanize %}
 {% load bbcode_tags %}
+{% load rank %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
 
@@ -112,7 +113,26 @@
 
 										Posted {{ reply.post_time }} ({{ reply.post_time|naturaltime }}) by
 										<a href="{% url 'profile_page' username=reply.author.username %}">
-											{{ reply.author.username }}
+											{{ reply.author.username }} 
+
+											{% if reply.author|rank == 1 %}
+												<span class="badge badge-ghost">master</span>
+											{% elif reply.author|rank == 2 %}
+												<span class="badge badge-electric">elite</span>
+											{% elif reply.author|rank == 3 %}
+												<span class="badge badge-fire">skilled</span>
+											{% elif reply.author|rank == 4 %}
+												<span class="badge badge-psychic">training</span>
+											{% elif reply.author|rank == 5 %}
+												<span class="badge badge-success">new</span>
+											{% endif %}
+
+											{% if reply.author.is_staff %}
+												<span class="badge badge-primary">staff</span>
+											{% endif %}
+											{% if reply.author.is_superuser %}
+												<span class="badge badge-danger">admin</span>
+											{% endif %}
 										</a>
 									</div>
 									<div class="col-sm-4">
@@ -138,6 +158,25 @@
 							Posted {{ reply.post_time }} ({{ reply.post_time|naturaltime }}) by
 							<a href="{% url 'profile_page' username=reply.author.username %}">
 								{{ reply.author.username }}
+
+								{% if reply.author|rank == 1 %}
+									<span class="badge badge-ghost">master</span>
+								{% elif reply.author|rank == 2 %}
+									<span class="badge badge-electric">elite</span>
+								{% elif reply.author|rank == 3 %}
+									<span class="badge badge-fire">skilled</span>
+								{% elif reply.author|rank == 4 %}
+									<span class="badge badge-psychic">training</span>
+								{% elif reply.author|rank == 5 %}
+									<span class="badge badge-success">new</span>
+								{% endif %}
+								
+								{% if reply.author.is_staff %}
+									<span class="badge badge-primary">staff</span>
+								{% endif %}
+								{% if reply.author.is_superuser %}
+									<span class="badge badge-danger">admin</span>
+								{% endif %}
 							</a>
 							{% endif %}
 						</span>

@@ -2,9 +2,12 @@
 {% load staticfiles %}
 {% load users_online %}
 {% load bookmark_notes %}
+{% load site_notes %}
+{% load currency %}
 {% load get_posts %}
 {% load subtract %}
 {% load partition %}
+{% load todays_progress %}
 {% load next %}
 <!DOCTYPE html>
 <html>
@@ -25,8 +28,8 @@
 
 		<!-- PLUGINS JS -->
 		<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
-		<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
 		<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
 
 		<!-- CUSTOM JS -->
 		<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
@@ -103,40 +106,86 @@
 				<div class="col-sm-5 small" style="padding-top: 15px;">
 
 					<div style="float:left;">
+						<a href="{% url 'todays_interactions' %}">Interactions</a>
+						<br />
 						{% now "H:i M d Y" %}<br />
 						<a href="{% url 'online_page' %}">{{ 1|users_online }} User{{ 1|users_online|pluralize }} Online</a><br />
 						<a href="{% url 'admin:index' %}">Admin</a>
+						<a href="{% url 'logout' %}">Log Out?</a>
 					</div>
 					<div style="float:right;text-align: right;padding-right: 15px;">
 						{% if user.is_authenticated %}
 							<span class="big">
 
-								<div id="notes">
+								<span class="badge badge-white"><a href="{% url 'inventory' %}">Inventory</a></span>
+								<span class="badge badge-steel">{{ user|currency_pd }} PD</span>
+								<span class="badge badge-electric">{{ user|currency_coins }} Coins</span>
 
+								<br />
+								<span id="notes">
+									<a href="{% url 'pm_index' %}">
+										{% if user|pm_notes > 0 %}
+											<span class="badge badge-danger">
+												{{ user|pm_notes }} <i class="fa fa-envelope-open"></i>
+											</span>
+										{% else %}
+											<span class="badge badge-light">
+												0 <i class="fa fa-envelope-open"></i>
+											</span>
+										{% endif %}
+									</a>
 									<a href="{% url 'view_bookmarks' %}">
 										{% if user|bookmark_notes > 0 %}
-											<span class="badge badge-danger {% if user|bookmark_notes > 0%} badge-default {% endif %}">
+											<span class="badge badge-danger {% if user|bookmark_notes > 0 %} badge-default {% endif %}">
 												<b>
 													{{ user|bookmark_notes }} <i class="fa fa-bookmark"></i>
 												</b>
 											</span>
 										{% else %}
-											<span class="badge badge-light {% if user|bookmark_notes > 0%} badge-default {% endif %}">
+											<span class="badge badge-light {% if user|bookmark_notes > 0 %} badge-default {% endif %}">
 												<b>
 													0 <i class="fa fa-bookmark"></i>
 												</b>
 											</span>
 										{% endif %}
 									</a>
+									<a href="{% url 'gts' %}">
+										{% if user|trade_notes > 0 %}
+											<span class="badge badge-danger {% if user|trade_notes > 0 %} badge-default {% endif %}">
+												<b>
+													{{ user|trade_notes }} <i class="fa fa-exchange"></i>
+												</b>
+											</span>
+										{% else %}
+											<span class="badge badge-light {% if user|trade_notes > 0 %} badge-default {% endif %}">
+												<b>
+													0 <i class="fa fa-exchange"></i>
+												</b>
+											</span>
+										{% endif %}
+									</a>
 
-								</div>
+									<a href="{% url 'profile_page' username=user.username %}">
+										{% if user|hatch_notes > 0 %}
+											<span class="badge badge-danger {% if user|hatch_notes > 0 %} badge-default {% endif %}">
+												<b>
+													{{ user|hatch_notes }} <img src="{% static 'img/icons/egg.png' %}" width="8" />
+												</b>
+											</span>
+										{% else %}
+											<span class="badge badge-light {% if user|hatch_notes > 0 %} badge-default {% endif %}">
+												<b>
+													0 <img src="{% static 'img/icons/egg.png' %}" width="8" />
+												</b>
+											</span>
+										{% endif %}
+									</a>
+
+								</span><br />
 
 								<a href="{% url 'profile_page' username=user.username %}">{{ user.username }}</a>
-								
-								</a>
 							</span>
 							<br />
-							<a href="{% url 'logout' %}">Log Out?</a>
 						{% else %}
 						<a href="{% url 'login_page' %}">Log in</a><br />
 						<a href="{% url 'register_page' %}">Register</a><br />
@@ -166,7 +215,10 @@
 							<a class="nav-link" href="{% url 'park' %}">Park</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#" style="padding-left:0px;">Daycare</a>
+							<a class="nav-link" href="{% url 'daycare' %}" style="padding-left:0px;">Daycare</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'pokemart' %}" style="width:95px">Pok&eacute;mart</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{% url 'pokedex_index' %}" style="padding-left:0px;">Pok&eacute;dex</a>
@@ -190,6 +242,46 @@
 					</ul>
 				</div>
 			</nav>
+			<div class="row">
+				<div class="col-sm-4" style="position: relative;">
+					{% if 1|todays_progress_interaction == 1000.1 %}
+						<a href="{% url 'todays_interactions' %}"><span class="badge badge-danger" style="position:absolute;left:20px;top:-17px;z-index:5">2X</span></a>
+						<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+							<div class="progress-bar" role="progressbar" style="width:100%;background:#2ecc71"></div>
+						</div>
+					{% elif 1|todays_progress_interaction == 1.1 %}
+					..
+					{% else %}
+						<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+							<div class="progress-bar" role="progressbar" style="width:{{ 1|todays_progress_interaction }}%;background:#2ecc71"></div>
+						</div>
+					{% endif %}
+				</div>
+				<div class="col-sm-4">
+					{% if 1|todays_progress_berry_interaction == 1000.1 %}
+						<a href="{% url 'todays_interactions' %}"><span class="badge badge-danger" style="position:absolute;left:20px;top:-17px;z-index:5">25%</span></a>
+						<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+							<div class="progress-bar" role="progressbar" style="width:100%;"></div>
+						</div>
+					{% else %}
+						<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+							<div class="progress-bar" role="progressbar" style="width:{{ 1|todays_progress_berry_interaction }}%;"></div>
+						</div>
+					{% endif %}
+				</div>
+				<div class="col-sm-4">
+					{% if 1|todays_progress_hatch == 1000.1 %}
+						<a href="{% url 'todays_interactions' %}"><span class="badge badge-danger" style="position:absolute;left:20px;top:-17px;z-index:5">2X</span></a>
+						<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+							<div class="progress-bar" role="progressbar" style="width:100%;background:#f1c40f"></div>
+						</div>
+					{% else %}
+						<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+							<div class="progress-bar" role="progressbar" style="width:{{ 1|todays_progress_hatch }}%;background:#f1c40f"></div>
+						</div>
+					{% endif %}
+				</div>
+			</div>
 		</div>
 
 		<div class="mobile">
@@ -246,8 +338,48 @@
 			</div>
 		</div>
 
+		<div class="mobile">
+			<div class="col-sm-4" style="position: relative;height: 30px;margin-top: 25px;">
+				{% if 1|todays_progress_interaction == 1000.1 %}
+					<a href="{% url 'todays_interactions' %}"><span class="badge badge-danger" style="position:absolute;left:20px;top:-8px;z-index:5">2X</span></a>
+					<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+						<div class="progress-bar" role="progressbar" style="width:100%;background:#2ecc71"></div>
+					</div>
+				{% else %}
+					<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+						<div class="progress-bar" role="progressbar" style="width:{{ 1|todays_progress_interaction }}%;background:#2ecc71"></div>
+					</div>
+				{% endif %}
+			</div>
+			<div class="col-sm-4" style="position: relative;height: 30px;">
+				{% if 1|todays_progress_berry_interaction == 1000.1 %}
+					<a href="{% url 'todays_interactions' %}"><span class="badge badge-danger" style="position:absolute;left:20px;top:-8px;z-index:5">25%</span></a>
+					<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+						<div class="progress-bar" role="progressbar" style="width:100%;"></div>
+					</div>
+				{% else %}
+					<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+						<div class="progress-bar" role="progressbar" style="width:{{ 1|todays_progress_berry_interaction }}%;"></div>
+					</div>
+				{% endif %}
+			</div>
+			<div class="col-sm-4" style="position: relative;height: 30px;">
+				{% if 1|todays_progress_hatch == 1000.1 %}
+					<a href="{% url 'todays_interactions' %}"><span class="badge badge-danger" style="position:absolute;left:20px;top:-8px;z-index:5">2X</span></a>
+					<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+						<div class="progress-bar" role="progressbar" style="width:100%;background:#f1c40f"></div>
+					</div>
+				{% else %}
+					<div class="progress" style="position:relative;height:5px;margin:-10px 0 0 10px">
+						<div class="progress-bar" role="progressbar" style="width:{{ 1|todays_progress_hatch }}%;background:#f1c40f"></div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+
 		<div class="container-fluid">
 			<div class="row" style="padding-bottom: 15px;">
+
 				{% block content %}{% endblock %}
 			</div>
 		</div>
@@ -258,7 +390,19 @@
 				<div id="notes" style="position: absolute;top: 0;right:-10px;">
 					{% if user|bookmark_notes > 0 %}
 						<span class="notes-circle very-small">
-							<b>{{ user|bookmark_notes }}</b>
+							<b>!</b>
+						</span>
+					{% elif user|trade_notes > 0 %}
+						<span class="notes-circle very-small">
+							<b>!</b>
+						</span>
+					{% elif user|hatch_notes > 0 %}
+						<span class="notes-circle very-small">
+							<b>!</b>
+						</span>
+					{% elif user|pm_notes > 0 %}
+						<span class="notes-circle very-small">
+							<b>!</b>
 						</span>
 					{% endif %}
 				</div>
@@ -268,7 +412,7 @@
 				<div class="bubble">
 					{% if user.is_authenticated %}
 						<div class="bubble-header white big oswald" style="padding: 5px;">
-							<span class="left">{{ user.username }}</span>
+							<span class="left"><a href="{% url 'profile_page' username=user.username %}" style="color:white;">{{ user.username }}</a></span>
 							<span class="right">
 								<a href="{% url 'logout' %}" class="light open small">
 									<span class="red">Logout?</span>
@@ -277,13 +421,78 @@
 							</span>
 							<div class="clear"></div>
 						</div>
-						<div class="bubble-content small">
-							Notifications: <br />
-							PD: <br />
-							Coins: <br />
+						<div class="bubble-content">
+
+							<span id="notes" class="mobile">
+								<a href="{% url 'pm_index' %}">
+									{% if user|pm_notes > 0 %}
+										<span class="badge badge-danger">
+											{{ user|pm_notes }} <i class="fa fa-envelope-open"></i>
+										</span>
+									{% else %}
+										<span class="badge badge-light">
+											0 <i class="fa fa-envelope-open"></i>
+										</span>
+									{% endif %}
+								</a>
+								<a href="{% url 'view_bookmarks' %}">
+									{% if user|bookmark_notes > 0 %}
+										<span class="badge badge-danger {% if user|bookmark_notes > 0%} badge-default {% endif %}">
+											<b>
+												{{ user|bookmark_notes }} <i class="fa fa-bookmark"></i>
+											</b>
+										</span>
+									{% else %}
+										<span class="badge badge-light {% if user|bookmark_notes > 0%} badge-default {% endif %}">
+											<b>
+												0 <i class="fa fa-bookmark"></i>
+											</b>
+										</span>
+									{% endif %}
+								</a>
+								<a href="{% url 'gts' %}">
+									{% if user|trade_notes > 0 %}
+										<span class="badge badge-danger {% if user|trade_notes > 0%} badge-default {% endif %}">
+											<b>
+												{{ user|trade_notes }} <i class="fa fa-exchange"></i>
+											</b>
+										</span>
+									{% else %}
+										<span class="badge badge-light {% if user|trade_notes > 0%} badge-default {% endif %}">
+											<b>
+												0 <i class="fa fa-exchange"></i>
+											</b>
+										</span>
+									{% endif %}
+								</a>
+								<a href="{% url 'profile_page' username=user.username %}">
+									{% if user|hatch_notes > 0 %}
+										<span class="badge badge-danger {% if user|hatch_notes > 0 %} badge-default {% endif %}">
+											<b>
+												{{ user|hatch_notes }} <img src="{% static 'img/icons/egg.png' %}" width="8" />
+											</b>
+										</span>
+									{% else %}
+										<span class="badge badge-light {% if user|hatch_notes > 0 %} badge-default {% endif %}">
+											<b>
+												0 <img src="{% static 'img/icons/egg.png' %}" width="8" />
+											</b>
+										</span>
+									{% endif %}
+								</a>
+							</span><br />
+
+							<span class="badge badge-flying">{{ user|currency_pd }} PD</span>
+							<span class="badge badge-electric">{{ user|currency_coins }} Coins</span>
+							<span class="badge badge-white"><a href="{% url 'inventory' %}" style="color:#396ca2">Inventory</a></span>
+							<br />
 							{% if user.is_superuser %}
-							<a href="{% url 'admin:index' %}">Admin</a>
+							<a href="{% url 'admin:index' %}"><span class="dark-blue">Admin</span></a>
 							{% endif %}
+							<br />
+							<span class="badge badge-fire big" style="font-size:1em"><a href="{% url 'pokedex_index' %}"><span class="whitef">Pok&eacute;dex</span></a></span>
+							<span class="badge badge-white" style="font-size:1em"><a href="{% url 'forum_index' %}"><span class="dark-blue">Forum</span></a></span><br />
+							<a href="{% url 'todays_interactions' %}"><span class="dark-blue">Interactions</span></a>
 						</div>
 					{% else %}
 						<div class="bubble-header white big oswald" style="padding: 5px;">
@@ -295,7 +504,7 @@
 						</div>
 					{% endif %}
 					<div style="display: block;padding-bottom: 5px;">
-					<a href="#" class="white small">&nbsp; Support</a>
+					<a href="#" class="white small">&nbsp; </a>
 					</div>
 				</div>
 			</div>
@@ -316,15 +525,20 @@
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="#">
+					<a class="nav-link" href="{% url 'daycare' %}">
 						<img src="{% static 'img/icons/heart.png' %}" width="16" />
 					</a>
 				</li>
 				<li class="nav-item">
+					<a class="nav-link" href="{% url 'pokemart' %}">
+						<img src="{% static 'img/icons/basket.png' %}" width="16" />
+					</a>
+				</li><!-- 
+				<li class="nav-item">
 					<a class="nav-link" href="#" style="color: white;font-size:.3em;letter-spacing: 3px;">
 						&#9679;&#9679;&#9679;
 					</a>
-				</li>
+				</li> -->
 			</ul>
 		</nav>
 
@@ -338,13 +552,13 @@
 					<a href="{% url 'register_page' %}"><span class="dark-blue">Register</span></a>
 				</div>
 				<div style="display: block;padding-bottom: 5px;">
-					<a href="#" class="white small">&nbsp; Support</a>
+					<a href="#" class="white small">&nbsp; </a>
 				</div>
 			</div>
 		</div>
 
 		<div class="desktop footer small gray">
-			&copy; Pok&eacute;mon PC 2017&nbsp; | <a href="#">Support</a>
+			&copy; Pok&eacute;mon PC {% now "Y" %}&nbsp;
 		</div>
 
 	</body>

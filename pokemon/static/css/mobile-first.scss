@@ -40,6 +40,12 @@ a {
 	}
 }
 
+img {
+	image-rendering: pixelated;
+} img.render {
+	image-rendering: auto;
+}
+
 /* UTILITIES */
 
 .oswald {
@@ -117,16 +123,40 @@ a {
 /* HACKS */
 
 
-label > input{ /* HIDE RADIO */
+label.label > input{ /* HIDE RADIO */
 	visibility: hidden; /* Makes input not-clickable */
 	position: absolute; /* Remove input from document flow */
 }
-label > input + img{ /* IMAGE STYLES */
+label.label > input + div{ /* IMAGE STYLES */
 	cursor:pointer;
 	border:3px solid transparent;
 }
-label > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
-	border:3px solid $light-blue;
+label.label > input:checked + div{ /* (RADIO CHECKED) IMAGE STYLES */
+	border:3px solid rgba(255,255,255,0.5);
+}
+
+label.label-pokemon > input{ /* HIDE RADIO */
+	visibility: hidden; /* Makes input not-clickable */
+	position: absolute; /* Remove input from document flow */
+}
+label.label-pokemon > input + img{ /* IMAGE STYLES */
+	cursor:pointer;
+	border:3px solid transparent;
+}
+label.label-pokemon > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
+	border:3px solid rgba(0,0,0,0.3);
+}
+
+label[title]:hover:after {
+  content: attr(title);
+  padding: 4px 8px;
+  color: #333;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 20;
+  white-space: nowrap;
+  background: #fff;
 }
 
 
@@ -403,6 +433,58 @@ label > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
 
 }
 
+.content-box-red {
+	border:1px solid $dark-red;
+
+	.content-box-head {
+		background: $red;
+	}
+	
+	.content-box-button {
+		background: $red;
+	}
+
+}
+
+.content-box-pink {
+	border:1px solid #d83e6d;
+
+	.content-box-head {
+		background: #F85888;
+	}
+	
+	.content-box-button {
+		background: #F85888;
+	}
+
+}
+
+.content-box-green {
+	border:1px solid $dark-green;
+
+	.content-box-head {
+		background: $green;
+	}
+	
+	.content-box-button {
+		background: $green;
+	}
+
+}
+
+.content-box-yellow {
+	border:1px solid $dark-green;
+
+	.content-box-head {
+		background: #F8D030;
+	}
+	
+	.content-box-button {
+		background: #F8D030;
+	}
+
+}
+
 table.content-box-table {
 	width: 100%;
 	border: 1px solid $blue;
@@ -424,6 +506,13 @@ table.content-box-table {
 
 	td {
 		padding: 5px 15px;
+	}
+}
+
+table.content-box-table-yellow {
+	border: 1px solid #dbb620;
+	th {
+		background: #F8D030
 	}
 }
 

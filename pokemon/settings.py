@@ -34,7 +34,10 @@ INSTALLED_APPS = [
     'core',
     'forum',
     'pokedex',
+    'pm',
     'pokemon',
+    'psycopg2',
+    'djcelery',
     'sass_processor',
     'precise_bbcode',
     'django.contrib.admin',
@@ -81,10 +84,21 @@ WSGI_APPLICATION = 'pokemon.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydb',
+        'USER': 'audrey',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -127,3 +141,18 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'pokemon/static/')
 STATIC_URL = '/static/'
+
+
+
+BROKER_URL = 'amqp://'
+# BROKER_URL = 'django://'
+
+CELERY_ACCEPT_CONTENT = ['json', 'pickle','application/text']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+
+

@@ -21,6 +21,12 @@ a {
   a:hover {
     color: #1f4e7a; }
 
+img {
+  image-rendering: pixelated; }
+
+img.render {
+  image-rendering: auto; }
+
 /* UTILITIES */
 .oswald {
   font-family: "Oswald", sans-serif;
@@ -81,21 +87,48 @@ a {
   clear: both; }
 
 /* HACKS */
-label > input {
+label.label > input {
   /* HIDE RADIO */
   visibility: hidden;
   /* Makes input not-clickable */
   position: absolute;
   /* Remove input from document flow */ }
 
-label > input + img {
+label.label > input + div {
   /* IMAGE STYLES */
   cursor: pointer;
   border: 3px solid transparent; }
 
-label > input:checked + img {
+label.label > input:checked + div {
   /* (RADIO CHECKED) IMAGE STYLES */
-  border: 3px solid #9ac1e5; }
+  border: 3px solid rgba(255, 255, 255, 0.5); }
+
+label.label-pokemon > input {
+  /* HIDE RADIO */
+  visibility: hidden;
+  /* Makes input not-clickable */
+  position: absolute;
+  /* Remove input from document flow */ }
+
+label.label-pokemon > input + img {
+  /* IMAGE STYLES */
+  cursor: pointer;
+  border: 3px solid transparent; }
+
+label.label-pokemon > input:checked + img {
+  /* (RADIO CHECKED) IMAGE STYLES */
+  border: 3px solid rgba(0, 0, 0, 0.3); }
+
+label[title]:hover:after {
+  content: attr(title);
+  padding: 4px 8px;
+  color: #333;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 20;
+  white-space: nowrap;
+  background: #fff; }
 
 /* STYLISTIC CHOICES */
 .admin {
@@ -293,6 +326,34 @@ label > input:checked + img {
   .content-box-gray .content-box-button {
     background: #7B848A; }
 
+.content-box-red {
+  border: 1px solid #a72925; }
+  .content-box-red .content-box-head {
+    background: #D9534F; }
+  .content-box-red .content-box-button {
+    background: #D9534F; }
+
+.content-box-pink {
+  border: 1px solid #d83e6d; }
+  .content-box-pink .content-box-head {
+    background: #F85888; }
+  .content-box-pink .content-box-button {
+    background: #F85888; }
+
+.content-box-green {
+  border: 1px solid #449E44; }
+  .content-box-green .content-box-head {
+    background: #5cb85c; }
+  .content-box-green .content-box-button {
+    background: #5cb85c; }
+
+.content-box-yellow {
+  border: 1px solid #449E44; }
+  .content-box-yellow .content-box-head {
+    background: #F8D030; }
+  .content-box-yellow .content-box-button {
+    background: #F8D030; }
+
 table.content-box-table {
   width: 100%;
   border: 1px solid #2B6CA7; }
@@ -308,6 +369,11 @@ table.content-box-table {
         color: white; }
   table.content-box-table td {
     padding: 5px 15px; }
+
+table.content-box-table-yellow {
+  border: 1px solid #dbb620; }
+  table.content-box-table-yellow th {
+    background: #F8D030; }
 
 table.sticky {
   border: 1px solid #449E44; }

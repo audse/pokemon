@@ -1,6 +1,9 @@
 {% extends "mobile-first-base.html" %}
 {% load staticfiles %}
 {% load partition %}
+{% load rank %}
+{% load order_by %}
+{% load bbcode_tags %}
 
 {% block title %}{{ current_user.username}}'s Profile{% endblock %}
 
@@ -11,36 +14,62 @@
 	<h1 class="gray oswald">{{ current_user.username }}'s Profile</h1>
 	<div class="row">
 
-		<div class="col-sm-6">
-			{% for adopt in adopts|partition:"2"|first %}
+		{% for adopt in adopts %}
+			<div class="col-sm-6">
 				<div class="party-space">
 					{% if adopt.hatched %}
 						<div class="party-space-content">
-							<img src="{% static 'img/pokemon/' %}{% if adopt.shiny %}shiny/{% endif %}{{ adopt.pokemon.number }}.png" style="float:left;" />
-							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">
+							<div style="position:relative;float:left;height:96px;width:96px;{% if adopt.happiness == 100 %}background:url('{% static 'img/glow.png/' %}');{% endif %}">
+								<img src="{% static 'img/pokemon/' %}{% if adopt.shiny %}shiny/{% endif %}{{ adopt.pokemon.number }}.png" style="position:absolute;" />
+								{% if adopt.held_item %}
+									<img src="{% static 'img/items/' %}{{ adopt.held_item.image }}.png" style="position:absolute;left:0;bottom:0" />
+								{% endif %}
+							</div>
+							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk status='pokemon' %}">
+
+							{% if adopt.shiny %}
+								<span class="small badge badge-electric">&#9733;</span>
+							{% endif %}
+
 							{% if adopt.nickname %}
 								{{ adopt.nickname }}
 							{% else %}
 								{{ adopt.pokemon.name }}
 							{% endif %}
 							</a></h5>
-							{% if adopt.percent != 100 %}
-							<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> {% if adopt.total_exp != 0 %}/ {{ adopt.total_exp }}{% endif %}
+							{% if adopt.pokemon.evo_level %}
+								{% if adopt.percent != 100 %}
+								<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> {% if adopt.total_exp != 0 %}/ {{ adopt.total_exp }}{% endif %}
+								{% else %}
+								<span id="percent-{{ adopt.pk }}">{{ adopt.percent }}</span>%
+								{% endif %}
+								<div class="progress">
+								 	<div class="progress-bar small" role="progressbar" style="{% if adopt.total_exp %}width:{{ adopt.percent }}%;{% else %}width:100%{% endif %}"></div>
+								</div>
 							{% else %}
-							<span id="percent-{{ adopt.pk }}">{{ adopt.percent }}</span>%
+								Happiness: {{ adopt.happiness }}%
+								
+								<div class="progress" style="position:relative;margin: 10px;">
+									<div class="progress-bar" role="progressbar" style="width:{{ adopt.happiness }}%;position: absolute;left:0;z-index:6">
+									</div>
+									<div class="progress-bar" role="progressbar" style="width:0%;"></div>
+								 	<div class="progress-bar" role="progressbar" style="width:20%;background:#e74c3c;position: absolute;left:0;z-index:5;text-align:right;">>:(&nbsp;</div>
+								 	<div class="progress-bar" role="progressbar" style="width:40%;background:#e67e22;position: absolute;left:0;z-index:4;text-align:right;">:(&nbsp;</div>
+								 	<div class="progress-bar" role="progressbar" style="width:60%;background:#f1c40f;position: absolute;left:0;z-index:3;text-align:right;">:|&nbsp;</div>
+								 	<div class="progress-bar" role="progressbar" style="width:80%;background:#87D37C;position: absolute;left:0;z-index: 2;text-align:right;">:)&nbsp;</div>
+								 	<div class="progress-bar" role="progressbar" style="width:100%;background:#2ecc71;position: absolute;left:0;z-index:1;text-align:right;">:D&nbsp;</div>
+								</div>
+
 							{% endif %}
-							<div class="progress">
-							 	<div class="progress-bar small" role="progressbar" style="{% if adopt.total_exp %}width:{{ adopt.percent }}%;{% else %}width:100%{% endif %}"></div>
-							</div>
 
 							<div style="clear:both"></div>
 						</div>
-						{% include 'includes/interact_pokemon.html' %}
+						{% include 'includes/interact_pokemon_play.html' %}
 					{% else %}
 						<div class="party-space-content">
 							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png" style="float:left;" />
 
-							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">Egg</a></h5>
+							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk status='pokemon' %}">Egg</a></h5>
 
 							<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> / {{ adopt.pokemon.ehp }}
 							<div class="progress">
@@ -51,74 +80,105 @@
 						</div>
 						{% include 'includes/interact_egg.html' %}
 				{% endif %}
-				</div>
-			{% endfor %}
-		</div>
-
-		<div class="col-sm-6">
-			{% for adopt in adopts|partition:"2"|last %}
-				<div class="party-space">
-					{% if adopt.hatched %}
-						<div class="party-space-content">
-							<img src="{% static 'img/pokemon/' %}{% if adopt.shiny %}shiny/{% endif %}{{ adopt.pokemon.number }}.png" style="float:left;" />
-							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">
-							{% if adopt.nickname %}
-								{{ adopt.nickname }}
-							{% else %}
-								{{ adopt.pokemon.name }}
-							{% endif %}
-							</a></h5>
-							{% if adopt.percent != 100 %}
-							<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> {% if adopt.total_exp != 0 %}/ {{ adopt.total_exp }}{% endif %}
-							{% else %}
-							<span id="percent-{{ adopt.pk }}">{{ adopt.percent }}</span>%
-							{% endif %}
-							<div class="progress">
-							 	<div class="progress-bar small" role="progressbar" style="{% if adopt.total_exp %}width:{{ adopt.percent }}%;{% else %}width:100%{% endif %}"></div>
-							</div>
-
-							<div style="clear:both"></div>
-						</div>
-						{% include 'includes/interact_pokemon.html' %}
-					{% else %}
-						<div class="party-space-content">
-							<img src="{% static 'img/eggs/' %}{{ adopt.pokemon.number }}.png" style="float:left;" />
-
-							<h5 class="blue open-sans"><a href="{% url 'view_adopt' pk=adopt.pk %}">Egg</a></h5>
-
-							<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> / {{ adopt.pokemon.ehp }}
-							<div class="progress">
-							 	<div class="progress-bar small" role="progressbar" style="width:{{ adopt.percent }}%;" aria-valuenow="{{ adopt.exp }}" aria-valuemin="0" aria-valuemax="{{ adopt.pokemon.ehp }}"></div>
-							</div>
-
-							<div style="clear:both"></div>
-						</div>
-						{% include 'includes/interact_egg.html' %}
-				{% endif %}
-				</div>
-			{% endfor %}
-		</div>
-
-	</div>
-</div>
-<div class="col-sm-3">
-	{% if user.username == current_user.username %}
-	{% if user.is_superuser %}
-		<br class="desktop" /><br class="desktop" /><br class="desktop" /><br class="desktop" />
-		<h5 class="gray">What are you up to?</h5>
-		<form action="{% url 'manually_update_online' %}" method="POST">
-			{% csrf_token %}
-			<div class="form-group">
-				<div class="input-group">
-					<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-user"></i></span>
-					<input type="text" class="form-control" name="action" placeholder="I am..." />
 				</div>
 			</div>
-			<button class="btn btn-secondary" type="submit">Go</button>
+		{% endfor %}
+	</div>
+
+</div>
+<div class="col-sm-3">
+	<h1 class="gray oswald">About</h1>
+	{% if current_user.is_staff %}
+		<span class="badge badge-primary">staff</span>
+	{% endif %}
+	{% if current_user.is_superuser %}
+		<span class="badge badge-danger">admin</span>
+	{% endif %}
+
+	{% if current_user|rank == 1 %}
+		<span class="badge badge-ghost">master</span>
+	{% elif current_user|rank == 2 %}
+		<span class="badge badge-electric">elite</span>
+	{% elif current_user|rank == 3 %}
+		<span class="badge badge-fire">skilled</span>
+	{% elif current_user|rank == 4 %}
+		<span class="badge badge-psychic">training</span>
+	{% elif rcurrent_user|rank == 5 %}
+		<span class="badge badge-success">new</span>
+	{% endif %}
+
+	{% if user.username == current_user.username %}
+		<div class="content-box" style="margin-top: 15px;">
+			<div class="content-box-body" class="about" style="width: 100%" >
+				{% autoescape off %}
+					{{ about.about|bbcode }}
+				{% endautoescape %}
+				<br /><br />
+			</div>
+			<a href="#" data-toggle="modal" data-target="#edit-about"><button class="content-box-button">Edit About</button></a>
+		</div>
+		{% if user.is_superuser %}
+			<br />
+			<h5 class="gray">What are you up to?</h5>
+			<form action="{% url 'manually_update_online' %}" method="POST">
+				{% csrf_token %}
+				<div class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon input-group-addon" id="basic-addon1"><i class="fa fa-user"></i></span>
+						<input type="text" class="form-control" name="action" placeholder="I am..." />
+					</div>
+				</div>
+				<button class="btn btn-secondary" type="submit">Go</button>
+			</form>
+			<br class="mobile" />
+		{% endif %}
+	{% else %}
+		<div class="content-box" style="margin-top: 15px;">
+			<a href="{% url 'send_pm_page' username=current_user.username %}"><button class="content-box-button">Send Private Message</button></a>
+			<div class="content-box-body">
+				{% autoescape off %}
+					{{ about.about|bbcode }}
+				{% endautoescape %}
+				<br /><br />
+			</div>
+			<a href="{% url 'start_trade_page' username=current_user.username %}"><button class="content-box-button">Start Trade</button></a>
+		</div>
+	{% endif %}
+</div>
+<div class="col-sm-1"></div>
+
+<div class="modal fade" id="edit-about" tabindex="-1" role="dialog" aria-labelledby="EditReply" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Edit About</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'edit_about' %}" method="POST">
+			{% csrf_token %}
+			<div class="form-group">
+				<textarea class="form-control" name="about_text" rows="5">{{ about.about }}</textarea>
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Submit Edit</button>
 		</form>
-		<br class="mobile" />
-	{% endif %}
-	{% endif %}
+	  </div>
+	</div>
+  </div>
+</div>
+
+<!-- New row -->
+<div class="col-sm-1"></div>
+<div class="col-sm-10">
+	<h2 class="gray oswald">Boxes <span style="font-size: .5em;">Click to Interact</span></h2>
+
+	{% include 'includes/interact_pokemon_boxes.html' %}
+
 </div>
 <div class="col-sm-1"></div>
 

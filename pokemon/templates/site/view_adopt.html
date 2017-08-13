@@ -1,6 +1,7 @@
 {% extends "mobile-first-base.html" %}
 {% load staticfiles %}
 {% load partition %}
+{% load order_by %}
 
 {% block title %}
 	{{ adopt.owner.username }}'s 
@@ -60,21 +61,68 @@
 
 				<div class="content-box">
 					<div class="content-box-head">
+
 						#{{ adopt.pokemon.number|stringformat:"03d" }} {{ adopt.pokemon.name }} 
 						<span class="oswald badge badge-{{ adopt.pokemon.primary_type }}" style="text-transform: uppercase;">{{ adopt.pokemon.primary_type }}</span>
 
 						<span class="oswald badge badge-{{ adopt.pokemon.secondary_type }}" style="text-transform: uppercase;">{{ adopt.pokemon.secondary_type }}</span><br />
 					</div>
 					<div class="content-box-body" style="min-height: 96px;">
-						<img src="{% static 'img/pokemon/' %}{{ adopt.pokemon.number }}.png" style="float:left;"/>
+						<div style="{% if adopt.happiness == 100 %}background:url('{% static 'img/glow.png/' %}');{% endif %}width:96px;height:96px;float:left;display:inline-block">
+							{% if adopt.shiny %}
+								<img src="{% static 'img/pokemon/shiny/' %}{{ adopt.pokemon.number }}.png"/>
+							{% else %}
+								<img src="{% static 'img/pokemon/' %}{{ adopt.pokemon.number }}.png" />
+							{% endif %}
+						</div>
 						{% if adopt.gender %}
-						Gender: male
+						Gender: &male;
 						{% else %}
-						Gender: female
+						Gender: &female;
 						{% endif %}<br />
 						Nature: {{ adopt.nature }}
+						{% if adopt.shiny %}
+							<br />
+							<span class="badge badge-electric">Shiny</span>
+						{% endif %}
+						<br />Happiness<br />
+						<div class="progress" style="position:relative;margin: 10px;">
+							<div class="progress-bar" role="progressbar" style="width:{{ adopt.happiness }}%;position: absolute;left:0;z-index:6">
+								{{ adopt.happiness }}%
+							</div>
+							<div class="progress-bar" role="progressbar" style="width:0%;"></div>
+						 	<div class="progress-bar" role="progressbar" style="width:20%;background:#e74c3c;position: absolute;left:0;z-index:5;text-align:right;">>:(&nbsp;</div>
+						 	<div class="progress-bar" role="progressbar" style="width:40%;background:#e67e22;position: absolute;left:0;z-index:4;text-align:right;">:(&nbsp;</div>
+						 	<div class="progress-bar" role="progressbar" style="width:60%;background:#f1c40f;position: absolute;left:0;z-index:3;text-align:right;">:|&nbsp;</div>
+						 	<div class="progress-bar" role="progressbar" style="width:80%;background:#87D37C;position: absolute;left:0;z-index: 2;text-align:right;">:)&nbsp;</div>
+						 	<div class="progress-bar" role="progressbar" style="width:100%;background:#2ecc71;position: absolute;left:0;z-index:1;text-align:right;">:D&nbsp;</div>
+						</div>
+						{% if adopt.pokemon.evo_level %}
+							{% if adopt.percent != 100 %}
+								<span id="exp-{{ adopt.pk }}">{{ adopt.exp }}</span> {% if adopt.total_exp != 0 %}/ {{ adopt.total_exp }}{% endif %} EXP
+							{% else %}
+								<span id="percent-{{ adopt.pk }}">{{ adopt.percent }}</span>%
+							{% endif %}
+							<div class="progress" style="margin:10px;">
+							 	<div class="progress-bar small" role="progressbar" style="{% if adopt.total_exp %}width:{{ adopt.percent }}%;{% else %}width:100%{% endif %};"></div>
+							</div><br />
+						{% else %}
+							<p>Full EXP</p>
+						{% endif %}
 					</div>
 				</div>
+
+				<div class="content-box" style="margin-top:15px;">
+				{% if adopt.held_item != None %}
+					<div class="content-box-body">
+						<p><img src="{% static 'img/items/' %}{{ adopt.held_item.image }}.png" style="float:left;" /> &nbsp; Holding a {{ adopt.held_item.name }}</p>
+					</div>
+					<a href="{% url 'take_held_item' adopt_pk=adopt.pk %}"><button class="content-box-button">Take Held Item</button></a>
+				{% else %}
+					<a href="#" data-toggle="modal" data-target="#give-held-item"><button class="content-box-button">Give Held Item</button></a>
+				{% endif %}
+				</div>
+
 				<div class="content-box" style="margin-top:15px;">
 					<div class="content-box-body" style="padding-bottom:15px">
 						{% if adopt.pokemon.evo %}
@@ -85,17 +133,70 @@
 							{% elif adopt.pokemon.evo_on_trade %}
 								evolves on trade
 							{% endif %}
+						{% elif adopt.pokemon.name == "Eevee" %}
+							evolves with a water stone, thunder stone, or fire stone
 						{% else %}
 							<i class="gray">Does not evolve</i>
 						{% endif %}
 					</div>
 				</div>
 
+				<div class="content-box" style="margin-top:15px;">
+					<div class="content-box-body" style="padding-bottom:15px">
+						<div class="progress" style="margin-bottom: 10px;">
+							<div class="progress-bar" role="progressbar" style="background:#78C850;width:{{ adopt.smart }}%;">SMART {{ adopt.smart }}%</div>
+						</div>
+						<div class="progress" style="margin-bottom: 10px;">
+							<div class="progress-bar" role="progressbar" style="background:#F08030;width:{{ adopt.cool }}%;">COOL {{ adopt.cool }}%</div>
+						</div>
+						<div class="progress" style="margin-bottom: 10px;">
+							<div class="progress-bar" role="progressbar" style="background:#EE99AC;width:{{ adopt.cute }}%;">CUTE {{ adopt.cute }}%</div>
+						</div>
+						<div class="progress" style="margin-bottom: 10px;">
+							<div class="progress-bar" role="progressbar" style="background:#6890F0;width:{{ adopt.beauty }}%;">BEAUTY {{ adopt.beauty }}%</div>
+						</div>
+						<div class="progress">
+							<div class="progress-bar" role="progressbar" style="background:#F8D030;width:{{ adopt.tough }}%;">TOUGH {{ adopt.tough }}%</div>
+						</div>
+					</div>
+				</div>
 
-				{% if adopt.exp == adopt.total_exp %}
+				{% if adopt.pokemon.evo %}
 					{% if adopt.owner == user %}
+						{% if adopt.pokemon.evo_level %}
+							{% if adopt.exp == adopt.total_exp%}
+								<div class="content-box" style="margin-top:15px;">
+									<a href="{% url 'evolve_by_level' pk=adopt.pk %}"><button class="content-box-button">Evolve Pok&eacute;mon</button></a>
+								</div>
+							{% endif %}
+						{% elif adopt.pokemon.evo_item %}
+							{% if has_item %}
+								<div class="content-box" style="margin-top:15px;">
+									<a href="{% url 'evolve_by_item' pk=adopt.pk %}"><button class="content-box-button">Evolve Pok&eacute;mon with {{ item|title }}</button></a>
+								</div>
+							{% endif %}
+						{% elif adopt.pokemon.evo_on_trade %}
+							{% if adopt.ready_to_evo_by_trade %}
+								<div class="content-box" style="margin-top:15px;">
+									<a href="{% url 'evolve_by_trade' pk=adopt.pk %}"><button class="content-box-button">Evolve Pok&eacute;mon</button></a>
+								</div>
+							{% endif %}
+						{% endif %}
+					{% endif %}
+				{% elif adopt.pokemon.name == "Eevee" %}
+					{% if has_eevee_water %}
 						<div class="content-box" style="margin-top:15px;">
-							<a href="{% url 'evolve_by_level' pk=adopt.pk %}"><button class="content-box-button">Evolve Pokemon</button></a>
+							<a href="{% url 'evolve_eevee' pk=adopt.pk item='water' %}"><button class="content-box-button">Evolve Pok&eacute;mon with Water Stone</button></a>
+						</div>
+					{% endif %}
+					{% if has_eevee_thunder %}
+						<div class="content-box" style="margin-top:15px;">
+							<a href="{% url 'evolve_eevee' pk=adopt.pk item='thunder' %}"><button class="content-box-button">Evolve Pok&eacute;mon with Thunder Stone</button></a>
+						</div>
+					{% endif %}
+					{% if has_eevee_fire %}
+						<div class="content-box" style="margin-top:15px;">
+							<a href="{% url 'evolve_eevee' pk=adopt.pk item='fire' %}"><button class="content-box-button">Evolve Pok&eacute;mon with Fire Stone</button></a>
 						</div>
 					{% endif %}
 				{% endif %}
@@ -107,6 +208,15 @@
 				{% if adopt.party and adopt.hatched %}
 				<div class="content-box">
 					<button class="content-box-button" data-toggle="modal" data-target="#boxes-list">Move to Box</button>
+				</div>
+				{% endif %}
+
+				{% if not adopt.party and adopt.hatched %}
+				<div class="content-box">
+					<a href="{% url 'move_to_party' adopt=adopt.pk %}"><button class="content-box-button">Move to Party</button></a>
+				</div>
+				<div class="content-box">
+					<button class="content-box-button" data-toggle="modal" data-target="#boxes-list-to-switch">Move to Different Box</button>
 				</div>
 				{% endif %}
 
@@ -137,26 +247,43 @@
       		</div>
       		<div class="modal-body">
       			<div class="row">
-      				<div class="col-sm-6">
-      					{% for box in boxes|partition:"2"|first %}
+      				{% for box in boxes|order_by:"create_time" %}
+      					<div class="col-sm-6">
+      						<a href="{% url 'move_to_box' box=box.pk adopt=adopt.pk %}">
       						<div class="content-box">
-      							<div class="content-box-head">{{ box.name }}</div>
-								<a href="{% url 'move_to_box' box=box.pk adopt=adopt.pk %}">
-									<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%" />
-								</a>
+      							<div class="content-box-head">{{ box.name }} ({{ box.pokemon.count }}/25)</div>
+								<div class="content-box-body" style="background:#{{ box.wallpaper }};height:150px"></div>
 							</div>
-      					{% endfor %}
-      				</div>
-      				<div class="col-sm-6">
-      					{% for box in boxes|partition:"2"|last %}
+							</a>
+      					</div>
+      				{% endfor %}
+      			</div>
+      		</div>
+      		<div class="modal-footer">
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+ <div class="modal fade" id="boxes-list-to-switch" tabindex="-1" role="dialog" aria-labelledby="boxes-listLabel" aria-hidden="true">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="boxes-listLabel">Your Boxes</h4>
+      		</div>
+      		<div class="modal-body">
+      			<div class="row">
+      				{% for box in boxes|order_by:"create_time" %}
+      					<div class="col-sm-6">
+      						<a href="{% url 'move_to_different_box' box=box.pk adopt=adopt.pk %}">
       						<div class="content-box">
-      							<div class="content-box-head">{{ box.name }}</div>
-								<a href="{% url 'move_to_box' box=box.pk adopt=adopt.pk %}">
-									<img src="{% static 'img/areas/' %}{{ box.wallpaper }}.png" width="100%" />
-								</a>
+      							<div class="content-box-head">{{ box.name }} ({{ box.pokemon.count }}/25)</div>
+								<div class="content-box-body" style="background:#{{ box.wallpaper }};height:150px"></div>
 							</div>
-      					{% endfor %}
-      				</div>
+							</a>
+      					</div>
+      				{% endfor %}
       			</div>
       		</div>
       		<div class="modal-footer">
@@ -175,6 +302,9 @@
       		</div>
       		<div class="modal-body">
         		Are you sure you want to release your {% if adopt.hatched %}{% if adopt.nickname %}{{ adopt.nickname }}{% else %}{{ adopt.pokemon.name }}{% endif %}{% else %}egg{% endif %}? Releasing cannot be undone.
+
+        		<br /><br />
+        		<span class="small">Note that you must wait at least 2 hours after adopting an egg or Pok&eacute;mon before releasing it.</span>
       		</div>
       		<div class="modal-footer">
         		<button type="button" class="btn btn-secondary" onclick='' data-dismiss="modal">No</button>
@@ -204,5 +334,156 @@
     	</div>
   	</div>
 </div>
+
+<!-- GIVE HELD ITEM MODAL -->
+<div class="modal fade" id="give-held-item" tabindex="-1" role="dialog" aria-labelledby="changeNicknameLabel" aria-hidden="true">
+  	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Give Held Item</h4>
+      		</div>
+      		<div class="modal-body">
+      			<form method="post" action="{% url 'give_held_item' adopt_pk=adopt.pk %}">
+      			{% csrf_token %}
+      				<h5>Summons</h5>
+      				{% for item in inventory %}
+      					{% if item.item.category == "summon" %}
+  							<label class="label-pokemon small gray" style="display:inline-block;text-align: center;margin:10px;background: #eee;padding: 5px;">
+  								<input type="radio" name="item_pk" value="{{ item.item.pk }}" />
+      							<img src="{% static 'img/items/' %}{{ item.item.image }}.png" />x{{ item.quantity }}<br />
+      							{{ item.item.name|title }}<br />
+  							</label>
+      					{% endif %}
+      				{% endfor %}<br />
+      				<h5>Fossils</h5>
+      				{% for item in inventory %}
+      					{% if item.item.category == "fossil" %}
+  							<label class="label-pokemon small gray" style="display:inline-block;text-align: center;margin:10px;background: #eee;padding: 5px;">
+								<input type="radio" name="item_pk" value="{{ item.item.pk }}" />
+  								<img src="{% static 'img/items/' %}{{ item.item.image }}.png" />x{{ item.quantity }}<br />
+  								{{ item.item.name|title }}<br />
+							</label>
+      					{% endif %}
+      				{% endfor %}<br />
+      				<h5>Evolution Stones</h5>
+      				{% for item in inventory %}
+      					{% if item.item.category == "evolution stone" %}
+  							<label class="label-pokemon small gray" style="display:inline-block;text-align: center;margin:10px;background: #eee;padding: 5px">
+  								<input type="radio" name="item_pk" value="{{ item.item.pk }}" />
+  								<img src="{% static 'img/items/' %}{{ item.item.image }}.png" />x{{ item.quantity }}<br />
+  								{{ item.item.name|title }}<br />
+  							</label>
+      					{% endif %}
+      				{% endfor %}<br />
+      				<h5>Berries</h5>
+      				{% for item in inventory %}
+      					{% if item.item.category == "berry" %}
+  							<label class="label-pokemon small gray" style="display:inline-block;text-align: center;margin:10px;background: #eee;padding: 5px">
+  								<input type="radio" name="item_pk" value="{{ item.item.pk }}" />
+      							<img src="{% static 'img/items/' %}{{ item.item.image }}.png" />x{{ item.quantity }}<br />
+      							{{ item.item.name|title }}<br />
+  							</label>
+      					{% endif %}
+      				{% endfor %}<br />
+      				<h5>Key Items</h5>
+      				{% for item in inventory %}
+      					{% if item.item.category == "key item" %}
+      						{% if item.item.name != "bag" %}
+  								<label class="label-pokemon small gray" style="display:inline-block;text-align: center;margin:10px;background: #eee;padding: 5px;">
+  									<input type="radio" name="item_pk" value="{{ item.item.pk }}" />
+      								<img src="{% static 'img/items/' %}{{ item.item.image }}.png" />x{{ item.quantity }}<br />
+      								{{ item.item.name|title }}<br />
+  								</label>
+      						{% endif %}
+      					{% endif %}
+      				{% endfor %}<br />
+      				<h5>Parcels</h5>
+      				{% for item in inventory %}
+      					{% if item.item.category == "parcel" %}
+  							<label class="label-pokemon small gray" style="display:inline-block;text-align: center;margin:10px;background: #eee;padding: 5px">
+  								<input type="radio" name="item_pk" value="{{ item.item.pk }}" />
+      							<img src="{% static 'img/items/' %}{{ item.item.image }}.png" />x{{ item.quantity }}<br />
+      							{{ item.item.name|title }}<br />
+  							</label>
+      					{% endif %}
+      				{% endfor %}<br />
+      				<h5>Gold Upgrades</h5>
+      				{% for item in inventory %}
+      					{% if item.item.purchase_value_coins != 0 %}
+      						{% if item.item.category != "parcel" %}
+  								<label class="label-pokemon small gray" style="display:inline-block;text-align: center;margin:10px;background: #eee;padding: 5px;">
+  									<input type="radio" name="item_pk" value="{{ item.item.pk }}" />
+      								<img src="{% static 'img/items/' %}{{ item.item.image }}.png" />x{{ item.quantity }}<br />
+      								{{ item.item.name|title }}<br />
+  								</label>
+      						{% endif %}
+      					{% endif %}
+      				{% endfor %}
+      		</div>
+      		<div class="modal-footer">
+        		<button type="submit" class="btn btn-success" onclick=''>Give</button></a>
+
+      			</form>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+{% if status == "hatched" %}
+<div class="modal fade" id="hatched-modal" tabindex="-1" role="dialog">
+  	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Egg Hatched!</h4>
+      		</div>
+      		<div class="modal-body">Your egg has hatched into a {{ adopt.pokemon.name }}!</div>
+      		<div class="modal-footer">
+        		<button type="close" data-dismiss="modal"  class="btn btn-success" onclick=''>Great!</button></a>
+
+      			</form>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+<script type="text/javascript">
+    $(window).on('load',function(){
+        $('#hatched-modal').modal('show');
+    });
+</script>
+{% elif status == "evolved" %}
+<div class="modal fade" id="evolved-modal" tabindex="-1" role="dialog">
+  	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title" id="releaseLabel">Pok&eacute;mon Evolved!</h4>
+      		</div>
+      		<div class="modal-body" style="text-align: center">
+      			{% if adopt.shiny %}
+					<img src="{% static 'img/pokemon/shiny/' %}{{ adopt.pokemon.number }}.png" />
+				{% else %}
+					<img src="{% static 'img/pokemon/' %}{{ adopt.pokemon.number }}.png" />
+				{% endif %}
+      			Your Pok&eacute;mon has evolved into a {{ adopt.pokemon.name }}!
+      		</div>
+      		<div class="modal-footer">
+        		<button type="close" data-dismiss="modal"  class="btn btn-success" onclick=''>Great!</button></a>
+
+      			</form>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+<script type="text/javascript">
+    $(window).on('load',function(){
+        $('#evolved-modal').modal('show');
+    });
+</script>
+
+{% endif %}
 
 {% endblock %}

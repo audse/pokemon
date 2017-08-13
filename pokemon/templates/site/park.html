@@ -8,74 +8,253 @@
 
 <div class="col-sm-1"></div>
 <div class="col-sm-6">
-	<h1 class="gray oswald">The Park</h1>
+	<h1 class="gray oswald">Ranger Azza's Park</h1>
 
 		<div id="park" class="content-box" style="position:relative;overflow: hidden;">
 			<img src="{% static 'img/park.png' %}" width="100%"/>
 			{% for pokemon in park_pokemon %}
 				{% if pokemon.hatched %}
 					<a href="" data-toggle="modal" data-target="#park-adopt-{{ pokemon.pk }}">
-						<img src="{% static 'img/pokemon/' %}{{ pokemon.pokemon.number }}.png" style="position: absolute;top:{{ pokemon.y_percent }}%;left:{{ pokemon.x_percent }}%;margin-top:-15px;margin-left:-15px;" />
+						<img src="{% static 'img/pokemon/crop/' %}{{ pokemon.pokemon.number }}.png" style="position: absolute;top:{{ pokemon.y_percent }}%;left:{{ pokemon.x_percent }}%;" />
 					</a>
 				{% else %}
 					<a href="" data-toggle="modal" data-target="#park-adopt-{{ pokemon.pk }}">
-						<img src="{% static 'img/eggs/crop/' %}{{ pokemon.pokemon.number }}.png" style="position: absolute;top:{{ pokemon.y_percent }}%;left:{{ pokemon.x_percent }}%;margin-top:-15px;margin-left:-15px;" />
+						<img src="{% static 'img/eggs/crop/' %}{{ pokemon.pokemon.number }}.png" style="position: absolute;top:{{ pokemon.y_percent }}%;left:{{ pokemon.x_percent }}%;" />
 					</a>
 				{% endif %}
+				
+				<div class="modal fade" id="park-adopt-{{ pokemon.pk }}" tabindex="-1" role="dialog" aria-labelledby="park-adoptLabel" aria-hidden="true">
+				  	<div class="modal-dialog modal-sm">
+				    	<div class="modal-content">
+				      		<div class="modal-header">
+				        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        		<h4 class="modal-title" id="park-adoptLabel">
+				        			{% if pokemon.hatched %}
+				        				Adopt this Pok&eacute;mon?
+				      				{% else %}
+				      					Adopt this egg?
+				      				{% endif %}
+				        		</h4>
+				      		</div>
+				      		<div class="modal-body" style="text-align:center;">
+				      			{% if pokemon.hatched %}
+				      				<img src="{% static 'img/pokemon/' %}{{ pokemon.pokemon.number }}.png" />
+				      			{% else %}
+				      				<img src="{% static 'img/eggs/' %}{{ pokemon.pokemon.number }}.png" />
+				      			{% endif %}
+				      		</div>
+				      		<div class="modal-footer">
+				        		<a href="{% url 'park_adopt' pk=pokemon.pk %}"><button type="button" class="btn btn-secondary" onclick=''>Adopt</button></a>
+				      		</div>
+				    	</div>
+				  	</div>
+				</div>
+
 			{% endfor %}
+
 		</div>
 
 		<div class="content-box">
 			<button id="reload" class="content-box-button">Reload</button>
 		</div>
 
+		{% if has_incense %}
+		<div class="content-box content-box-pink">
+			<button id="reload-incense" class="content-box-button">Reload with Incense</button>
+		</div>
+		{% endif %}
+
+		{% if has_repel %}
+		<div class="content-box content-box-green">
+			<button id="reload-repel" class="content-box-button">Reload with Repel</button>
+		</div>
+		{% endif %}
+
 	<br />
 </div>
 
 <div class="col-sm-4">
-	<img src="{% static 'img/azza.jpg' %}" width="100%" />
+	<br class="desktop" /><br class="desktop" />
+	<h3 class="gray oswald">Park Passes</h3>
+	<table class="content-box-table">
+		<tr>
+			<th>PASS</th>
+			<th style="text-align: center">IMG</th>
+			<th style="text-align: right">Price</th>
+		</tr>
+		{% for item in park_passes %}
+			{% if item.name != "basic park pass" %}
+				<tr>
+					<td>{{ item.name|title }}</td>
+					<td style="text-align: center"><img src="{% static 'img/items/' %}{{ item.image }}.png" /></td>
+					<td style="text-align: right">{% if item.purchase_value != 0 %}<a href="#" data-toggle="modal" data-target="#buy-{{ item.pk }}">{{ item.purchase_value }} PD</a>{% elif item.purchase_value_coins != 0 %}<a href="#" data-toggle="modal" data-target="#buy-gold-{{ item.pk }}"><span class="badge badge-electric" style="font-size:.9em;">{{ item.purchase_value_coins }} Coins</span></a>{% endif %}</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="small gray">{{ item.description }}</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+	</table>
+	<br />
+	<p>You have made {{ park_adopts_today }} adoptions today.</p>
+	<p>Your {% if has_gold_park_pass %}gold park pass allows 24{% elif has_silver_park_pass %}silver park pass allows 12{% elif has_bronze_park_pass %}bronze park pass allows 6{% else %}basic park pass allows 3{% endif %} adoptions per day.</p>
+</div>
+
+<div class="col-sm-1"></div>
+<div class="col-sm-1"></div>
+<div class="col-sm-6">
+	<h3 class="gray oswald">Park Store <span class="badge badge-electric">GOLD</span></h3>
+	<p><i class="gray">Note that these items are permanent and do not run out.</i>
+	<table class="content-box-table">
+		<tr>
+			<th>ITEM</th>
+			<th style="text-align: center">IMG</th>
+			<th style="text-align: right">Price</th>
+		</tr>
+		{% for item in park_items %}
+				<tr>
+					<td>{{ item.name|title }}</td>
+					<td style="text-align: center"><img src="{% static 'img/items/' %}{{ item.image }}.png" /></td>
+					<td style="text-align: right"><a href="#" data-toggle="modal" data-target="#buy-gold-{{ item.pk }}">{{ item.purchase_value_coins }} Coins</a></td>
+				</tr>
+				<tr>
+					<td colspan="3" class="small gray">{{ item.description }}</td>
+				</tr>
+		{% endfor %}
+	</table>
+</div>
+<div class="col-sm-4">
+	<img src="{% static 'img/azza.png' %}" class="render" width="100%" />
 	<p class="red bold">Needs flavor text</p>
 </div>
 
-{% for pokemon in park_pokemon %}
 
-<div class="modal fade" id="park-adopt-{{ pokemon.pk }}" tabindex="-1" role="dialog" aria-labelledby="park-adoptLabel" aria-hidden="true">
-  	<div class="modal-dialog modal-sm">
-    	<div class="modal-content">
-      		<div class="modal-header">
-        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        		<h4 class="modal-title" id="park-adoptLabel">
-        			{% if pokemon.hatched %}
-        				Adopt this Pok&eacute;mon?
-      				{% else %}
-      					Adopt this egg?
-      				{% endif %}
-        		</h4>
-      		</div>
-      		<div class="modal-body" style="text-align:center;">
-      			{% if pokemon.hatched %}
-      				<img src="{% static 'img/pokemon/' %}{{ pokemon.pokemon.number }}.png" />
-      			{% else %}
-      				<img src="{% static 'img/eggs/' %}{{ pokemon.pokemon.number }}.png" />
-      			{% endif %}
-      		</div>
-      		<div class="modal-footer">
-        		<a href="{% url 'park_adopt' pk=pokemon.pk %}"><button type="button" class="btn btn-secondary" onclick=''>Adopt</button></a>
-      		</div>
-    	</div>
-  	</div>
+{% for item in park_passes %}
+{% if item.purchase_value_coins == 0 %}
+<div class="modal fade" id="buy-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}es</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'purchase_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value }} PD each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
 </div>
+{% else %}
+<div class="modal fade" id="buy-gold-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}es</h4>
+	  </div>
+	  <div class="modal-body">
 
+	  <form action="{% url 'purchase_gold_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value_coins }} Coins each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endif %}
 {% endfor %}
+
+{% for item in park_items %}
+<div class="modal fade" id="buy-gold-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}es</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'purchase_gold_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value_coins }} Coins each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
 
 <script type="text/javascript">
 	function reloadPark(){
 		$("#park").load(document.URL + " #park");
 	}
+	function reloadParkIncense(){
+		$("#park").load("{% url 'park_incense' %}" + " #park");
+	}
+	function reloadParkRepel(){
+		$("#park").load("{% url 'park_repel' %}" + " #park");
+	}
 
 	$(document).ready(function(){
 		$("#reload").click(function(){
 			reloadPark()
+		    var btn = $(this);
+		    btn.prop('disabled', true);
+		    btn.addClass("content-box-button-disabled");
+		    $("#park").addClass("the-border-clause");
+		    setTimeout(function(){
+		        btn.prop('disabled', false);
+		        btn.removeClass("content-box-button-disabled");
+		    }, 500);
+		});
+
+		$("#reload-incense").click(function(){
+			reloadParkIncense()
+		    var btn = $(this);
+		    btn.prop('disabled', true);
+		    btn.addClass("content-box-button-disabled");
+		    $("#park").addClass("the-border-clause");
+		    setTimeout(function(){
+		        btn.prop('disabled', false);
+		        btn.removeClass("content-box-button-disabled");
+		    }, 500);
+		});
+
+		$("#reload-repel").click(function(){
+			reloadParkRepel()
 		    var btn = $(this);
 		    btn.prop('disabled', true);
 		    btn.addClass("content-box-button-disabled");

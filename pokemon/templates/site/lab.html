@@ -1,5 +1,6 @@
 {% extends "mobile-first-base.html" %}
 {% load staticfiles %}
+{% load order_by %}
 
 {% block title %}Lab{% endblock %}
 
@@ -47,20 +48,186 @@
 		</div>
 
 		<form action="{% url 'lab_reload' %}">
-			<button type="submit" class="content-box-button">Reload</button>
+			<button type="submit" id="reload" class="content-box-button content-box-button-disabled" disabled>Reload <span class="countdown"></span></button>
 		</form>
+
+		<script type="text/javascript">
+				var updateTime = new Date("{{ lab_set.update_time.isoformat }}");
+
+			setInterval(function(){
+				var timeNow = new Date();
+				var timeSince = (timeNow - updateTime);
+				timeSince = parseInt(timeSince/1000);
+				if (timeSince < 240) {
+					$("#reload").addClass("content-box-button-disabled");
+					$(".countdown").html( (240-timeSince) + " seconds left")
+					document.getElementById("reload").disabled = true;
+				} else {
+					$("#reload").removeClass("content-box-button-disabled");
+					$(".countdown").html("");
+					document.getElementById("reload").disabled = false;
+				}
+			}, 1000);
+		</script>
 	</div>
+	{% else %}
+		<a href="{% url 'register_page' %}"><button class="btn btn-secondary">Sign Up!</button></a>
 	{% endif %}
 	
 	<br />
 </div>
 
 <div class="col-sm-4">
-	<img src="{% static 'img/cedar.jpg' %}" width="100%" />
+	<img src="{% static 'img/cedar.png' %}" class="render" width="100%" />
 </div>
 
 <div class="col-sm-1">
 	
 </div>
+
+<div class="col-sm-1"></div>
+<div class="col-sm-4">
+	{% if dex_entries >= 50 or egg_entries >= 30 %}
+		<h3 class="gray oswald">Your Summons</h3>
+		<p class="gray"><i>Note that you must have a party space free to summon a Pok&eacute;mon.</i></p>
+		{% for item in inventory %}
+			{% if item.item.category == "summon" %}
+				<div class="content-box">
+					<div class="content-box-body" style="text-align: center;">
+						x{{ item.quantity }} <img src="{% static 'img/items/' %}{{ item.item.image }}.png" /> {{ item.item.name|title }}
+					</div>
+					<div class="content-box-body">
+						<p><a href="{% url 'summon_pokemon' item_pk=item.pk %}"><button class="btn btn-success" style="width:100%;">Summon</button></a></p>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+		</table>
+		<h3 class="gray oswald">Your Fossils</h3>
+		<p class="gray"><i>Note that you must have a party space free to extract a Pok&eacute;mon.</i></p>
+		{% for item in inventory %}
+			{% if item.item.category == "fossil" %}
+				<div class="content-box">
+					<div class="content-box-body" style="text-align: center;">
+						x{{ item.quantity }} <img src="{% static 'img/items/summons/' %}{{ item.item.image }}.png" /> {{ item.item.name|title }}
+					</div>
+					<div class="content-box-body">
+						<p><a href="{% url 'summon_pokemon' item_pk=item.pk %}"><button class="btn btn-success" style="width:100%;">Extract</button></a></p>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+		</table>
+	{% else %}
+		<h3 class="gray oswald">Your Summons</h3>
+		<div class="content-box">
+			<div class="content-box-body">
+				<p><i class="gray">Reach 50 Pok&eacute;dex entries and 30 Eggdex entries to unlock summon items!</i></p>
+			</div>
+		</div>
+	{% endif %}
+</div>
+<div class="col-sm-6">
+	<h3 class="gray oswald">Rare Summon Store</h3>
+	<p>Some Pok&eacute;mon are too rare to be kept with our regular collection. These have to be summoned to you. But they won't listen to just any trainer, only those who are serious about Pok&eacute;mon and completing their Pok&eacute;dex.</p>
+
+	{% if dex_entries < 50 or egg_entries < 30 %}
+		<div class="alert alert-danger"><b>Unlock!</b> Reach 50 Pok&eacute;dex entries and 30 Eggdex entries to unlock the summon store!</div>
+		<p>You have {{ dex_entries }} Pok&eacute;dex entries and {{ egg_entries }} Eggdex entries.</p>
+	{% else %}
+		<div class="alert alert-success"><b>Unlock!</b> Summon store unlocked!</div>
+		<table class="content-box-table">
+			<tr>
+				<th>SUMMON</th>
+				<th style="text-align: center;">IMG</th>
+				<th style="text-align: right;">Price</th>
+			</tr>
+			{% for summon in summons|order_by:"purchase_value"%}
+			<tr>
+				<td>{{ summon.name|title }}</td>
+				<td style="text-align: center;"><img src="{% static 'img/items/' %}{{ summon.image}}.png" /></td>
+				<td style="text-align: right;"><a href="#" data-toggle="modal" data-target="#buy-{{ summon.pk }}">{{ summon.purchase_value }} PD</a></td>
+			</tr>
+			<tr>
+				<td colspan="3" class="small gray">{{ summon.description }}</td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<th>FOSSIL</th>
+				<th style="text-align: center;">IMG</th>
+				<th style="text-align: right;">Price</th>
+			</tr>
+			{% for summon in fossils|order_by:"associated_pokemon" %}
+			<tr>
+				<td>{{ summon.name|title }}</td>
+				<td style="text-align: center;"><img src="{% static 'img/items/' %}{{ summon.image}}.png" /></td>
+				<td style="text-align: right;"><a href="#" data-toggle="modal" data-target="#buy-{{ summon.pk }}">{{ summon.purchase_value }} PD</a></td>
+			</tr>
+			<tr>
+				<td colspan="3" class="small gray">{{ summon.description }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+</div>
+
+
+{% for item in summons %}
+<div class="modal fade" id="buy-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}s</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'purchase_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value }} PD each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
+
+{% for item in fossils %}
+<div class="modal fade" id="buy-{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="SellItem" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Buy {{ item.name|title }}s</h4>
+	  </div>
+	  <div class="modal-body">
+
+	  <form action="{% url 'purchase_item' item_pk=item.pk %}" method="POST">
+			{% csrf_token %}
+    		<input type="hidden" name="next" value="{{ request.path }}">
+			<div class="form-group">
+				<label>Buy</label>
+				<input type="text" name="quantity" value="1" size="10" />
+			</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="submit" class="btn btn-secondary">Buy for {{ item.purchase_value }} PD each</button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endfor %}
 
 {% endblock %}

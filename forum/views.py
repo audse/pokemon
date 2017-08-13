@@ -85,7 +85,7 @@ def view_post(request, pk):
 	action = "Viewing the forum post &quot;"+post.title+"&quot;"
 	core_views.update_online(request, action)
 
-	replies = Reply.objects.filter(original=post)
+	replies = Reply.objects.filter(original=post).order_by('post_time')
 
 	# check for if its bookmarked, if so update last_viewed
 	if request.user.is_authenticated():
